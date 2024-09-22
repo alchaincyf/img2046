@@ -1,9 +1,10 @@
 'use client'
 
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from './theme';
-import Layout from './components/Layout';
+import { Inter } from 'next/font/google'
+import './globals.css'
+import Layout from './components/Layout'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,
@@ -11,13 +12,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="zh">
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <body>
-          <Layout>{children}</Layout>
-        </body>
-      </ThemeProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <Layout>{children}</Layout>
+      </body>
     </html>
   )
 }
