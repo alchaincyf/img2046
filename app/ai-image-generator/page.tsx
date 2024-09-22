@@ -20,7 +20,7 @@ const AIImageGeneratorPage: React.FC = () => {
           priority
         />
         <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
-          使用我们的 AI 图片生成器，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。
+          使用 img2046 图片生成器，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。
         </Typography>
       </Box>
       <Paper sx={{ p: 3 }}>
