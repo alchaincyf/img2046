@@ -67,7 +67,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 disablePadding
               >
                 <NextLinkComposed
-                  to={item.href}
+                  href={item.href}
                   style={{
                     textDecoration: 'none',
                     color: item.href === pathname ? theme.palette.primary.main : 'inherit',
