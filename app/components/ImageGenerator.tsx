@@ -3,9 +3,7 @@ import axios from 'axios';
 import { TextField, Button, Box, Typography, Grid, CircularProgress } from '@mui/material';
 
 const ImageGenerator: React.FC = () => {
-  const [prompt, setPrompt] = useState('');
-  const [negativePrompt, setNegativePrompt] = useState('');
-  const [imageSize, setImageSize] = useState('1024x1024');
+  const [userDescription, setUserDescription] = useState('');
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,12 +14,17 @@ const ImageGenerator: React.FC = () => {
     setError('');
 
     try {
-      const response = await axios.post('/api/generate-image', {
-        prompt,
-        negativePrompt,
-        imageSize,
+      // 首先，使用DeepSeek API生成优化的prompt
+      const promptResponse = await axios.post('/api/generate-prompt', {
+        userDescription
       });
-      setGeneratedImages(response.data.images.map((img: { url: string }) => img.url));
+      const optimizedPrompt = promptResponse.data.prompt;
+
+      // 然后，使用优化后的prompt生成图片
+      const imageResponse = await axios.post('/api/generate-image', {
+        prompt: optimizedPrompt,
+      });
+      setGeneratedImages(imageResponse.data.images.map((img: { url: string }) => img.url));
     } catch (error) {
       setError('图片生成失败，请稍后重试。');
       console.error('Error generating image:', error);
@@ -34,36 +37,14 @@ const ImageGenerator: React.FC = () => {
     <Box component="form" onSubmit={handleSubmit} sx={{ '& > *': { mb: 2 } }}>
       <TextField
         fullWidth
-        label="提示词"
+        label="描述你想要的图片"
         variant="outlined"
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
+        value={userDescription}
+        onChange={(e) => setUserDescription(e.target.value)}
         required
+        multiline
+        rows={4}
       />
-      <TextField
-        fullWidth
-        label="负面提示词（可选）"
-        variant="outlined"
-        value={negativePrompt}
-        onChange={(e) => setNegativePrompt(e.target.value)}
-      />
-      <TextField
-        select
-        fullWidth
-        label="图片尺寸"
-        value={imageSize}
-        onChange={(e) => setImageSize(e.target.value)}
-        SelectProps={{
-          native: true,
-        }}
-      >
-        <option value="1024x1024">1024x1024</option>
-        <option value="1024x2048">1024x2048</option>
-        <option value="1536x1024">1536x1024</option>
-        <option value="1536x2048">1536x2048</option>
-        <option value="2048x1152">2048x1152</option>
-        <option value="1152x2048">1152x2048</option>
-      </TextField>
       <Button
         type="submit"
         variant="contained"
