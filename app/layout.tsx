@@ -8,20 +8,20 @@ import Script from 'next/script'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: '图像魔方 The Image Matrix | 一站式图像处理工具',
+  title: '图像魔方 img2046.com | 一站式图像处理工具',
   description: '图像魔方是一个强大的在线图像处理工具，提供格式转换、裁剪、调整大小、压缩、滤镜、SVG生成器和AI Logo设计等功能。轻松处理您的图片需求。',
   keywords: '图像处理, 格式转换, 图片裁剪, 图片压缩, AI Logo设计, SVG生成器',
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
     url: 'https://www.img2046.com/',
-    siteName: '图像魔方 The Image Matrix',
+    siteName: '图像魔方 img2046.com',
     images: [
       {
         url: 'https://www.img2046.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: '图像魔方 The Image Matrix',
+        alt: '图像魔方 img2046.com',
       },
     ],
   },
@@ -66,7 +66,7 @@ export default function RootLayout({
             {
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "图像魔方 The Image Matrix",
+              "name": "图像魔方 img2046.com",
               "url": "https://www.img2046.com/",
               "description": "图像魔方是一个强大的在线图像处理工具，提供格式转换、裁剪、调整大小、压缩、滤镜、SVG生成器和AI Logo设计等功能。支持JPG、PNG、WEBP、GIF和PDF格式之间的相互转换，文件大小限制为10MB。",
               "applicationCategory": "MultimediaApplication",

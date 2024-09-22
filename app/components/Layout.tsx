@@ -54,7 +54,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 color: 'inherit'
               }}
             >
-              图像魔方 The Image Matrix
+              图像魔方 img2046.com
             </Typography>
           </Link>
         </Toolbar>
