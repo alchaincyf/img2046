@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 图片格式转换器
 
-## Getting Started
+这是一个基于Next.js 14开发的图片格式转换网站。用户可以上传图片，进行格式互转或转换为PDF。
 
-First, run the development server:
+## 功能
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. 图片格式互转
+   - 支持JPG, PNG, GIF, WebP等常见格式
+   - 单张或多张图片上传
+   - 自由选择目标格式
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. 图片转PDF
+   - 单张或多张图片上传
+   - 合并为单个PDF文件
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. 文件大小限制和类型检查
+4. 批量处理和进度显示
+5. 图片预览功能
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 使用方法
 
-## Learn More
+1. 访问网站首页
+2. 点击上传区域或拖拽文件来上传图片
+3. 选择目标格式(包括PDF)
+4. 点击"转换"按钮
+5. 等待处理完成后，从下载区域获取转换后的文件
 
-To learn more about Next.js, take a look at the following resources:
+## 技术栈
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js 14
+- React
+- TypeScript
+- Sharp (用于图片处理)
+- jsPDF (用于PDF生成)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 开发计划
 
-## Deploy on Vercel
+- [x] 实现基础UI组件
+- [x] 开发后端API接口
+- [x] 集成图片处理库
+- [x] 实现PDF转换功能
+- [x] 优化用户体验(如进度显示、错误处理)
+- [x] 添加文件大小限制和类型检查
+- [x] 实现批量处理和进度显示
+- [x] 改进错误处理和用户反馈
+- [x] 优化性能，特别是对于大文件的处理
+- [x] 添加预览功能
+- [ ] 部署和性能优化
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 待优化项目
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. 进一步优化大文件处理性能
+2. 添加更多图片处理选项（如裁剪、调整大小等）
+3. 实现用户账户系统，支持保存转换历史
+4. 添加更多文件格式支持（如SVG、TIFF等）
+5. 优化移动端体验
