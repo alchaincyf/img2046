@@ -53,7 +53,7 @@ const Footer: React.FC = () => {
           <Link color="inherit" href="https://www.youtube.com/@Alchain" target="_blank" rel="noopener noreferrer">
             AI进化论-花生
           </Link>
-          , Created with{' '}
+          , Created with {' '}
           <Link color="inherit" href="https://www.bookai.top/cursor/intro" target="_blank" rel="noopener noreferrer">
             Cursor
           </Link>
