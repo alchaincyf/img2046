@@ -33,7 +33,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AppBar 
+        position="fixed" 
+        sx={{ 
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: '#2c3e50', // 使用与"图片格式转换"标题相同的颜色
+        }}
+      >
         <Toolbar sx={{ gap: 3 }}> {/* 添加 gap 属性来缩短距离 */}
           <Image src="/image-tools-icon.svg" alt="Image Tools Icon" width={40} height={40} /> {/* 调整图标大小 */}
           <Link href="/" passHref legacyBehavior>

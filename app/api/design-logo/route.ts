@@ -131,26 +131,18 @@ const logoDesignPrompt = `请设计一个SVG格式的logo，遵循以下设计�
 
 1. 视口大小：使用200x200的视口大小。
 
-2. 渐变色背景：使用线性渐变（linearGradient）作为背景或主要元素的填充色。可以考虑以下渐变色：
+2. 渐变色背景：使用线性渐变作为背景或主要元素的填充色。可以考虑以下渐变色：
    ${getRandomElements(gradients, 3).join('\n   ')}
 
-3. 简洁的几何形状：主要使用简单的几何形状组成logo。可以考虑以下形状组合：
-   ${getRandomElements(shapes, 3).join('\n   ')}
-
-4. 对比色细节：使用白色（#ecf0f1）或浅色来绘制内部细节和轮廓。可以考虑以下对比色搭配：
-   ${getRandomElements(contrastColors, 3).join('\n   ')}
-
+4. 对比色细节：考虑使用一下颜色${getRandomElements(contrastColors, 3).join('\n   ')}来绘制内部细节和轮廓。可以考虑以下对比色搭配：
+   
 5. 深色点缀：适当使用深色来强调某些元素。可以考虑以下深色点缀：
    ${getRandomElements(darkAccents, 3).join('\n   ')}
 
 6. 圆角设计：对于矩形元素，考虑使用圆角（rx属性）。可以考虑以下圆角应用：
    ${getRandomElements(roundedDesigns, 3).join('\n   ')}
 
-7. 象征性设计：通过简化的图形元素来象征特定的概念。可以考虑以下象征性设计：
-   ${getRandomElements(symbolicDesigns, 3).join('\n   ')}
-
-8. 配色方案：主要使用蓝绿色调，但可以适当调整。可以考虑以下配色方案：
-   ${getRandomElements(colorSchemes, 3).join('\n   ')}
+7. 象征性设计：通过简化的图形元素来象征特定的概念。
 
 9. 图形平衡：确保logo的各个元素在视觉上保持平衡。可以考虑以下平衡设计：
    ${getRandomElements(balancedDesigns, 3).join('\n   ')}
@@ -158,7 +150,9 @@ const logoDesignPrompt = `请设计一个SVG格式的logo，遵循以下设计�
 10. 可扩展性：设计时考虑logo在不同尺寸下的表现。可以考虑以下可扩展设计技巧：
     ${getRandomElements(scalabilityTips, 3).join('\n    ')}
 
-请基于以上原则和随机元素，创作一个独特、现代、富有寓意的SVG logo。logo应该简洁明了，易于识别，不包含任何文字！请只返回SVG代码，不要包含任何其他解释或评论。`;
+请基于以上原则和随机元素，创作一个独特、现代、富有寓意的SVG logo。logo应该简洁明了，易于识别，不包含任何文字！
+
+在返回SVG代码之前，请先用<Design></Design>标签包裹一段简短的设计理念说明。`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -172,14 +166,17 @@ export async function POST(req: NextRequest) {
       ],
     });
 
-    const svgCode = response.choices[0].message.content;
-    const extractedSvg = svgCode.match(/<svg[\s\S]*<\/svg>/);
+    const content = response.choices[0].message.content;
+    const designMatch = content.match(/<Design>([\s\S]*?)<\/Design>/);
+    const designConcept = designMatch ? designMatch[1].trim() : '';
+    const svgMatch = content.match(/<svg[\s\S]*<\/svg>/);
+    const svgCode = svgMatch ? svgMatch[0] : '';
 
-    if (!extractedSvg) {
+    if (!svgCode) {
       throw new Error('无法生成有效的 SVG');
     }
 
-    return NextResponse.json({ svgCode: extractedSvg[0] });
+    return NextResponse.json({ svgCode, designConcept });
   } catch (error) {
     console.error('Logo design error:', error);
     return NextResponse.json({ error: 'Logo 设计失败' }, { status: 500 });

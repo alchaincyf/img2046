@@ -8,6 +8,7 @@ import Feedback from '../components/Feedback';
 export default function AILogoDesign() {
   const [logoName, setLogoName] = useState('');
   const [svgCode, setSvgCode] = useState('');
+  const [designConcept, setDesignConcept] = useState('');
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
@@ -48,6 +49,7 @@ export default function AILogoDesign() {
 
       const data = await response.json();
       setSvgCode(data.svgCode);
+      setDesignConcept(data.designConcept);
       setProgress(100);
       setSuccess(true);
     } catch (err) {
@@ -149,7 +151,7 @@ export default function AILogoDesign() {
       )}
       {svgCode && (
         <Box sx={{ mt: 3, textAlign: 'center' }}>
-          <Typography variant="h6" gutterBottom>生成的 Logo</Typography>
+          <Typography variant="h6" gutterBottom>AI设计的Logo</Typography>
           <Box sx={{ 
             display: 'flex', 
             justifyContent: 'center', 
@@ -169,6 +171,11 @@ export default function AILogoDesign() {
               }} 
             />
           </Box>
+          {designConcept && (
+            <Typography variant="body1" sx={{ mt: 2, mb: 3, fontStyle: 'italic', color: '#555' }}>
+              {designConcept}
+            </Typography>
+          )}
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
             <Button 
               variant="contained" 
