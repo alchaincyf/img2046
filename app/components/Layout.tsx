@@ -1,3 +1,5 @@
+'use client';  // 添加这行
+
 import React from 'react';
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, useTheme } from '@mui/material';
 import NextLinkComposed from './CustomLink';
