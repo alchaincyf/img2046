@@ -64,15 +64,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {menuItems.map((item) => (
               <ListItem
                 key={item.text}
-                component={NextLinkComposed}
-                to={item.href}
-                selected={item.href === pathname}
-                sx={{
-                  color: item.href === pathname ? 'primary.main' : 'inherit',
-                }}
+                disablePadding
               >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                <NextLinkComposed
+                  to={item.href}
+                  style={{
+                    textDecoration: 'none',
+                    color: item.href === pathname ? theme.palette.primary.main : 'inherit',
+                    display: 'flex',
+                    width: '100%',
+                    padding: '8px 16px',
+                    backgroundColor: item.href === pathname ? theme.palette.action.selected : 'inherit',
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </NextLinkComposed>
               </ListItem>
             ))}
           </List>
