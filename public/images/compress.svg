@@ -1,5 +1,20 @@
 <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect x="40" y="60" width="120" height="80" fill="#3498db" rx="10" />
-  <path d="M60 80 L140 80 L140 120 L60 120 Z" fill="#2ecc71" />
-  <path d="M70 70 L130 70 M70 130 L130 130" stroke="#34495e" stroke-width="4" stroke-linecap="round" />
+  <defs>
+    <linearGradient id="compressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="40" y="40" width="120" height="120" fill="url(#compressGrad)" rx="10">
+    <animate attributeName="height" values="120;80;120" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="y" values="40;60;40" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="width" values="120;100;120" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="x" values="40;50;40" dur="3s" repeatCount="indefinite" />
+  </rect>
+  <path d="M60 100 L140 100" stroke="#ecf0f1" stroke-width="4" stroke-linecap="round">
+    <animate attributeName="d" values="M60 100 L140 100;M70 100 L130 100;M60 100 L140 100" dur="3s" repeatCount="indefinite" />
+  </path>
+  <path d="M70 60 L130 60 M70 140 L130 140" stroke="#34495e" stroke-width="4" stroke-linecap="round">
+    <animate attributeName="d" values="M70 60 L130 60 M70 140 L130 140;M80 80 L120 80 M80 120 L120 120;M70 60 L130 60 M70 140 L130 140" dur="3s" repeatCount="indefinite" />
+  </path>
 </svg>

@@ -1,5 +1,21 @@
 <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect x="20" y="40" width="70" height="120" rx="10" fill="#3498db" />
-  <rect x="110" y="40" width="70" height="120" rx="10" fill="#2ecc71" />
-  <path d="M95 100 L105 100 M105 95 L105 105 M95 95 L95 105" stroke="#34495e" stroke-width="4" />
+  <defs>
+    <linearGradient id="leftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="rightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2ecc71;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#27ae60;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="20" y="40" width="70" height="120" rx="10" fill="url(#leftGrad)">
+    <animate attributeName="x" values="20;25;20" dur="3s" repeatCount="indefinite" />
+  </rect>
+  <rect x="110" y="40" width="70" height="120" rx="10" fill="url(#rightGrad)">
+    <animate attributeName="x" values="110;105;110" dur="3s" repeatCount="indefinite" />
+  </rect>
+  <path d="M95 100 L105 100 M105 95 L105 105 M95 95 L95 105" stroke="#34495e" stroke-width="4">
+    <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="5s" repeatCount="indefinite" />
+  </path>
 </svg>

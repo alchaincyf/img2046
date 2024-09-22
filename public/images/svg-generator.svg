@@ -1,13 +1,16 @@
 <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="pencilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <rect x="20" y="40" width="160" height="120" rx="10" fill="#ecf0f1" stroke="#34495e" stroke-width="4"/>
-  <path d="M40 60 L160 60 M40 90 L160 90 M40 120 L160 120" stroke="#bdc3c7" stroke-width="2"/>
-  <path d="M70 20 L130 20 L150 40 L50 40 Z" fill="url(#pencilGrad)" stroke="#34495e" stroke-width="4"/>
-  <circle cx="100" cy="170" r="10" fill="#e74c3c"/>
-  <path d="M85 170 Q100 190 115 170" stroke="#c0392b" stroke-width="4" fill="none"/>
+  <rect x="40" y="40" width="120" height="120" fill="url(#docGrad)" rx="10" />
+  <rect x="60" y="60" width="80" height="80" fill="#ecf0f1" rx="5" />
+  <path d="M70 80 L130 80 M70 100 L130 100 M70 120 L130 120" stroke="#34495e" stroke-width="2" stroke-linecap="round">
+    <animate attributeName="d" values="M70 80 L130 80 M70 100 L130 100 M70 120 L130 120;M70 80 L130 80 M70 100 L110 100 M70 120 L130 120;M70 80 L130 80 M70 100 L130 100 M70 120 L130 120" dur="4s" repeatCount="indefinite" />
+  </path>
+  <path d="M150 30 L170 50 L150 70" fill="none" stroke="#34495e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <animateTransform attributeName="transform" type="rotate" from="0 160 50" to="360 160 50" dur="10s" repeatCount="indefinite" />
+  </path>
 </svg>

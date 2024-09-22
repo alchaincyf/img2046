@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Box, Button, Typography, Grid, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, Typography, Grid, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import FileUpload from '../components/FileUpload';
@@ -97,11 +97,18 @@ export default function CropPage() {
     setError(null);
   };
 
+  const handleAspectRatioChange = (event: SelectChangeEvent<number | undefined>) => {
+    setAspectRatio(event.target.value as number | undefined);
+  };
+
   return (
-    <Box sx={{ '& > *': { mb: 3 } }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+        图片裁剪
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
         <Image src="/images/crop.svg" alt="Image Crop" width={200} height={200} />
-        <Typography variant="body1" sx={{ ml: 3 }}>
+        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
           使用我们的图片裁剪工具，您可以轻松地调整图片大小和比例。上传图片，选择裁剪区域，然后保存您的完美构图。
         </Typography>
       </Box>
@@ -109,10 +116,11 @@ export default function CropPage() {
       {src && (
         <Box sx={{ mt: 3 }}>
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>选择裁剪比例</InputLabel>
+            <InputLabel id="aspect-ratio-select-label">选择裁剪比例</InputLabel>
             <Select
+              labelId="aspect-ratio-select-label"
               value={aspectRatio}
-              onChange={(e) => setAspectRatio(e.target.value as number | undefined)}
+              onChange={handleAspectRatioChange}
               label="选择裁剪比例"
             >
               {aspectRatios.map((ratio) => (
@@ -154,11 +162,34 @@ export default function CropPage() {
       )}
       {src && (
         <Box sx={{ mt: 2 }}>
-          <Button variant="contained" onClick={handleCrop} sx={{ mr: 2 }}>
+          <Button 
+            variant="contained" 
+            onClick={handleCrop} 
+            sx={{ 
+              mr: 2,
+              fontSize: '1.1rem', 
+              padding: '10px 20px',
+              backgroundColor: '#2ecc71',
+              '&:hover': {
+                backgroundColor: '#27ae60'
+              }
+            }}
+          >
             裁剪
           </Button>
           {croppedImageUrl && (
-            <Button variant="contained" onClick={handleDownload}>
+            <Button 
+              variant="contained" 
+              onClick={handleDownload}
+              sx={{ 
+                fontSize: '1.1rem', 
+                padding: '10px 20px',
+                backgroundColor: '#3498db',
+                '&:hover': {
+                  backgroundColor: '#2980b9'
+                }
+              }}
+            >
               下载
             </Button>
           )}

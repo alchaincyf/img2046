@@ -98,17 +98,29 @@ export default function SVGGeneratorPage() {
   };
 
   return (
-    <Box sx={{ '& > *': { mb: 2 } }}>
-      <Typography variant="h5" gutterBottom>
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
         SVG 生成器
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <Image src="/images/svg-generator.svg" alt="SVG Generator" width={150} height={150} />
-        <Typography variant="body2" sx={{ ml: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Image src="/images/svg-generator.svg" alt="SVG Generator" width={200} height={200} />
+        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
           使用我们的 SVG 生成器，您可以输入 SVG 代码，实时预览图像，并下载为不同的图片格式。您也可以上传 SVG 文件进行编辑。
         </Typography>
       </Box>
-      <Button variant="contained" onClick={handleUpload} sx={{ mb: 2 }}>
+      <Button 
+        variant="contained" 
+        onClick={handleUpload} 
+        sx={{ 
+          mb: 3, 
+          fontSize: '1.1rem', 
+          padding: '10px 20px',
+          backgroundColor: '#3498db',
+          '&:hover': {
+            backgroundColor: '#2980b9'
+          }
+        }}
+      >
         上传 SVG 文件
       </Button>
       <input
@@ -118,35 +130,71 @@ export default function SVGGeneratorPage() {
         ref={fileInputRef}
         onChange={handleFileChange}
       />
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <TextField
             label="SVG 代码"
             multiline
-            rows={10}
+            rows={12}
             fullWidth
             variant="outlined"
             value={svgCode}
             onChange={handleSvgCodeChange}
+            sx={{ '& .MuiInputBase-input': { fontSize: '1.1rem' } }}
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom>预览</Typography>
-            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <img src={previewUrl} alt="SVG Preview" style={{ maxWidth: '100%', maxHeight: '300px' }} />
+          <Paper elevation={3} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h5" gutterBottom sx={{ color: '#2c3e50' }}>预览</Typography>
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f7f9fa', borderRadius: '5px' }}>
+              <img src={previewUrl} alt="SVG Preview" style={{ maxWidth: '100%', maxHeight: '400px' }} />
             </Box>
           </Paper>
         </Grid>
       </Grid>
-      <Box sx={{ mt: 2 }}>
-        <Button variant="contained" onClick={() => handleDownload('svg')} sx={{ mr: 1 }}>
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+        <Button 
+          variant="contained" 
+          onClick={() => handleDownload('svg')} 
+          sx={{ 
+            mr: 2, 
+            fontSize: '1.1rem', 
+            padding: '10px 20px',
+            backgroundColor: '#2ecc71',
+            '&:hover': {
+              backgroundColor: '#27ae60'
+            }
+          }}
+        >
           下载 SVG
         </Button>
-        <Button variant="contained" onClick={() => handleDownload('png')} sx={{ mr: 1 }}>
+        <Button 
+          variant="contained" 
+          onClick={() => handleDownload('png')} 
+          sx={{ 
+            mr: 2, 
+            fontSize: '1.1rem', 
+            padding: '10px 20px',
+            backgroundColor: '#e74c3c',
+            '&:hover': {
+              backgroundColor: '#c0392b'
+            }
+          }}
+        >
           下载 PNG
         </Button>
-        <Button variant="contained" onClick={() => handleDownload('jpg')}>
+        <Button 
+          variant="contained" 
+          onClick={() => handleDownload('jpg')}
+          sx={{ 
+            fontSize: '1.1rem', 
+            padding: '10px 20px',
+            backgroundColor: '#f39c12',
+            '&:hover': {
+              backgroundColor: '#d35400'
+            }
+          }}
+        >
           下载 JPG
         </Button>
       </Box>

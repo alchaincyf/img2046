@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Button, TextField, Checkbox, FormControlLabel, Grid, Typography } from '@mui/material';
-import FileUpload from '../components/FileUpload';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 
@@ -22,16 +21,20 @@ export default function ResizePage() {
       const reader = new FileReader();
       reader.addEventListener('load', () => {
         setSrc(reader.result as string);
-        const img = new Image();  // 使用 Image 构造函数
-        img.onload = () => {
-          setWidth(img.width);
-          setHeight(img.height);
-          setOriginalAspectRatio(img.width / img.height);
-        };
-        img.src = reader.result as string;
+        loadImage(reader.result as string);
       });
       reader.readAsDataURL(files[0]);
     }
+  };
+
+  const loadImage = (src: string) => {
+    const img = new window.Image();
+    img.onload = () => {
+      setWidth(img.width);
+      setHeight(img.height);
+      setOriginalAspectRatio(img.width / img.height);
+    };
+    img.src = src;
   };
 
   const handleWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +59,7 @@ export default function ResizePage() {
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext('2d');
-      const img = new Image();  // 使用 Image 构造函数
+      const img = new window.Image();
       img.onload = () => {
         if (ctx) {
           ctx.drawImage(img, 0, 0, width, height);
@@ -84,16 +87,47 @@ export default function ResizePage() {
   };
 
   return (
-    <Box sx={{ '& > *': { mb: 3 } }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-        <Image src="/images/resize.svg" alt="Image Resize" width={200} height={200} />
-        <Typography variant="body1" sx={{ ml: 3 }}>
-          调整图片大小从未如此简单。上传您的图片，输入所需的尺寸，我们的工具将为您重新调整图片大小，同时保持图片质量。
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+        调整图片大小
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Image src="/images/resize.svg" alt="Resize" width={200} height={200} />
+        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
+          使用我们的调整大小工具，您可以轻松地改变图片的尺寸。上传您的图片，设置新的宽度和高度，然后点击调整大小按钮即可。
         </Typography>
       </Box>
-      <FileUpload onFilesSelected={onSelectFile} />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const files = e.target.files;
+          if (files && files.length > 0) {
+            onSelectFile(Array.from(files));
+          }
+        }}
+        style={{ display: 'none' }}
+        id="raised-button-file"
+      />
+      <label htmlFor="raised-button-file">
+        <Button 
+          variant="contained" 
+          component="span"
+          sx={{ 
+            mb: 3, 
+            fontSize: '1.1rem', 
+            padding: '10px 20px',
+            backgroundColor: '#3498db',
+            '&:hover': {
+              backgroundColor: '#2980b9'
+            }
+          }}
+        >
+          上传图片
+        </Button>
+      </label>
       {src && (
-        <Grid container spacing={2} sx={{ mt: 3 }}>
+        <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom>原图</Typography>
             <img src={src} style={{ maxWidth: '100%', height: 'auto' }} />
@@ -135,11 +169,34 @@ export default function ResizePage() {
             label="保持宽高比"
           />
           <Box sx={{ mt: 2 }}>
-            <Button variant="contained" onClick={handleResize} sx={{ mr: 2 }}>
+            <Button 
+              variant="contained" 
+              onClick={handleResize} 
+              sx={{ 
+                mr: 2,
+                fontSize: '1.1rem', 
+                padding: '10px 20px',
+                backgroundColor: '#2ecc71',
+                '&:hover': {
+                  backgroundColor: '#27ae60'
+                }
+              }}
+            >
               调整大小
             </Button>
             {resizedImageUrl && (
-              <Button variant="contained" onClick={handleDownload}>
+              <Button 
+                variant="contained" 
+                onClick={handleDownload}
+                sx={{ 
+                  fontSize: '1.1rem', 
+                  padding: '10px 20px',
+                  backgroundColor: '#e74c3c',
+                  '&:hover': {
+                    backgroundColor: '#c0392b'
+                  }
+                }}
+              >
                 下载
               </Button>
             )}
