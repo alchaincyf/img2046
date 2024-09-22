@@ -1,0 +1,38 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景圆 -->
+  <circle cx="100" cy="100" r="90" fill="url(#grad1)">
+    <animate attributeName="r" values="90;85;90" dur="3s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- AI 文字 -->
+  <text x="100" y="80" font-family="Arial" font-size="40" fill="#fff" text-anchor="middle">AI</text>
+  
+  <!-- 动态线条 -->
+  <path d="M40,120 Q100,160 160,120" stroke="#fff" stroke-width="4" fill="none">
+    <animate attributeName="d" 
+             values="M40,120 Q100,160 160,120;M40,130 Q100,90 160,130;M40,120 Q100,160 160,120" 
+             dur="5s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- 旋转的齿轮 -->
+  <g transform="translate(100,100)">
+    <path d="M0,-40 L10,-30 L10,-10 L30,-10 L40,0 L30,10 L10,10 L10,30 L0,40 L-10,30 L-10,10 L-30,10 L-40,0 L-30,-10 L-10,-10 L-10,-30 Z" fill="#fff">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="10s" repeatCount="indefinite" />
+    </path>
+  </g>
+  
+  <!-- 闪烁的星星 -->
+  <circle cx="160" cy="40" r="5" fill="#fff">
+    <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="40" cy="160" r="5" fill="#fff">
+    <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" begin="1s" />
+  </circle>
+</svg>

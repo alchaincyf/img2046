@@ -11,6 +11,7 @@ import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import CompressIcon from '@mui/icons-material/Compress';
 import FilterIcon from '@mui/icons-material/Filter';
 import CreateIcon from '@mui/icons-material/Create';
+import BrushIcon from '@mui/icons-material/Brush'; // 添加这行
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -23,6 +24,7 @@ const menuItems = [
   { text: '压缩', icon: <CompressIcon />, href: '/compress' },
   { text: '滤镜', icon: <FilterIcon />, href: '/filter' },
   { text: 'SVG 生成器', icon: <CreateIcon />, href: '/svg-generator' },
+  { text: 'AI Logo 设计', icon: <BrushIcon />, href: '/ai-logo-design' }, // 添加这一行
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -32,8 +34,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <Image src="/image-tools-icon.svg" alt="Image Tools Icon" width={50} height={50} />
+        <Toolbar sx={{ gap: 3 }}> {/* 添加 gap 属性来缩短距离 */}
+          <Image src="/image-tools-icon.svg" alt="Image Tools Icon" width={40} height={40} /> {/* 调整图标大小 */}
           <Link href="/" passHref legacyBehavior>
             <Typography 
               variant="h6" 
