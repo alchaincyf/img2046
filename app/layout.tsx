@@ -14,11 +14,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
-    url: 'https://imagematrix.bookai.top',
+    url: 'https://www.img2046.com/',
     siteName: '图像魔方 The Image Matrix',
     images: [
       {
-        url: 'https://imagematrix.bookai.top/og-image.jpg',
+        url: 'https://www.img2046.com/og-image.jpg',
         width: 1200,
         height: 630,
         alt: '图像魔方 The Image Matrix',
@@ -45,7 +45,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <head>
         <link rel="icon" href="/image-tools-icon.svg" />
-        <link rel="canonical" href="https://imagematrix.bookai.top" />
+        <link rel="canonical" href="https://www.img2046.com/" />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-FRKGZTH854"
@@ -67,8 +67,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebApplication",
               "name": "图像魔方 The Image Matrix",
-              "url": "https://imagematrix.bookai.top",
-              "description": "图像魔方是一个强大的在线图像处理工具，提供格式��换、裁剪、调整大小、压缩、滤镜、SVG生成器和AI Logo设计等功能。支持JPG、PNG、WEBP、GIF和PDF格式之间的相互转换，文件大小限制为10MB。",
+              "url": "https://www.img2046.com/",
+              "description": "图像魔方是一个强大的在线图像处理工具，提供格式转换、裁剪、调整大小、压缩、滤镜、SVG生成器和AI Logo设计等功能。支持JPG、PNG、WEBP、GIF和PDF格式之间的相互转换，文件大小限制为10MB。",
               "applicationCategory": "MultimediaApplication",
               "operatingSystem": "All",
               "offers": {
