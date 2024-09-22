@@ -6,10 +6,6 @@ const client = new OpenAI({
   baseURL: 'https://api.deepseek.com',
 });
 
-function getRandomElements<T>(arr: T[], count: number): T[] {
-  const shuffled = [...arr].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
-}
 
 const logoDesignPrompt = `你是一名有20年经验，广受好评的无印良品极简风格的logo设计专家，请设计一个SVG格式的logo，遵循以下设计原则和特点：
 

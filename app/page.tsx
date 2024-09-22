@@ -5,7 +5,6 @@ import { Box, Button, Grid, Typography, Paper } from '@mui/material';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import Feedback from './components/Feedback';
-import dynamic from 'next/dynamic';
 
 const supportedFormats = ['jpg', 'png', 'webp', 'gif', 'pdf'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

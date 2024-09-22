@@ -18,13 +18,14 @@ import Image from 'next/image';
 const drawerWidth = 200;
 
 const menuItems = [
-  { text: '格式转换', icon: <HomeIcon />, href: '/' },
-  { text: '裁剪', icon: <CropIcon />, href: '/crop' },
-  { text: '调整大小', icon: <AspectRatioIcon />, href: '/resize' },
-  { text: '压缩', icon: <CompressIcon />, href: '/compress' },
-  { text: '滤镜', icon: <FilterIcon />, href: '/filter' },
-  { text: 'SVG 生成器', icon: <CreateIcon />, href: '/svg-generator' },
-  { text: 'AI Logo 设计', icon: <BrushIcon />, href: '/ai-logo-design' },
+  { text: '格式转换', icon: <Image src="/images/format-convert.svg" alt="Format Convert" width={24} height={24} />, href: '/' },
+  { text: '裁剪', icon: <Image src="/images/crop.svg" alt="Crop" width={24} height={24} />, href: '/crop' },
+  { text: '调整大小', icon: <Image src="/images/resize.svg" alt="Resize" width={24} height={24} />, href: '/resize' },
+  { text: '压缩', icon: <Image src="/images/compress.svg" alt="Compress" width={24} height={24} />, href: '/compress' },
+  { text: '滤镜', icon: <Image src="/images/filter.svg" alt="Filter" width={24} height={24} />, href: '/filter' },
+  { text: 'SVG 生成器', icon: <Image src="/images/svg-generator.svg" alt="SVG Generator" width={24} height={24} />, href: '/svg-generator' },
+  { text: 'AI Logo 设计', icon: <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={24} height={24} />, href: '/ai-logo-design' },
+  { text: 'AI 图片生成器', icon: <Image src="/images/ai-image-generator.svg" alt="AI Image Generator" width={24} height={24} />, href: '/ai-image-generator' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
