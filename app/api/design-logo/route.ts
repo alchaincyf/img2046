@@ -167,6 +167,11 @@ export async function POST(req: NextRequest) {
     });
 
     const content = response.choices[0].message.content;
+    
+    if (content === null) {
+      throw new Error('No content generated');
+    }
+
     const designMatch = content.match(/<Design>([\s\S]*?)<\/Design>/);
     const designConcept = designMatch ? designMatch[1].trim() : '';
     const svgMatch = content.match(/<svg[\s\S]*<\/svg>/);

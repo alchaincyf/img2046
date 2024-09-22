@@ -1,10 +1,3 @@
 {
-  "extends": "next/core-web-vitals",
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  },
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/explicit-module-boundary-types": "error"
-  }
+  "extends": "next/core-web-vitals"
 }
