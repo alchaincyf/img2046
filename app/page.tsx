@@ -5,6 +5,7 @@ import { Box, Button, Grid, Typography, Paper } from '@mui/material';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import Feedback from './components/Feedback';
+import dynamic from 'next/dynamic';
 
 const supportedFormats = ['jpg', 'png', 'webp', 'gif', 'pdf'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -80,37 +81,49 @@ export default function Home() {
   };
 
   return (
-    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+    <Box component="main" sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h1" gutterBottom sx={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#2c3e50' }}>
         图片格式转换
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/format-convert.svg" alt="Format Conversion" width={200} height={200} />
-        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
-          欢迎使用我们的图片格式转换工具。上传您的图片或PDF，选择要转换的格式，然后点击转换按钮即可开始。支持JPG、PNG、WEBP、GIF和PDF格式之间的相互转换。文件大小限制为10MB。
-        </Typography>
-      </Box>
-      <Paper
-        {...getRootProps()}
-        sx={{
-          p: 3,
-          textAlign: 'center',
-          cursor: 'pointer',
-          backgroundColor: isDragActive ? '#e8f4fd' : '#f7f9fa',
-          border: '2px dashed #3498db',
-          '&:hover': {
-            backgroundColor: '#e8f4fd',
-          },
-        }}
-      >
-        <input {...getInputProps()} />
-        <Typography variant="h6" gutterBottom>
-          {isDragActive ? '释放文件以上传' : '拖放文件到这里, 或者点击选择文件'}
-        </Typography>
-        <Button variant="contained" sx={{ mt: 2 }}>
-          选择文件
-        </Button>
-      </Paper>
+      <section>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+          <Image 
+            src="/images/format-convert.svg" 
+            alt="格式转换图标" 
+            width={200} 
+            height={200} 
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,..."  // 添加一个模糊的占位符
+            priority  // 如果这是首屏图片，可以添加 priority 属性
+          />
+          <Typography variant="h2" sx={{ ml: 3, color: '#34495e', fontSize: '1.5rem' }}>
+            欢迎使用我们的图片格式转换工具。上传您的图片或PDF，选择要转换的格式，然后点击转换按钮即可开始。支持JPG、PNG、WEBP、GIF和PDF格式之间的相互转换。文件大小限制为10MB。
+          </Typography>
+        </Box>
+      </section>
+      <section>
+        <Paper
+          {...getRootProps()}
+          sx={{
+            p: 3,
+            textAlign: 'center',
+            cursor: 'pointer',
+            backgroundColor: isDragActive ? '#e8f4fd' : '#f7f9fa',
+            border: '2px dashed #3498db',
+            '&:hover': {
+              backgroundColor: '#e8f4fd',
+            },
+          }}
+        >
+          <input {...getInputProps()} />
+          <Typography variant="h3" gutterBottom sx={{ fontSize: '1.5rem' }}>
+            {isDragActive ? '释放文件以上传' : '拖放文件到这里, 或者点击选择文件'}
+          </Typography>
+          <Button variant="contained" sx={{ mt: 2 }}>
+            选择文件
+          </Button>
+        </Paper>
+      </section>
       {previewUrl && (
         <Box sx={{ mt: 3 }}>
           <Typography variant="h6" gutterBottom>预览</Typography>
