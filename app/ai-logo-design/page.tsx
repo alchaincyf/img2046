@@ -44,16 +44,21 @@ export default function AILogoDesign() {
       });
 
       if (!response.ok) {
-        throw new Error('Logo 设计失败');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Logo 设计失败');
       }
 
       const data = await response.json();
+      if (!data.svgCode) {
+        throw new Error('未能生成 SVG 代码');
+      }
       setSvgCode(data.svgCode);
-      setDesignConcept(data.designConcept);
+      setDesignConcept(data.designConcept || '');
       setProgress(100);
       setSuccess(true);
     } catch (err) {
-      setError('Logo 设计失败，请重试');
+      console.error('Error in logo design:', err);
+      setError(`Logo 设计失败: ${(err as Error).message}`);
     } finally {
       setLoading(false);
     }

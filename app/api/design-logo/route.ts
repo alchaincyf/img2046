@@ -146,6 +146,8 @@ export async function POST(req: NextRequest) {
   try {
     const { logoName } = await req.json();
 
+    console.log('Received logo name:', logoName);
+
     const response = await client.chat.completions.create({
       model: 'deepseek-chat',
       messages: [
@@ -154,11 +156,15 @@ export async function POST(req: NextRequest) {
       ],
     });
 
+    console.log('API response:', response);
+
     const content = response.choices[0].message.content;
     
     if (content === null) {
       throw new Error('No content generated');
     }
+
+    console.log('Generated content:', content);
 
     const designMatch = content.match(/<Design>([\s\S]*?)<\/Design>/);
     const designConcept = designMatch ? designMatch[1].trim() : '';
@@ -169,9 +175,12 @@ export async function POST(req: NextRequest) {
       throw new Error('无法生成有效的 SVG');
     }
 
+    console.log('Design concept:', designConcept);
+    console.log('SVG code:', svgCode);
+
     return NextResponse.json({ svgCode, designConcept });
   } catch (error) {
     console.error('Logo design error:', error);
-    return NextResponse.json({ error: 'Logo 设计失败' }, { status: 500 });
+    return NextResponse.json({ error: 'Logo 设计失败: ' + (error as Error).message }, { status: 500 });
   }
 }
