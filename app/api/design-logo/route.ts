@@ -127,28 +127,16 @@ function getRandomElements<T>(arr: T[], count: number): T[] {
   return shuffled.slice(0, count);
 }
 
-const logoDesignPrompt = `请设计一个SVG格式的logo，遵循以下设计原则和特点：
+const logoDesignPrompt = `你是一名有20年经验，广受好评的无印良品极简风格的logo设计专家，请设计一个SVG格式的logo，遵循以下设计原则和特点：
 
 1. 视口大小：使用200x200的视口大小。
 
-2. 渐变色背景：使用线性渐变作为背景或主要元素的填充色。可以考虑以下渐变色：
-   ${getRandomElements(gradients, 3).join('\n   ')}
+2. 渐变色背景：使用线性渐变作为背景或主要元素的填充色。
 
-4. 对比色细节：考虑使用一下颜色${getRandomElements(contrastColors, 3).join('\n   ')}来绘制内部细节和轮廓。可以考虑以下对比色搭配：
-   
-5. 深色点缀：适当使用深色来强调某些元素。可以考虑以下深色点缀：
-   ${getRandomElements(darkAccents, 3).join('\n   ')}
+3. 圆角设计：对于矩形元素，考虑使用圆角（rx属性）
+4. 象征性设计：通过简化的图形元素来象征特定的概念。
 
-6. 圆角设计：对于矩形元素，考虑使用圆角（rx属性）。可以考虑以下圆角应用：
-   ${getRandomElements(roundedDesigns, 3).join('\n   ')}
-
-7. 象征性设计：通过简化的图形元素来象征特定的概念。
-
-9. 图形平衡：确保logo的各个元素在视觉上保持平衡。可以考虑以下平衡设计：
-   ${getRandomElements(balancedDesigns, 3).join('\n   ')}
-
-10. 可扩展性：设计时考虑logo在不同尺寸下的表现。可以考虑以下可扩展设计技巧：
-    ${getRandomElements(scalabilityTips, 3).join('\n    ')}
+5. 图形平衡：确保logo的各个元素在视觉上保持平衡。
 
 请基于以上原则和随机元素，创作一个独特、现代、富有寓意的SVG logo。logo应该简洁明了，易于识别，不包含任何文字！
 
