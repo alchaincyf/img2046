@@ -1,0 +1,39 @@
+<svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 背景圆 -->
+  <circle cx="25" cy="25" r="23" fill="url(#gradient)">
+    <animate attributeName="r" values="23;21;23" dur="3s" repeatCount="indefinite" />
+  </circle>
+  
+  <!-- 图片框 -->
+  <rect x="15" y="15" width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
+    <animate attributeName="width" values="20;18;20" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="height" values="20;18;20" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="x" values="15;16;15" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="y" values="15;16;15" dur="3s" repeatCount="indefinite" />
+  </rect>
+  
+  <!-- 裁剪角 -->
+  <path d="M13 18 L13 13 L18 13" fill="none" stroke="#fff" stroke-width="2">
+    <animate attributeName="d" values="M13 18 L13 13 L18 13;M14 17 L14 14 L17 14;M13 18 L13 13 L18 13" dur="3s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- 调整大小箭头 -->
+  <path d="M37 37 L32 37 L37 32" fill="none" stroke="#fff" stroke-width="2">
+    <animateTransform attributeName="transform" type="rotate" from="0 35 35" to="360 35 35" dur="6s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- 滤镜图标 -->
+  <circle cx="25" cy="25" r="3" fill="#fff">
+    <animate attributeName="r" values="3;2;3" dur="2s" repeatCount="indefinite" />
+  </circle>
+  <path d="M22 25 L28 25" stroke="#fff" stroke-width="2">
+    <animate attributeName="d" values="M22 25 L28 25;M23 25 L27 25;M22 25 L28 25" dur="2s" repeatCount="indefinite" />
+  </path>
+</svg>

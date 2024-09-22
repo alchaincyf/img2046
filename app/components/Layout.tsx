@@ -9,6 +9,7 @@ import CompressIcon from '@mui/icons-material/Compress';
 import FilterIcon from '@mui/icons-material/Filter';
 import CreateIcon from '@mui/icons-material/Create';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const drawerWidth = 200; // 减小抽屉宽度
 
@@ -29,8 +30,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            图片处理工具
+          <Image src="/image-tools-icon.svg" alt="Image Tools Icon" width={50} height={50} />
+          <Typography 
+            variant="h6" 
+            noWrap 
+            component={Link}
+            href="/"
+            sx={{ 
+              ml: 2, 
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'none',
+              color: 'inherit'
+            }}
+          >
+            图像魔方 The Image Matrix
           </Typography>
         </Toolbar>
       </AppBar>
