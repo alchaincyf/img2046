@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/generate-image/*.ts": {
+      "maxDuration": 300
+    }
+  }
+}
