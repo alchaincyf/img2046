@@ -5,7 +5,8 @@ import { Box, Button, Typography, Grid, Select, MenuItem, FormControl, InputLabe
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import FileUpload from '../components/FileUpload';
-import SharedLayout from '../components/SharedLayout';
+import Image from 'next/image';
+import Feedback from '../components/Feedback';
 
 const aspectRatios = [
   { label: '自由', value: undefined },
@@ -53,6 +54,9 @@ export default function CropPage() {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSelectFile = (files: File[]) => {
     if (files && files.length > 0) {
@@ -84,11 +88,23 @@ export default function CropPage() {
       link.download = 'cropped_image.jpg';
       link.href = croppedImageUrl;
       link.click();
+      setSuccess(true);
     }
   };
 
+  const handleClose = () => {
+    setSuccess(false);
+    setError(null);
+  };
+
   return (
-    <SharedLayout title="图片裁剪">
+    <Box sx={{ '& > *': { mb: 3 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+        <Image src="/images/crop.svg" alt="Image Crop" width={200} height={200} />
+        <Typography variant="body1" sx={{ ml: 3 }}>
+          使用我们的图片裁剪工具，您可以轻松地调整图片大小和比例。上传图片，选择裁剪区域，然后保存您的完美构图。
+        </Typography>
+      </Box>
       <FileUpload onFilesSelected={onSelectFile} />
       {src && (
         <Box sx={{ mt: 3 }}>
@@ -148,6 +164,7 @@ export default function CropPage() {
           )}
         </Box>
       )}
-    </SharedLayout>
+      <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
+    </Box>
   );
 }

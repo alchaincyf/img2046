@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Box, Button, TextField, Checkbox, FormControlLabel, Grid, Typography } from '@mui/material';
 import FileUpload from '../components/FileUpload';
-import SharedLayout from '../components/SharedLayout';
+import Image from 'next/image';
+import Feedback from '../components/Feedback';
 
 export default function ResizePage() {
   const [src, setSrc] = useState<string | null>(null);
@@ -12,13 +13,16 @@ export default function ResizePage() {
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
   const [originalAspectRatio, setOriginalAspectRatio] = useState(1);
   const [resizedImageUrl, setResizedImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSelectFile = (files: File[]) => {
     if (files && files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener('load', () => {
         setSrc(reader.result as string);
-        const img = new Image();
+        const img = new Image();  // 使用 Image 构造函数
         img.onload = () => {
           setWidth(img.width);
           setHeight(img.height);
@@ -52,7 +56,7 @@ export default function ResizePage() {
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext('2d');
-      const img = new Image();
+      const img = new Image();  // 使用 Image 构造函数
       img.onload = () => {
         if (ctx) {
           ctx.drawImage(img, 0, 0, width, height);
@@ -70,11 +74,23 @@ export default function ResizePage() {
       link.download = 'resized_image.png';
       link.href = resizedImageUrl;
       link.click();
+      setSuccess(true);
     }
   };
 
+  const handleClose = () => {
+    setSuccess(false);
+    setError(null);
+  };
+
   return (
-    <SharedLayout title="调整图片大小">
+    <Box sx={{ '& > *': { mb: 3 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+        <Image src="/images/resize.svg" alt="Image Resize" width={200} height={200} />
+        <Typography variant="body1" sx={{ ml: 3 }}>
+          调整图片大小从未如此简单。上传您的图片，输入所需的尺寸，我们的工具将为您重新调整图片大小，同时保持图片质量。
+        </Typography>
+      </Box>
       <FileUpload onFilesSelected={onSelectFile} />
       {src && (
         <Grid container spacing={2} sx={{ mt: 3 }}>
@@ -130,6 +146,7 @@ export default function ResizePage() {
           </Box>
         </Box>
       )}
-    </SharedLayout>
+      <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
+    </Box>
   );
 }

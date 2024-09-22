@@ -21,7 +21,8 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-image-crop": "^11.0.7",
-    "sharp": "^0.33.3"
+    "sharp": "^0.33.3",
+    "framer-motion": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

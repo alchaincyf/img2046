@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Box, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, Select, MenuItem, FormControl, InputLabel, Typography } from '@mui/material';
 import FileUpload from '../components/FileUpload';
-import SharedLayout from '../components/SharedLayout';
+import Image from 'next/image';
+import Feedback from '../components/Feedback';
 
 const filters = [
   { name: '原图', filter: '' },
@@ -20,6 +21,9 @@ export default function FilterPage() {
   const [filter, setFilter] = useState('');
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [filteredBlob, setFilteredBlob] = useState<Blob | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSelectFile = (files: File[]) => {
     if (files && files.length > 0) {
@@ -74,11 +78,23 @@ export default function FilterPage() {
       link.download = 'filtered_image.png';
       link.href = url;
       link.click();
+      setSuccess(true);
     }
   };
 
+  const handleClose = () => {
+    setSuccess(false);
+    setError(null);
+  };
+
   return (
-    <SharedLayout title="图片滤镜">
+    <Box sx={{ '& > *': { mb: 3 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+        <Image src="/images/filter.svg" alt="Image Filter" width={200} height={200} />
+        <Typography variant="body1" sx={{ ml: 3 }}>
+          为您的图片添加独特的风格。选择各种滤镜效果，如灰度、复古或高对比度，轻松提升您的图片视觉效果。
+        </Typography>
+      </Box>
       <FileUpload onFilesSelected={onSelectFile} />
       {src && (
         <Box sx={{ mt: 3 }}>
@@ -107,6 +123,7 @@ export default function FilterPage() {
           </Box>
         </Box>
       )}
-    </SharedLayout>
+      <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
+    </Box>
   );
 }

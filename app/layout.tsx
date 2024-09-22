@@ -1,30 +1,9 @@
 'use client'
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import localFont from "next/font/local";
-import "./globals.css";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
-const theme = createTheme({
-  typography: {
-    fontFamily: [
-      'var(--font-geist-sans)',
-      'Arial',
-      'sans-serif'
-    ].join(','),
-  },
-});
+import { theme } from './theme';
+import Layout from './components/Layout';
 
 export default function RootLayout({
   children,
@@ -32,11 +11,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="zh">
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          {children}
+        <body>
+          <Layout>{children}</Layout>
         </body>
       </ThemeProvider>
     </html>

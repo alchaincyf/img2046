@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Box, Button, Slider, Typography, Paper, Grid } from '@mui/material';
 import FileUpload from '../components/FileUpload';
-import SharedLayout from '../components/SharedLayout';
+import NextImage from 'next/image';  // 重命名 Next.js 的 Image 组件
+import Feedback from '../components/Feedback';
 
 export default function CompressPage() {
   const [src, setSrc] = useState<string | null>(null);
@@ -12,6 +13,9 @@ export default function CompressPage() {
   const [compressedSize, setCompressedSize] = useState<number | null>(null);
   const [fileName, setFileName] = useState<string>('');
   const [compressedImageUrl, setCompressedImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSelectFile = (files: File[]) => {
     if (files && files.length > 0) {
@@ -28,7 +32,7 @@ export default function CompressPage() {
 
   const handleCompress = () => {
     if (src) {
-      const img = new Image();
+      const img = new window.Image();  // 使用 window.Image 构造函数
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -56,7 +60,13 @@ export default function CompressPage() {
       link.download = `compressed_${fileName}`;
       link.href = compressedImageUrl;
       link.click();
+      setSuccess(true);
     }
+  };
+
+  const handleClose = () => {
+    setSuccess(false);
+    setError(null);
   };
 
   // 计算压缩比例
@@ -65,7 +75,13 @@ export default function CompressPage() {
     : null;
 
   return (
-    <SharedLayout title="图片压缩">
+    <Box sx={{ '& > *': { mb: 3 } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+        <NextImage src="/images/compress.svg" alt="Image Compression" width={200} height={200} />
+        <Typography variant="body1" sx={{ ml: 3 }}>
+          我们的图片压缩工具可以帮助您减小文件大小，同时保持图片质量。上传图片，调整压缩级别，然后下载优化后的文件。
+        </Typography>
+      </Box>
       <FileUpload onFilesSelected={onSelectFile} />
       {src && (
         <Grid container spacing={2} sx={{ mt: 3 }}>
@@ -114,6 +130,7 @@ export default function CompressPage() {
           )}
         </Box>
       )}
-    </SharedLayout>
+      <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
+    </Box>
   );
 }
