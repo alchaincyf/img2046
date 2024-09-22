@@ -1,21 +1,30 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Typography, Box, Paper } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import FileUpload from './components/FileUpload';
 import FormatSelector from './components/FormatSelector';
 import ConvertButton from './components/ConvertButton';
 import DownloadArea from './components/DownloadArea';
+import SharedLayout from './components/SharedLayout';
 
 export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [selectedFormat, setSelectedFormat] = useState('JPG');
   const [convertedFile, setConvertedFile] = useState<Blob | null>(null);
   const [fileName, setFileName] = useState('');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFilesSelected = (selectedFiles: File[]) => {
     setFiles(selectedFiles);
     setConvertedFile(null);
+    if (selectedFiles.length > 0) {
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
+      reader.readAsDataURL(selectedFiles[0]);
+    } else {
+      setPreviewUrl(null);
+    }
   };
 
   const handleFormatSelected = (format: string) => {
@@ -29,25 +38,39 @@ export default function Home() {
   };
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom>
-          图片格式转换器
-        </Typography>
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <Box sx={{ '& > *': { mb: 3 } }}>
-            <FileUpload onFilesSelected={handleFilesSelected} />
-            <Typography variant="h6" gutterBottom>选择目标格式：</Typography>
-            <FormatSelector onFormatSelected={handleFormatSelected} />
-            <ConvertButton
-              files={files}
-              selectedFormat={selectedFormat}
-              onConversionComplete={handleConversionComplete}
-            />
-            <DownloadArea convertedFile={convertedFile} fileName={fileName} />
-          </Box>
-        </Paper>
+    <SharedLayout title="图片格式转换">
+      <Box sx={{ '& > *': { mb: 3 } }}>
+        <FileUpload onFilesSelected={handleFilesSelected} />
+        <FormatSelector onFormatSelected={handleFormatSelected} />
+        <ConvertButton
+          files={files}
+          selectedFormat={selectedFormat}
+          onConversionComplete={handleConversionComplete}
+        />
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" gutterBottom>原图</Typography>
+            {previewUrl ? (
+              <img src={previewUrl} alt="Original" style={{ maxWidth: '100%', height: 'auto' }} />
+            ) : (
+              <Typography>请上传图片</Typography>
+            )}
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" gutterBottom>转换预览</Typography>
+            {convertedFile ? (
+              <img 
+                src={URL.createObjectURL(convertedFile)} 
+                alt="Converted" 
+                style={{ maxWidth: '100%', height: 'auto' }} 
+              />
+            ) : (
+              <Typography>转换后的图片将显示在这里</Typography>
+            )}
+          </Grid>
+        </Grid>
+        <DownloadArea convertedFile={convertedFile} fileName={fileName} />
       </Box>
-    </Container>
+    </SharedLayout>
   );
 }

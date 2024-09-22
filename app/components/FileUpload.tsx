@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Box, Typography, List, ListItem, ListItemText, ImageList, ImageListItem } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
 import dynamic from 'next/dynamic';
 
 const CloudUploadIcon = dynamic(() => import('@mui/icons-material/CloudUpload'), { ssr: false });
@@ -21,7 +21,6 @@ interface FileUploadProps {
 
 export default function FileUpload({ onFilesSelected }: FileUploadProps) {
   const [files, setFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const validFiles = acceptedFiles.filter(file => {
@@ -38,10 +37,6 @@ export default function FileUpload({ onFilesSelected }: FileUploadProps) {
 
     setFiles(validFiles);
     onFilesSelected(validFiles);
-
-    // Generate previews
-    const newPreviews = validFiles.map(file => URL.createObjectURL(file));
-    setPreviews(newPreviews);
   }, [onFilesSelected]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
@@ -85,20 +80,6 @@ export default function FileUpload({ onFilesSelected }: FileUploadProps) {
             ))}
           </List>
         </Box>
-      )}
-      {previews.length > 0 && (
-        <ImageList sx={{ mt: 2 }} cols={3} rowHeight={164}>
-          {previews.map((preview, index) => (
-            <ImageListItem key={index}>
-              <img
-                src={preview}
-                alt={`Preview ${index + 1}`}
-                loading="lazy"
-                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-              />
-            </ImageListItem>
-          ))}
-        </ImageList>
       )}
     </Box>
   );
