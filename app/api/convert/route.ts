@@ -50,8 +50,16 @@ export async function POST(req: NextRequest) {
       const pages = pdfDoc.getPages();
       if (pages.length > 0) {
         const page = pages[0];
-        const pngImage = await page.render().toBuffer();
-        convertedBuffer = await sharp(pngImage).toFormat(format as keyof sharp.FormatEnum).toBuffer();
+        // Instead of using render(), we'll use pdf.js to render the PDF
+        const pdfjsLib = require('pdfjs-dist');
+        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+        const pdfPage = await pdf.getPage(1);
+        const viewport = pdfPage.getViewport({ scale: 2 });
+        const canvas = new OffscreenCanvas(viewport.width, viewport.height);
+        const context = canvas.getContext('2d');
+        await pdfPage.render({ canvasContext: context, viewport: viewport }).promise;
+        const pngImage = await canvas.convertToBlob({ type: 'image/png' });
+        convertedBuffer = await sharp(await pngImage.arrayBuffer()).toFormat(format as keyof sharp.FormatEnum).toBuffer();
       } else {
         throw new Error('PDF is empty');
       }
