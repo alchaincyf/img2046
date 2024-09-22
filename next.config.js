@@ -1,29 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  images: {
-    domains: ['your-image-domain.com'],  // 如果你有外部图片源
+  experimental: {
+    serverComponentsExternalPackages: ['sharp', 'onnxruntime-node'],
   },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-        ],
+  images: {
+    domains: ['api.siliconflow.cn'],
+  },
+  webpack(config) {
+    config.experiments = { ...config.experiments, topLevelAwait: true }
+    return config
+  },
+  serverRuntimeConfig: {
+    // 这里设置服务器端的配置
+    api: {
+      bodyParser: {
+        sizeLimit: '10mb',
       },
-    ];
+    },
+    serverTimeout: 59, // 设置服务器超时时间为59秒
   },
 }
 

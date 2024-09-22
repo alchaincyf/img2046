@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/generate-image/route.ts": {
+    "app/api/**/*.ts": {
       "maxDuration": 59
     }
   }
