@@ -13,7 +13,10 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
+    "@types/gif.js": "^0.2.5",
     "@types/jszip": "^3.4.0",
+    "framer-motion": "^6.0.0",
+    "gif.js": "^0.2.0",
     "jspdf": "^2.5.1",
     "jszip": "^3.10.1",
     "next": "14.2.13",
@@ -21,8 +24,7 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-image-crop": "^11.0.7",
-    "sharp": "^0.33.3",
-    "framer-motion": "^6.0.0"
+    "sharp": "^0.33.3"
   },
   "devDependencies": {
     "@types/node": "^20",

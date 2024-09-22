@@ -7,9 +7,10 @@ import CropIcon from '@mui/icons-material/Crop';
 import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import CompressIcon from '@mui/icons-material/Compress';
 import FilterIcon from '@mui/icons-material/Filter';
+import CreateIcon from '@mui/icons-material/Create';
 import { motion } from 'framer-motion';
 
-const drawerWidth = 240;
+const drawerWidth = 200; // 减小抽屉宽度
 
 const menuItems = [
   { text: '格式转换', icon: <HomeIcon />, href: '/' },
@@ -17,6 +18,7 @@ const menuItems = [
   { text: '调整大小', icon: <AspectRatioIcon />, href: '/resize' },
   { text: '压缩', icon: <CompressIcon />, href: '/compress' },
   { text: '滤镜', icon: <FilterIcon />, href: '/filter' },
+  { text: 'SVG 生成器', icon: <CreateIcon />, href: '/svg-generator' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -45,7 +47,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <List>
             {menuItems.map((item) => (
               <ListItem
-                button
                 key={item.text}
                 component={Link}
                 href={item.href}
@@ -79,8 +80,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </List>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
+      <Box component="main" sx={{ flexGrow: 1, p: 2, mt: '64px' }}> {/* 调整 padding 和 margin-top */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
