@@ -27,18 +27,18 @@ export default function CompressPage() {
   const handleCompress = () => {
     if (src) {
       const image = new Image();
-      image.src = src;
       image.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = image.width;
-        canvas.height = image.height;
         if (ctx) {
+          canvas.width = image.width;
+          canvas.height = image.height;
           ctx.drawImage(image, 0, 0);
           const compressedImageUrl = canvas.toDataURL('image/jpeg', quality / 100);
           setCompressedImageUrl(compressedImageUrl);
         }
       };
+      image.src = src;
     }
   };
 
@@ -96,7 +96,7 @@ export default function CompressPage() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom>原图</Typography>
-            <img src={src} style={{ maxWidth: '100%', height: 'auto' }} />
+            <img src={src} style={{ maxWidth: '100%', height: 'auto' }} alt="Original" />
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom>压缩后预览</Typography>
