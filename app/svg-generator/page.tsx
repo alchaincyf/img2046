@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
@@ -15,6 +15,46 @@ export default function SVGGeneratorPage() {
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // Add useEffect to set default SVG code
+  useEffect(() => {
+    const defaultSvg = `
+      <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="courtGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFA500;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#FF4500;stop-opacity:1" />
+          </linearGradient>
+          <radialGradient id="ballGradient" cx="50%" cy="50%" r="50%" fx="25%" fy="25%">
+            <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#B22222;stop-opacity:1" />
+          </radialGradient>
+        </defs>
+        <!-- 篮球场背景 -->
+        <rect x="0" y="0" width="200" height="200" fill="url(#courtGradient)" />
+        <!-- 篮筐 -->
+        <path d="M70 40 L130 40 L120 60 L80 60 Z" fill="#C0C0C0" stroke="#808080" stroke-width="2" />
+        <path d="M80 60 Q100 80 120 60" fill="none" stroke="#FF0000" stroke-width="3" />
+        <!-- 篮板 -->
+        <rect x="60" y="10" width="80" height="40" fill="#FFFFFF" stroke="#000000" stroke-width="2" />
+        <!-- 篮球 -->
+        <circle cx="100" cy="150" r="20" fill="url(#ballGradient)">
+          <animate attributeName="cy" values="150;50;150" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="100;100;100" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="r" values="20;15;20" dur="2s" repeatCount="indefinite" />
+        </circle>
+        <!-- 篮球纹理 -->
+        <path d="M90 150 Q100 130 110 150 M80 150 Q100 170 120 150" fill="none" stroke="#000000" stroke-width="2">
+          <animate attributeName="d" values="M90 150 Q100 130 110 150 M80 150 Q100 170 120 150;M95 50 Q100 35 105 50 M85 50 Q100 65 115 50;M90 150 Q100 130 110 150 M80 150 Q100 170 120 150" dur="2s" repeatCount="indefinite" />
+        </path>
+        <!-- 运动轨迹 -->
+        <path d="M100 150 Q100 50 100 50" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="5,5">
+          <animate attributeName="d" values="M100 150 Q100 50 100 50;M100 50 Q100 150 100 150;M100 150 Q100 50 100 50" dur="2s" repeatCount="indefinite" />
+        </path>
+      </svg>
+    `;
+    setSvgCode(defaultSvg);
+    setPreviewUrl(URL.createObjectURL(new Blob([defaultSvg], { type: 'image/svg+xml' })));
+  }, []);
 
   const handleSvgCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSvgCode(event.target.value);
