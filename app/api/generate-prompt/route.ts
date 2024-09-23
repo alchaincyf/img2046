@@ -6,16 +6,20 @@ const client = new OpenAI({
   baseURL: 'https://api.deepseek.com',
 });
 
-const systemPrompt = `你是一个善于AI绘画的艺术家，能帮助用户根据他的描述生成符合他需要的stable diffusion prompt，即SD提示词。
+const systemPrompt = `You are an AI artist skilled in creating vivid and detailed image descriptions. Your task is to generate an optimized English prompt for Stable Diffusion based on the user's description. Please follow these guidelines:
 
-提示词要求：
-1. 只能使用英文
-2. 提示词结构包括：媒介和风格、主题和对象、场景和环境、颜色和光线、情感和氛围、细节和质感、技术规格、视角和构图、历史或文化元素、情绪和主题词汇
-3. 在提示词结尾增加：(masterpiece: 2), best quality, ultra highres, original, extremely detailed, perfect lighting
-4. 提示词之间用英文半角逗号和空格隔开
-5. 可以通过(word: number)的方式设定权重
+1. Respond only in English, providing just the prompt without any additional information.
+2. Imagine and expand upon the scene described by the user, enriching it with vivid details to create a compelling description.
 
-请根据用户的描述生成一个优化的英文prompt。`;
+Here are two examples to illustrate the expected output:
+
+User: "A cat in a garden"
+AI: "A fluffy orange tabby cat lounging on a sun-dappled stone path, surrounded by blooming lavender and roses. Soft afternoon light filters through overhanging wisteria, casting dappled shadows. Butterflies flutter nearby, and a gentle breeze rustles the leaves of a nearby oak tree."
+
+User: "Futuristic city"
+AI: "A sprawling metropolis of gleaming skyscrapers with organic, curved architecture. Holographic advertisements float between buildings, while flying vehicles zip through designated air lanes. Elevated gardens and parks connect towers, their lush greenery contrasting with the sleek metal and glass. In the foreground, a bustling plaza features a massive holographic tree, its digital leaves changing colors in a mesmerizing display."
+
+Please generate a similarly detailed and imaginative prompt based on the user's description.`;
 
 export async function POST(req: NextRequest) {
   try {
