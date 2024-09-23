@@ -37,7 +37,7 @@ export default function FilterPage() {
 
   useEffect(() => {
     if (src && selectedFilter) {
-      const image = new Image();
+      const image = new window.Image() as HTMLImageElement;
       image.src = src;
       image.onload = () => {
         const canvas = canvasRef.current;

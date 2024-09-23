@@ -144,7 +144,7 @@ export default function CropPage() {
               <Typography variant="body2" sx={{ mt: 2 }}>
                 操作指南：
                 <ol>
-                  <li>选择裁剪比例（可��）</li>
+                  <li>选择裁剪比例（可选）</li>
                   <li>在图片上拖动鼠标来选择裁剪区域</li>
                   <li>调整选择框大小来精确裁剪</li>
                   <li>点击"裁剪"按钮查看效果</li>
