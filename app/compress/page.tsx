@@ -26,7 +26,7 @@ export default function CompressPage() {
 
   const handleCompress = () => {
     if (src) {
-      const image = new Image();
+      const image = new window.Image() as HTMLImageElement;
       image.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
