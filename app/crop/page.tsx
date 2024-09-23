@@ -9,7 +9,7 @@ import Feedback from '../components/Feedback';
 
 export default function CropPage() {
   const [src, setSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Crop>({ unit: '%', width: 30, aspect: 16 / 9 });
+  const [crop, setCrop] = useState<Crop>({ unit: '%', width: 30, x: 0, y: 0 });
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const [aspectRatio, setAspectRatio] = useState<number | null>(16 / 9);
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ export default function CropPage() {
 
   const handleCrop = () => {
     if (src) {
-      const image = new Image();
+      const image = new Image() as HTMLImageElement;
       image.src = src;
       const canvas = document.createElement('canvas');
       const scaleX = image.naturalWidth / image.width;
@@ -118,8 +118,8 @@ export default function CropPage() {
             <InputLabel id="aspect-ratio-label">裁剪比例</InputLabel>
             <Select
               labelId="aspect-ratio-label"
-              value={aspectRatio || ''}
-              onChange={(e) => setAspectRatio(e.target.value as number)}
+              value={aspectRatio}
+              onChange={(e) => setAspectRatio(e.target.value as number | null)}
               label="裁剪比例"
             >
               <MenuItem value={16 / 9}>16:9</MenuItem>
