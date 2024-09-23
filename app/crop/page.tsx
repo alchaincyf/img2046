@@ -9,7 +9,7 @@ import Feedback from '../components/Feedback';
 
 export default function CropPage() {
   const [src, setSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Crop>({ unit: '%', width: 30, x: 0, y: 0 });
+  const [crop, setCrop] = useState<Crop>({ unit: '%', width: 30, height: 30, x: 0, y: 0 });
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const [aspectRatio, setAspectRatio] = useState<number | null>(16 / 9);
   const [loading, setLoading] = useState(false);
@@ -36,29 +36,31 @@ export default function CropPage() {
 
   const handleCrop = () => {
     if (src) {
-      const image = new Image() as HTMLImageElement;
+      const image = new Image();
       image.src = src;
-      const canvas = document.createElement('canvas');
-      const scaleX = image.naturalWidth / image.width;
-      const scaleY = image.naturalHeight / image.height;
-      canvas.width = crop.width || 0;
-      canvas.height = crop.height || 0;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(
-          image,
-          (crop.x || 0) * scaleX,
-          (crop.y || 0) * scaleY,
-          (crop.width || 0) * scaleX,
-          (crop.height || 0) * scaleY,
-          0,
-          0,
-          crop.width || 0,
-          crop.height || 0
-        );
-        const croppedImageUrl = canvas.toDataURL('image/jpeg');
-        setCroppedImageUrl(croppedImageUrl);
-      }
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        canvas.width = (crop.width || 0);
+        canvas.height = (crop.height || 0);
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(
+            image,
+            (crop.x || 0) * scaleX,
+            (crop.y || 0) * scaleY,
+            (crop.width || 0) * scaleX,
+            (crop.height || 0) * scaleY,
+            0,
+            0,
+            crop.width || 0,
+            crop.height || 0
+          );
+          const croppedImageUrl = canvas.toDataURL('image/jpeg');
+          setCroppedImageUrl(croppedImageUrl);
+        }
+      };
     }
   };
 
@@ -118,14 +120,14 @@ export default function CropPage() {
             <InputLabel id="aspect-ratio-label">裁剪比例</InputLabel>
             <Select
               labelId="aspect-ratio-label"
-              value={aspectRatio}
+              value={aspectRatio ?? ''}
               onChange={(e) => setAspectRatio(e.target.value as number | null)}
               label="裁剪比例"
             >
               <MenuItem value={16 / 9}>16:9</MenuItem>
               <MenuItem value={4 / 3}>4:3</MenuItem>
               <MenuItem value={1}>1:1</MenuItem>
-              <MenuItem value={null}>自由</MenuItem>
+              <MenuItem value={''}>自由</MenuItem>
             </Select>
           </FormControl>
           <Grid container spacing={2}>
