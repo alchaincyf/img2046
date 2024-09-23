@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Box, Button, Grid, Typography, Paper } from '@mui/material';
+import { Box, Button, Grid, Typography, Paper, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import Feedback from './components/Feedback';
@@ -79,23 +79,26 @@ export default function Home() {
     setError(null);
   };
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
-    <Box component="main" sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h1" gutterBottom sx={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#2c3e50' }}>
+    <Box component="main" sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h1" gutterBottom sx={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 'bold', color: '#2c3e50' }}>
         图片格式转换
       </Typography>
       <section>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
           <Image 
             src="/images/format-convert.svg" 
             alt="格式转换图标" 
-            width={200} 
-            height={200} 
+            width={isMobile ? 150 : 200} 
+            height={isMobile ? 150 : 200} 
             placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,..."  // 添加一个模糊的占位符
-            priority  // 如果这是首屏图片，可以添加 priority 属性
+            blurDataURL="data:image/svg+xml;base64,..."
+            priority
           />
-          <Typography variant="h2" sx={{ ml: 3, color: '#34495e', fontSize: '1.5rem' }}>
+          <Typography variant="h2" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e', fontSize: '1.5rem' }}>
             欢迎使用我们的图片格式转换工具。上传您的图片或PDF，选择要转换的格式，然后点击转换按钮即可开始。支持JPG、PNG、WEBP、GIF和PDF格式之间的相互转换。文件大小限制为10MB。
           </Typography>
         </Box>

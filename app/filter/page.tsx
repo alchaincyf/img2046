@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Box, Button, Select, MenuItem, FormControl, InputLabel, Typography, Grid } from '@mui/material';
+import { Box, Button, Select, MenuItem, FormControl, InputLabel, Typography, Grid, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 
@@ -17,66 +17,50 @@ const filters = [
 
 export default function FilterPage() {
   const [src, setSrc] = useState<string | null>(null);
-  const [filter, setFilter] = useState('');
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [filteredBlob, setFilteredBlob] = useState<Blob | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState('');
+  const [filteredImageUrl, setFilteredImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const onSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener('load', () => setSrc(reader.result as string));
-      reader.readAsDataURL(event.target.files[0]);
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
   useEffect(() => {
-    if (src && canvasRef.current) {
-      const ctx = canvasRef.current.getContext('2d');
-      const img = new window.Image();
-      img.onload = () => {
-        if (canvasRef.current) {
-          canvasRef.current.width = img.width;
-          canvasRef.current.height = img.height;
-          ctx?.drawImage(img, 0, 0);
-          applyFilter();
+    if (src && selectedFilter) {
+      const image = new Image();
+      image.src = src;
+      image.onload = () => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          if (ctx) {
+            ctx.filter = selectedFilter;
+            ctx.drawImage(image, 0, 0, image.width, image.height);
+            const filteredImageUrl = canvas.toDataURL('image/jpeg');
+            setFilteredImageUrl(filteredImageUrl);
+          }
         }
       };
-      img.src = src;
     }
-  }, [src, canvasRef]);
-
-  const applyFilter = () => {
-    if (canvasRef.current) {
-      const ctx = canvasRef.current.getContext('2d');
-      if (ctx) {
-        ctx.filter = filter;
-        const img = new window.Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-          canvasRef.current?.toBlob((blob) => {
-            if (blob) {
-              setFilteredBlob(blob);
-            }
-          }, 'image/png');
-        };
-        img.src = src as string;
-      }
-    }
-  };
-
-  useEffect(() => {
-    applyFilter();
-  }, [filter]);
+  }, [src, selectedFilter]);
 
   const handleDownload = () => {
-    if (filteredBlob) {
-      const url = URL.createObjectURL(filteredBlob);
+    if (filteredImageUrl) {
       const link = document.createElement('a');
-      link.download = 'filtered_image.png';
-      link.href = url;
+      link.download = 'filtered_image.jpg';
+      link.href = filteredImageUrl;
       link.click();
       setSuccess(true);
     }
@@ -88,14 +72,14 @@ export default function FilterPage() {
   };
 
   return (
-    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
         图片滤镜
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/filter.svg" alt="Image Filter" width={200} height={200} />
-        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
-          为您的图片添加独特的风格。选择各种滤镜效果，如灰度、复古或高对比度，轻松提升您的图片视觉效果。
+      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Image src="/images/filter.svg" alt="Filter" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
+        <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
+          使用我们的滤镜工具，您可以轻松地为图片添加各种效果。上传您的图片，选择滤镜，然后点击应用按钮即可。
         </Typography>
       </Box>
       <input
@@ -124,44 +108,52 @@ export default function FilterPage() {
       </label>
       {src && (
         <Box sx={{ mt: 3 }}>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>选择滤镜</InputLabel>
+          <FormControl sx={{ mb: 2, minWidth: 120 }}>
+            <InputLabel id="filter-select-label">选择滤镜</InputLabel>
             <Select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              labelId="filter-select-label"
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
               label="选择滤镜"
             >
-              {filters.map((f) => (
-                <MenuItem key={f.name} value={f.filter}>{f.name}</MenuItem>
+              {filters.map((filter) => (
+                <MenuItem key={filter.name} value={filter.filter}>{filter.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <Typography variant="h6" gutterBottom>原图</Typography>
-              <img src={src} alt="Original" style={{ maxWidth: '100%', height: 'auto' }} />
+              <img src={src} style={{ maxWidth: '100%', height: 'auto' }} />
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="h6" gutterBottom>滤镜效果</Typography>
-              <canvas ref={canvasRef} style={{ maxWidth: '100%', height: 'auto' }} />
+              {filteredImageUrl ? (
+                <img src={filteredImageUrl} alt="Filtered" style={{ maxWidth: '100%', height: 'auto' }} />
+              ) : (
+                <Typography>应用滤镜后的图片将显示在这里</Typography>
+              )}
             </Grid>
           </Grid>
-          <Box sx={{ mt: 2 }}>
-            <Button 
-              variant="contained" 
-              onClick={handleDownload}
-              sx={{ 
-                fontSize: '1.1rem', 
-                padding: '10px 20px',
-                backgroundColor: '#2ecc71',
-                '&:hover': {
-                  backgroundColor: '#27ae60'
-                }
-              }}
-            >
-              下载
-            </Button>
-          </Box>
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+          {filteredImageUrl && (
+            <Box sx={{ mt: 2 }}>
+              <Button 
+                variant="contained" 
+                onClick={handleDownload}
+                sx={{ 
+                  fontSize: '1.1rem', 
+                  padding: '10px 20px',
+                  backgroundColor: '#3498db',
+                  '&:hover': {
+                    backgroundColor: '#2980b9'
+                  }
+                }}
+              >
+                下载
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
       <Feedback loading={loading} success={success} error={error} onClose={handleClose} />

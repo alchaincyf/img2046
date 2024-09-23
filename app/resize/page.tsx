@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Box, Button, TextField, Checkbox, FormControlLabel, Grid, Typography } from '@mui/material';
+import { Box, Button, TextField, Checkbox, FormControlLabel, Grid, Typography, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 
@@ -15,6 +15,9 @@ export default function ResizePage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const onSelectFile = (files: File[]) => {
     if (files && files.length > 0) {
@@ -87,13 +90,13 @@ export default function ResizePage() {
   };
 
   return (
-    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
         调整图片大小
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/resize.svg" alt="Resize" width={200} height={200} />
-        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
+      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Image src="/images/resize.svg" alt="Resize" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
+        <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
           使用我们的调整大小工具，您可以轻松地改变图片的尺寸。上传您的图片，设置新的宽度和高度，然后点击调整大小按钮即可。
         </Typography>
       </Box>

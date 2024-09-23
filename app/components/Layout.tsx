@@ -1,24 +1,18 @@
 'use client';
 
-import React from 'react';
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, useTheme } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, useTheme, IconButton, useMediaQuery } from '@mui/material';
 import NextLinkComposed from './CustomLink';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import HomeIcon from '@mui/icons-material/Home';
-import CropIcon from '@mui/icons-material/Crop';
-import AspectRatioIcon from '@mui/icons-material/AspectRatio';
-import CompressIcon from '@mui/icons-material/Compress';
-import FilterIcon from '@mui/icons-material/Filter';
-import CreateIcon from '@mui/icons-material/Create';
-import BrushIcon from '@mui/icons-material/Brush';
+import MenuIcon from '@mui/icons-material/Menu';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-const drawerWidth = 200;
+const drawerWidth = 240;
 
 const menuItems = [
-  { text: '格式转换', icon: <Image src="/images/format-convert.svg" alt="Format Convert" width={24} height={24} />, href: '/' },
+  { text: '图片格式转换', icon: <Image src="/images/format-convert.svg" alt="Format Convert" width={24} height={24} />, href: '/' },
   { text: '裁剪', icon: <Image src="/images/crop.svg" alt="Crop" width={24} height={24} />, href: '/crop' },
   { text: '调整大小', icon: <Image src="/images/resize.svg" alt="Resize" width={24} height={24} />, href: '/resize' },
   { text: '压缩', icon: <Image src="/images/compress.svg" alt="Compress" width={24} height={24} />, href: '/compress' },
@@ -31,9 +25,45 @@ const menuItems = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawer = (
+    <Box sx={{ overflow: 'auto' }}>
+      <Toolbar /> {/* 添加这一行，为AppBar腾出空间 */}
+      <List>
+        {menuItems.map((item) => (
+          <ListItem
+            key={item.text}
+            disablePadding
+            onClick={() => isMobile && setMobileOpen(false)}
+          >
+            <NextLinkComposed
+              href={item.href}
+              style={{
+                textDecoration: 'none',
+                color: item.href === pathname ? theme.palette.primary.main : 'inherit',
+                display: 'flex',
+                width: '100%',
+                padding: '8px 16px',
+                backgroundColor: item.href === pathname ? theme.palette.action.selected : 'inherit',
+              }}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </NextLinkComposed>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
 
   return (
-    <>
+    <Box sx={{ display: 'flex' }}>
       <AppBar 
         position="fixed" 
         sx={{ 
@@ -41,80 +71,87 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           backgroundColor: '#2c3e50',
         }}
       >
-        <Toolbar sx={{ gap: 3 }}>
-          <Image src="/image-tools-icon.svg" alt="Image Tools Icon" width={40} height={40} />
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
           <Link href="/" passHref legacyBehavior>
-            <Typography 
-              variant="h6" 
-              noWrap 
-              component="a"
-              sx={{ 
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                textDecoration: 'none',
-                color: 'inherit'
-              }}
-            >
-              图像魔方 img2046.com
-            </Typography>
+            <a style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+              <Image src="/image-tools-icon.svg" alt="Image Tools Icon" width={40} height={40} />
+              <Typography 
+                variant="h6" 
+                noWrap 
+                component="span"
+                sx={{ 
+                  fontWeight: 'bold',
+                  ml: 2,
+                  display: { xs: 'none', sm: 'inline' }
+                }}
+              >
+                图像魔方 img2046.com
+              </Typography>
+            </a>
           </Link>
         </Toolbar>
       </AppBar>
-      <Box sx={{ display: 'flex', flexGrow: 1 }}>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+        >
+          {drawer}
+        </Drawer>
         <Drawer
           variant="permanent"
           sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
+          open
         >
-          <Toolbar />
-          <Box sx={{ overflow: 'auto' }}>
-            <List>
-              {menuItems.map((item) => (
-                <ListItem
-                  key={item.text}
-                  disablePadding
-                >
-                  <NextLinkComposed
-                    href={item.href}
-                    style={{
-                      textDecoration: 'none',
-                      color: item.href === pathname ? theme.palette.primary.main : 'inherit',
-                      display: 'flex',
-                      width: '100%',
-                      padding: '8px 16px',
-                      backgroundColor: item.href === pathname ? theme.palette.action.selected : 'inherit',
-                    }}
-                  >
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} />
-                  </NextLinkComposed>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
+          {drawer}
         </Drawer>
-        <Box component="main" sx={{ 
-          flexGrow: 1, 
-          p: 2, 
-          mt: '64px', 
-          display: 'flex', 
-          flexDirection: 'column',
-          paddingBottom: '100px' // 添加底部 padding
-        }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            style={{ flexGrow: 1 }}
-          >
-            {children}
-          </motion.div>
-        </Box>
       </Box>
-    </>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Toolbar /> {/* 添加这一行，为AppBar腾出空间 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.3 }}
+          style={{ flexGrow: 1 }}
+        >
+          {children}
+        </motion.div>
+      </Box>
+    </Box>
   );
 }

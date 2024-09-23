@@ -1,83 +1,63 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Box, Button, Typography, Grid, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
-import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
+import { Box, Button, FormControl, InputLabel, Select, MenuItem, Grid, Typography, useTheme, useMediaQuery } from '@mui/material';
+import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import FileUpload from '../components/FileUpload';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 
-const aspectRatios = [
-  { label: '自由', value: undefined },
-  { label: '1:1', value: 1 },
-  { label: '4:3', value: 4 / 3 },
-  { label: '16:9', value: 16 / 9 },
-];
-
-function getCroppedImg(image: HTMLImageElement, crop: PixelCrop): Promise<Blob> {
-  const canvas = document.createElement('canvas');
-  const scaleX = image.naturalWidth / image.width;
-  const scaleY = image.naturalHeight / image.height;
-  canvas.width = crop.width;
-  canvas.height = crop.height;
-  const ctx = canvas.getContext('2d');
-
-  if (ctx) {
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height
-    );
-  }
-
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (!blob) {
-        reject(new Error('Canvas is empty'));
-        return;
-      }
-      resolve(blob);
-    }, 'image/jpeg');
-  });
-}
-
 export default function CropPage() {
   const [src, setSrc] = useState<string | null>(null);
-  const [crop, setCrop] = useState<Crop>();
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [crop, setCrop] = useState<Crop>({ unit: '%', width: 30, aspect: 16 / 9 });
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
-  const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
+  const [aspectRatio, setAspectRatio] = useState<number | null>(16 / 9);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const onSelectFile = (files: File[]) => {
-    if (files && files.length > 0) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener('load', () => setSrc(reader.result as string));
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
-  const onImageLoad = useCallback((img: HTMLImageElement) => {
-    setImage(img);
-  }, []);
+  const onImageLoad = useCallback((image: HTMLImageElement) => {
+    const aspect = aspectRatio || 16 / 9;
+    const width = 30;
+    const height = (width / aspect) * (image.naturalHeight / image.naturalWidth);
+    setCrop({ unit: '%', width, height, x: 0, y: 0 });
+  }, [aspectRatio]);
 
-  const handleCrop = async () => {
-    if (image && crop) {
-      try {
-        const croppedImageBlob = await getCroppedImg(image, crop as PixelCrop);
-        const croppedImageUrl = URL.createObjectURL(croppedImageBlob);
+  const handleCrop = () => {
+    if (src) {
+      const image = new Image();
+      image.src = src;
+      const canvas = document.createElement('canvas');
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+      canvas.width = crop.width || 0;
+      canvas.height = crop.height || 0;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(
+          image,
+          (crop.x || 0) * scaleX,
+          (crop.y || 0) * scaleY,
+          (crop.width || 0) * scaleX,
+          (crop.height || 0) * scaleY,
+          0,
+          0,
+          crop.width || 0,
+          crop.height || 0
+        );
+        const croppedImageUrl = canvas.toDataURL('image/jpeg');
         setCroppedImageUrl(croppedImageUrl);
-      } catch (e) {
-        console.error('Error cropping image:', e);
       }
     }
   };
@@ -97,35 +77,55 @@ export default function CropPage() {
     setError(null);
   };
 
-  const handleAspectRatioChange = (event: SelectChangeEvent<number | undefined>) => {
-    setAspectRatio(event.target.value as number | undefined);
-  };
-
   return (
-    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
         图片裁剪
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/crop.svg" alt="Image Crop" width={200} height={200} />
-        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
-          使用我们的图片裁剪工具，您可以轻松地调整图片大小和比例。上传图片，选择裁剪区域，然后保存您的完美构图。
+      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Image src="/images/crop.svg" alt="Crop" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
+        <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
+          使用我们的裁剪工具，您可以轻松地裁剪图片。上传您的图片，选择裁剪区域，然后点击裁剪按钮即可。
         </Typography>
       </Box>
-      <FileUpload onFilesSelected={onSelectFile} />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={onSelectFile}
+        style={{ display: 'none' }}
+        id="raised-button-file"
+      />
+      <label htmlFor="raised-button-file">
+        <Button 
+          variant="contained" 
+          component="span"
+          sx={{ 
+            mb: 3, 
+            fontSize: '1.1rem', 
+            padding: '10px 20px',
+            backgroundColor: '#3498db',
+            '&:hover': {
+              backgroundColor: '#2980b9'
+            }
+          }}
+        >
+          上传图片
+        </Button>
+      </label>
       {src && (
         <Box sx={{ mt: 3 }}>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel id="aspect-ratio-select-label">选择裁剪比例</InputLabel>
+          <FormControl sx={{ mb: 2, minWidth: 120 }}>
+            <InputLabel id="aspect-ratio-label">裁剪比例</InputLabel>
             <Select
-              labelId="aspect-ratio-select-label"
-              value={aspectRatio}
-              onChange={handleAspectRatioChange}
-              label="选择裁剪比例"
+              labelId="aspect-ratio-label"
+              value={aspectRatio || ''}
+              onChange={(e) => setAspectRatio(e.target.value as number)}
+              label="裁剪比例"
             >
-              {aspectRatios.map((ratio) => (
-                <MenuItem key={ratio.label} value={ratio.value}>{ratio.label}</MenuItem>
-              ))}
+              <MenuItem value={16 / 9}>16:9</MenuItem>
+              <MenuItem value={4 / 3}>4:3</MenuItem>
+              <MenuItem value={1}>1:1</MenuItem>
+              <MenuItem value={null}>自由</MenuItem>
             </Select>
           </FormControl>
           <Grid container spacing={2}>
@@ -134,7 +134,7 @@ export default function CropPage() {
               <ReactCrop
                 crop={crop}
                 onChange={c => setCrop(c)}
-                aspect={aspectRatio}
+                aspect={aspectRatio || undefined}
                 onComplete={(c) => setCrop(c)}
               >
                 <img src={src} onLoad={e => onImageLoad(e.currentTarget)} style={{ maxWidth: '100%' }} />

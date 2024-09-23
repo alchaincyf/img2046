@@ -1,62 +1,51 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Button, Slider, Typography, Paper, Grid } from '@mui/material';
+import { Box, Button, Slider, Grid, Typography, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 
 export default function CompressPage() {
   const [src, setSrc] = useState<string | null>(null);
   const [quality, setQuality] = useState<number>(80);
-  const [originalSize, setOriginalSize] = useState<number>(0);
-  const [compressedSize, setCompressedSize] = useState<number | null>(null);
-  const [fileName, setFileName] = useState<string>('');
   const [compressedImageUrl, setCompressedImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const onSelectFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      setOriginalSize(file.size);
-      setFileName(file.name);
-      setCompressedSize(null);
-      setCompressedImageUrl(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
       reader.addEventListener('load', () => setSrc(reader.result as string));
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
   const handleCompress = () => {
     if (src) {
-      const img = new window.Image();
-      img.onload = () => {
+      const image = new Image();
+      image.src = src;
+      image.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx?.drawImage(img, 0, 0, img.width, img.height);
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              setCompressedSize(blob.size);
-              setCompressedImageUrl(URL.createObjectURL(blob));
-            }
-          },
-          'image/jpeg',
-          quality / 100
-        );
+        canvas.width = image.width;
+        canvas.height = image.height;
+        if (ctx) {
+          ctx.drawImage(image, 0, 0);
+          const compressedImageUrl = canvas.toDataURL('image/jpeg', quality / 100);
+          setCompressedImageUrl(compressedImageUrl);
+        }
       };
-      img.src = src;
     }
   };
 
   const handleDownload = () => {
     if (compressedImageUrl) {
       const link = document.createElement('a');
-      link.download = `compressed_${fileName}`;
+      link.download = 'compressed_image.jpg';
       link.href = compressedImageUrl;
       link.click();
       setSuccess(true);
@@ -68,20 +57,15 @@ export default function CompressPage() {
     setError(null);
   };
 
-  // 计算压缩比例
-  const compressionRatio = compressedSize 
-    ? ((1 - compressedSize / originalSize) * 100).toFixed(2)
-    : null;
-
   return (
-    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
         图片压缩
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/compress.svg" alt="Image Compression" width={200} height={200} />
-        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
-          我们的图片压缩工具可以帮助您减小文件大小，同时保持图片质量。上传图片，调整压缩级别，然后下载优化后的文件。
+      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Image src="/images/compress.svg" alt="Compress" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
+        <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
+          使用我们的压缩工具，您可以轻松地减小图片文件大小。上传您的图片，调整压缩质量，然后点击压缩按钮即可。
         </Typography>
       </Box>
       <input
@@ -135,16 +119,6 @@ export default function CompressPage() {
             min={0}
             max={100}
           />
-          <Paper elevation={3} sx={{ p: 2, mt: 2 }}>
-            <Typography variant="body1">原始文件: {fileName}</Typography>
-            <Typography variant="body1">原始大小: {(originalSize / 1024).toFixed(2)} KB</Typography>
-            {compressedSize && (
-              <>
-                <Typography variant="body1">压缩后大小: {(compressedSize / 1024).toFixed(2)} KB</Typography>
-                <Typography variant="body1">压缩比例: {compressionRatio}%</Typography>
-              </>
-            )}
-          </Paper>
           <Box sx={{ mt: 2 }}>
             <Button 
               variant="contained" 
@@ -168,9 +142,9 @@ export default function CompressPage() {
                 sx={{ 
                   fontSize: '1.1rem', 
                   padding: '10px 20px',
-                  backgroundColor: '#e74c3c',
+                  backgroundColor: '#3498db',
                   '&:hover': {
-                    backgroundColor: '#c0392b'
+                    backgroundColor: '#2980b9'
                   }
                 }}
               >

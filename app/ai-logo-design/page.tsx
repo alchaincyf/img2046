@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Paper, Grid, LinearProgress } from '@mui/material';
+import { Box, Button, TextField, Typography, Paper, Grid, LinearProgress, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 
@@ -13,6 +13,9 @@ export default function AILogoDesign() {
   const [progress, setProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -111,13 +114,13 @@ export default function AILogoDesign() {
   };
 
   return (
-    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+    <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
         极简Logo设计
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={200} height={200} />
-        <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
+      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
+        <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
+        <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
           使用我们的 极简Logo设计工具，只需输入您的 logo 名称，我们就能为您生成独特的 SVG 格式 logo。
         </Typography>
       </Box>

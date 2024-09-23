@@ -79,6 +79,7 @@ export default function RootLayout({
             }
           `}
         </Script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={inter.className} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Layout>{children}</Layout>
