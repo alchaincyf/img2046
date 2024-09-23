@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Box, Typography, Grid, LinearProgress, Step, Stepper, StepLabel } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
+import ImageIcon from '@mui/icons-material/Image';
 
 const steps = ['生成优化提示词', '生成图片', '完成'];
 
@@ -20,7 +22,6 @@ const ImageGenerator: React.FC = () => {
     setProgress(0);
 
     try {
-      // 生成优化提示词
       setProgress(33);
       const promptResponse = await axios.post('/api/generate-prompt', {
         userDescription
@@ -28,7 +29,6 @@ const ImageGenerator: React.FC = () => {
       const optimizedPrompt = promptResponse.data.prompt;
       setActiveStep(1);
 
-      // 生成图片
       setProgress(66);
       const imageResponse = await axios.post('/api/generate-image', {
         prompt: optimizedPrompt,
@@ -52,6 +52,15 @@ const ImageGenerator: React.FC = () => {
     }
   };
 
+  const handleDownload = (url: string, index: number) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `generated-image-${index + 1}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ '& > *': { mb: 2 } }}>
       <TextField
@@ -68,9 +77,8 @@ const ImageGenerator: React.FC = () => {
         type="submit"
         variant="contained"
         disabled={isLoading}
+        startIcon={<ImageIcon />}
         sx={{
-          fontSize: '1.1rem',
-          padding: '10px 20px',
           backgroundColor: '#2ecc71',
           '&:hover': {
             backgroundColor: '#27ae60'
@@ -101,7 +109,29 @@ const ImageGenerator: React.FC = () => {
           <Grid container spacing={2}>
             {generatedImages.map((url, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
-                <img src={url} alt={`Generated image ${index + 1}`} style={{ width: '100%', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <img 
+                    src={url} 
+                    alt={`Generated image ${index + 1}`} 
+                    style={{ width: '100%', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '8px' }} 
+                  />
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<DownloadIcon />}
+                    onClick={() => handleDownload(url, index)}
+                    sx={{
+                      color: '#3498db',
+                      borderColor: '#3498db',
+                      '&:hover': {
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderColor: '#2980b9'
+                      }
+                    }}
+                  >
+                    下载
+                  </Button>
+                </Box>
               </Grid>
             ))}
           </Grid>

@@ -100,12 +100,12 @@ export default function SVGGeneratorPage() {
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-        SVG 生成器
+        SVG 编辑器
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
         <Image src="/images/svg-generator.svg" alt="SVG Generator" width={200} height={200} />
         <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
-          使用我们的 SVG 生成器，您可以输入 SVG 代码，实时预览图像，并下载为不同的图片格式。您也可以上传 SVG 文件进行编辑。
+          使用我们的 SVG 编辑器，您可以输入 SVG 代码，实时预览图像，并下载为不同的图片格式。您也可以上传 SVG 文件进行编辑。
         </Typography>
       </Box>
       <Button 

@@ -113,12 +113,12 @@ export default function AILogoDesign() {
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-        AI Logo 设计
+        极简Logo设计
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
         <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={200} height={200} />
         <Typography variant="h6" sx={{ ml: 3, color: '#34495e' }}>
-          使用我们的 AI Logo 设计工具，只需输入您的 logo 名称，我们就能为您生成独特的 SVG 格式 logo。
+          使用我们的 极简Logo设计工具，只需输入您的 logo 名称，我们就能为您生成独特的 SVG 格式 logo。
         </Typography>
       </Box>
       <Paper sx={{ p: 3 }}>
