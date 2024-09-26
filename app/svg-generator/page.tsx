@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 export default function SVGGeneratorPage() {
   const [svgCode, setSvgCode] = useState('');
@@ -63,8 +64,8 @@ export default function SVGGeneratorPage() {
     }
   };
 
-  const handleScaleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setScaleFactor(event.target.value as number);
+  const handleScaleChange = (event: SelectChangeEvent<number>) => {
+    setScaleFactor(Number(event.target.value));
   };
 
   const handleDownload = async (format: 'svg' | 'png' | 'jpg') => {
