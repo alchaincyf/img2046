@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 
@@ -12,43 +12,30 @@ export default function SVGGeneratorPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [scaleFactor, setScaleFactor] = useState(1);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  // Add useEffect to set default SVG code
+
   useEffect(() => {
     const defaultSvg = `
       <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="courtGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#FFA500;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#FF4500;stop-opacity:1" />
+          <linearGradient id="resizeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
           </linearGradient>
-          <radialGradient id="ballGradient" cx="50%" cy="50%" r="50%" fx="25%" fy="25%">
-            <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#B22222;stop-opacity:1" />
-          </radialGradient>
         </defs>
-        <!-- 篮球场背景 -->
-        <rect x="0" y="0" width="200" height="200" fill="url(#courtGradient)" />
-        <!-- 篮筐 -->
-        <path d="M70 40 L130 40 L120 60 L80 60 Z" fill="#C0C0C0" stroke="#808080" stroke-width="2" />
-        <path d="M80 60 Q100 80 120 60" fill="none" stroke="#FF0000" stroke-width="3" />
-        <!-- 篮板 -->
-        <rect x="60" y="10" width="80" height="40" fill="#FFFFFF" stroke="#000000" stroke-width="2" />
-        <!-- 篮球 -->
-        <circle cx="100" cy="150" r="20" fill="url(#ballGradient)">
-          <animate attributeName="cy" values="150;50;150" dur="2s" repeatCount="indefinite" />
-          <animate attributeName="cx" values="100;100;100" dur="2s" repeatCount="indefinite" />
-          <animate attributeName="r" values="20;15;20" dur="2s" repeatCount="indefinite" />
+        <rect x="40" y="40" width="120" height="120" fill="url(#resizeGrad)" rx="10">
+          <animate attributeName="width" values="120;110;120" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="height" values="120;110;120" dur="3s" repeatCount="indefinite" />
+        </rect>
+        <path d="M40 100 L160 100 M100 40 L100 160" stroke="#ecf0f1" stroke-width="4" />
+        <circle cx="100" cy="100" r="10" fill="#2ecc71">
+          <animate attributeName="r" values="10;8;10" dur="2s" repeatCount="indefinite" />
         </circle>
-        <!-- 篮球纹理 -->
-        <path d="M90 150 Q100 130 110 150 M80 150 Q100 170 120 150" fill="none" stroke="#000000" stroke-width="2">
-          <animate attributeName="d" values="M90 150 Q100 130 110 150 M80 150 Q100 170 120 150;M95 50 Q100 35 105 50 M85 50 Q100 65 115 50;M90 150 Q100 130 110 150 M80 150 Q100 170 120 150" dur="2s" repeatCount="indefinite" />
-        </path>
-        <!-- 运动轨迹 -->
-        <path d="M100 150 Q100 50 100 50" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="5,5">
-          <animate attributeName="d" values="M100 150 Q100 50 100 50;M100 50 Q100 150 100 150;M100 150 Q100 50 100 50" dur="2s" repeatCount="indefinite" />
+        <path d="M30 30 L50 50 M170 170 L150 150" stroke="#34495e" stroke-width="4">
+          <animate attributeName="d" values="M30 30 L50 50 M170 170 L150 150;M35 35 L55 55 M165 165 L145 145;M30 30 L50 50 M170 170 L150 150" dur="3s" repeatCount="indefinite" />
         </path>
       </svg>
     `;
@@ -76,6 +63,10 @@ export default function SVGGeneratorPage() {
     }
   };
 
+  const handleScaleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setScaleFactor(event.target.value as number);
+  };
+
   const handleDownload = async (format: 'svg' | 'png' | 'jpg') => {
     setLoading(true);
     try {
@@ -86,12 +77,13 @@ export default function SVGGeneratorPage() {
         const img = new window.Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
+          canvas.width = img.width * scaleFactor;
+          canvas.height = img.height * scaleFactor;
           const ctx = canvas.getContext('2d');
+          ctx?.scale(scaleFactor, scaleFactor);
           ctx?.drawImage(img, 0, 0);
           canvas.toBlob((blob) => {
-            if (blob) downloadBlob(blob, `image.${format}`);
+            if (blob) downloadBlob(blob, `image_${scaleFactor}x.${format}`);
           }, `image/${format}`);
         };
         img.src = previewUrl;
@@ -195,27 +187,44 @@ export default function SVGGeneratorPage() {
       {previewUrl && (
         <Box sx={{ mt: 3 }}>
           <Typography variant="h6" gutterBottom>下载选项</Typography>
-          <Button 
-            variant="contained" 
-            onClick={() => handleDownload('svg')}
-            sx={{ mr: 2, mb: 2 }}
-          >
-            下载SVG
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={() => handleDownload('png')}
-            sx={{ mr: 2, mb: 2 }}
-          >
-            下载PNG
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={() => handleDownload('jpg')}
-            sx={{ mb: 2 }}
-          >
-            下载JPG
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+            <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+              <InputLabel id="scale-factor-label">倍数</InputLabel>
+              <Select
+                labelId="scale-factor-label"
+                value={scaleFactor}
+                onChange={handleScaleChange}
+                label="倍数"
+              >
+                <MenuItem value={0.5}>0.5x</MenuItem>
+                <MenuItem value={1}>1x</MenuItem>
+                <MenuItem value={2}>2x</MenuItem>
+                <MenuItem value={4}>4x</MenuItem>
+                <MenuItem value={8}>8x</MenuItem>
+              </Select>
+            </FormControl>
+            <Button 
+              variant="contained" 
+              onClick={() => handleDownload('svg')}
+              sx={{ mr: 2, mb: 2 }}
+            >
+              下载SVG
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={() => handleDownload('png')}
+              sx={{ mr: 2, mb: 2 }}
+            >
+              下载PNG
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={() => handleDownload('jpg')}
+              sx={{ mb: 2 }}
+            >
+              下载JPG
+            </Button>
+          </Box>
         </Box>
       )}
       <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
