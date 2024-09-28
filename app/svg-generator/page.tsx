@@ -75,22 +75,39 @@ export default function SVGGeneratorPage() {
         const blob = new Blob([svgCode], { type: 'image/svg+xml' });
         downloadBlob(blob, `image.${format}`);
       } else {
+        const svgBlob = new Blob([svgCode], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(svgBlob);
         const img = new window.Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width * scaleFactor;
-          canvas.height = img.height * scaleFactor;
-          const ctx = canvas.getContext('2d');
-          ctx?.scale(scaleFactor, scaleFactor);
-          ctx?.drawImage(img, 0, 0);
-          canvas.toBlob((blob) => {
-            if (blob) downloadBlob(blob, `image_${scaleFactor}x.${format}`);
-          }, `image/${format}`);
-        };
-        img.src = previewUrl;
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('Image loading failed'));
+          img.src = url;
+        });
+
+        const canvas = document.createElement('canvas');
+        const svgSize = getSvgSize(svgCode);
+        canvas.width = svgSize.width * scaleFactor;
+        canvas.height = svgSize.height * scaleFactor;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.scale(scaleFactor, scaleFactor);
+          ctx.drawImage(img, 0, 0);
+          const blob = await new Promise<Blob | null>((resolve) => {
+            canvas.toBlob(resolve, `image/${format}`);
+          });
+          if (blob) {
+            downloadBlob(blob, `image_${scaleFactor}x.${format}`);
+          } else {
+            throw new Error('Failed to create blob');
+          }
+        } else {
+          throw new Error('Failed to get canvas context');
+        }
+        URL.revokeObjectURL(url);
       }
       setSuccess(true);
     } catch (err) {
+      console.error('Download error:', err);
       setError('下载失败，请重试。');
     } finally {
       setLoading(false);
@@ -115,13 +132,40 @@ export default function SVGGeneratorPage() {
     setError(null);
   };
 
+  const getSvgSize = (svgCode: string): { width: number; height: number } => {
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgCode, 'image/svg+xml');
+    const svgElement = svgDoc.documentElement;
+
+    let width = parseInt(svgElement.getAttribute('width') || '0');
+    let height = parseInt(svgElement.getAttribute('height') || '0');
+
+    if (width === 0 || height === 0) {
+      const viewBox = svgElement.getAttribute('viewBox');
+      if (viewBox) {
+        const [, , vbWidth, vbHeight] = viewBox.split(' ').map(Number);
+        width = vbWidth;
+        height = vbHeight;
+      }
+    }
+
+    return { width: width || 1024, height: height || 1024 };
+  };
+
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
         SVG 编辑器
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/svg-generator.svg" alt="SVG Generator" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
+        <div style={{ position: 'relative', width: isMobile ? '150px' : '200px', height: isMobile ? '150px' : '200px' }}>
+          <Image 
+            src="/images/svg-generator.svg" 
+            alt="SVG Generator" 
+            layout="fill"
+            objectFit="contain"
+          />
+        </div>
         <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
           使用我们的SVG编辑器，您可以轻松地创建和编辑SVG图形。输入SVG代码，预览效果，然后下载为SVG、PNG或JPG格式。
         </Typography>
