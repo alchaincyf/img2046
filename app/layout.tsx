@@ -80,6 +80,11 @@ export default function RootLayout({
           `}
         </Script>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7522094408813551"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className={inter.className} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Layout>{children}</Layout>
