@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import ImageToolLayout from '../../components/ImageToolLayout';
 
 interface ImageDetails {
   originalPrompt: string;
@@ -50,31 +51,43 @@ const ImageDetailPage: React.FC = () => {
     return <CircularProgress />;
   }
 
-  if (error || !imageDetails) {
-    return <Typography color="error">{error || 'An error occurred'}</Typography>;
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
   }
 
+  if (!imageDetails) {
+    return null;
+  }
+
+  const pageTitle = `AI生成图片详情 - ${imageDetails.optimizedPrompt}`;
+  const pageDescription = `查看AI根据提示词"${imageDetails.originalPrompt}"生成的图片详情。`;
+
   return (
-    <Box sx={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>图片详情</Typography>
-        <Image 
-          src={imageDetails.imageUrl} 
-          alt={imageDetails.optimizedPrompt}
-          width={600}
-          height={400}
-          layout="responsive"
-          unoptimized // 添加这一行
-        />
-        <Typography variant="h6" sx={{ mt: 2 }}>原始提示词：</Typography>
-        <Typography>{imageDetails.originalPrompt}</Typography>
-        <Typography variant="h6" sx={{ mt: 2 }}>优化后的提示词：</Typography>
-        <Typography>{imageDetails.optimizedPrompt}</Typography>
-        <Button component={Link} href="/ai-image-generator" sx={{ mt: 2 }}>
-          返回生成页面
-        </Button>
-      </Paper>
-    </Box>
+    <ImageToolLayout
+      title={pageTitle}
+      description={pageDescription}
+    >
+      <Box sx={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+        <Paper sx={{ p: 3 }}>
+          <Typography variant="h4" gutterBottom>图片详情</Typography>
+          <Image 
+            src={imageDetails.imageUrl} 
+            alt={imageDetails.optimizedPrompt}
+            width={600}
+            height={400}
+            layout="responsive"
+            unoptimized
+          />
+          <Typography variant="h6" sx={{ mt: 2 }}>原始提示词：</Typography>
+          <Typography>{imageDetails.originalPrompt}</Typography>
+          <Typography variant="h6" sx={{ mt: 2 }}>优化后的提示词：</Typography>
+          <Typography>{imageDetails.optimizedPrompt}</Typography>
+          <Button component={Link} href="/ai-image-generator" sx={{ mt: 2 }}>
+            返回生成页面
+          </Button>
+        </Paper>
+      </Box>
+    </ImageToolLayout>
   );
 };
 
