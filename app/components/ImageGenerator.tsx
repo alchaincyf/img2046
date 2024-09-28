@@ -1,12 +1,22 @@
+'use client';
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Box, Typography, Grid, LinearProgress, Step, Stepper, StepLabel } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import ImageIcon from '@mui/icons-material/Image';
 
+interface ImageGeneratorProps {
+  onGenerate: (item: {
+    originalPrompt: string;
+    optimizedPrompt: string;
+    imageUrl: string;
+  }) => Promise<string | undefined>; // 修改返回类型
+}
+
 const steps = ['生成优化提示词', '生成图片', '完成'];
 
-const ImageGenerator: React.FC = () => {
+const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onGenerate }) => {
   const [userDescription, setUserDescription] = useState('');
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,9 +43,22 @@ const ImageGenerator: React.FC = () => {
       const imageResponse = await axios.post('/api/generate-image', {
         prompt: optimizedPrompt,
       });
+      const imageUrl = imageResponse.data.images.map((img: { url: string }) => img.url)[0];
       setGeneratedImages(imageResponse.data.images.map((img: { url: string }) => img.url));
       setActiveStep(2);
       setProgress(100);
+
+      // 生成成功后，添加到历史记录
+      if (optimizedPrompt && imageUrl) {
+        const docId = await onGenerate({
+          originalPrompt: userDescription,
+          optimizedPrompt,
+          imageUrl,
+        });
+        if (docId) {
+          console.log("Generated image added to history with ID:", docId);
+        }
+      }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         if (error.response.status === 504) {

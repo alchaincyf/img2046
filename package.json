@@ -17,11 +17,13 @@
     "@types/gif.js": "^0.2.5",
     "@types/jszip": "^3.4.0",
     "axios": "^1.7.7",
+    "firebase": "^10.13.2",
     "framer-motion": "^6.0.0",
     "gif.js": "^0.2.0",
     "jspdf": "^2.5.1",
     "jszip": "^3.10.1",
     "next": "14.2.13",
+    "next-intl": "^3.20.0",
     "openai": "^4.63.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^3.11.174",
@@ -29,6 +31,9 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-image-crop": "^11.0.7",
+    "react-virtualized-auto-sizer": "^1.0.24",
+    "react-window": "^1.8.10",
+    "react-window-infinite-loader": "^1.0.9",
     "sharp": "^0.33.5"
   },
   "devDependencies": {
