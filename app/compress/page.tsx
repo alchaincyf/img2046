@@ -212,7 +212,7 @@ export default function CompressPage() {
                   }
                 }}
               >
-                批量��缩
+                批量缩
               </Button>
               {compressedImages.length > 0 && (
                 <Button 

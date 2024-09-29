@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Paper, LinearProgress, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Typography, TextField, Button, Paper, LinearProgress, useTheme, useMediaQuery, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 import ImageToolLayout from '../components/ImageToolLayout';
+
+// 删除 Head 和 Metadata 相关的导入和导出
 
 export default function AILogoDesign() {
   const [logoName, setLogoName] = useState('');

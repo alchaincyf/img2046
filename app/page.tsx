@@ -3,6 +3,7 @@ import { Box, Typography, Grid, Paper, Button, Accordion, AccordionSummary, Acco
 import Image from 'next/image';
 import Link from 'next/link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Head from 'next/head';
 
 const tools = [
   { 
@@ -78,60 +79,66 @@ const faqs = [
 
 export default function Home() {
   return (
-    <Box sx={{ maxWidth: 1200, margin: '0 auto', padding: '40px 20px' }}>
-      <Typography variant="h1" component="h1" gutterBottom align="center" sx={{ fontSize: { xs: '2rem', md: '3rem' }, fontWeight: 'bold', mb: 4 }}>
-        图像魔方：一站式图像处理工具
-      </Typography>
-      <Typography variant="h2" component="h2" gutterBottom align="center" sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, mb: 6 }}>
-        轻松处理您的图片，提升工作效率
-      </Typography>
-      <Grid container spacing={4}>
-        {tools.map((tool) => (
-          <Grid item xs={12} sm={6} md={4} key={tool.name}>
-            <Link href={tool.href} passHref style={{ textDecoration: 'none' }}>
-              <Paper elevation={3} sx={{ 
-                p: 3, 
-                height: '100%', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                transition: '0.3s', 
-                '&:hover': { 
-                  transform: 'translateY(-5px)',
-                  boxShadow: 6
-                } 
-              }}>
-                <Image src={tool.icon} alt={tool.name} width={64} height={64} />
-                <Typography variant="h6" component="h3" align="center" sx={{ mt: 2, mb: 1 }}>
-                  {tool.name}
-                </Typography>
-                <Typography variant="body2" align="center" sx={{ flexGrow: 1, color: 'text.secondary' }}>
-                  {tool.description}
-                </Typography>
-              </Paper>
-            </Link>
-          </Grid>
-        ))}
-      </Grid>
-      <Box sx={{ mt: 8 }}>
-        <Typography variant="h3" component="h3" gutterBottom sx={{ fontSize: { xs: '1.5rem', md: '2rem' }, textAlign: 'center', mb: 4 }}>
-          常见问题
+    <>
+      <Head>
+        <title>图像魔方 - 一站式在线图像处理工具 | img2046.com</title>
+        <meta name="description" content="图像魔方提供多种免费在线图像处理工具,包括AI文生图、图片压缩、调整大小、格式转换等。轻松处理您的图片,提升工作效率。" />
+      </Head>
+      <Box sx={{ maxWidth: 1200, margin: '0 auto', padding: '40px 20px' }}>
+        <Typography variant="h1" component="h1" gutterBottom align="center" sx={{ fontSize: { xs: '2rem', md: '3rem' }, fontWeight: 'bold', mb: 4 }}>
+          图像魔方：一站式图像处理工具
         </Typography>
-        {faqs.map((faq, index) => (
-          <Accordion key={index} sx={{ mb: 2 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls={`panel${index}a-content`}
-              id={`panel${index}a-header`}
-            >
-              <Typography sx={{ fontWeight: 'bold' }}>{faq.question}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>{faq.answer}</Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
+        <Typography variant="h2" component="h2" gutterBottom align="center" sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, mb: 6 }}>
+          轻松处理您的图片，提升工作效率
+        </Typography>
+        <Grid container spacing={4}>
+          {tools.map((tool) => (
+            <Grid item xs={12} sm={6} md={4} key={tool.name}>
+              <Link href={tool.href} passHref style={{ textDecoration: 'none' }}>
+                <Paper elevation={3} sx={{ 
+                  p: 3, 
+                  height: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  transition: '0.3s', 
+                  '&:hover': { 
+                    transform: 'translateY(-5px)',
+                    boxShadow: 6
+                  } 
+                }}>
+                  <Image src={tool.icon} alt={tool.name} width={64} height={64} />
+                  <Typography variant="h6" component="h3" align="center" sx={{ mt: 2, mb: 1 }}>
+                    {tool.name}
+                  </Typography>
+                  <Typography variant="body2" align="center" sx={{ flexGrow: 1, color: 'text.secondary' }}>
+                    {tool.description}
+                  </Typography>
+                </Paper>
+              </Link>
+            </Grid>
+          ))}
+        </Grid>
+        <Box sx={{ mt: 8 }}>
+          <Typography variant="h3" component="h3" gutterBottom sx={{ fontSize: { xs: '1.5rem', md: '2rem' }, textAlign: 'center', mb: 4 }}>
+            常见问题
+          </Typography>
+          {faqs.map((faq, index) => (
+            <Accordion key={index} sx={{ mb: 2 }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`panel${index}a-content`}
+                id={`panel${index}a-header`}
+              >
+                <Typography sx={{ fontWeight: 'bold' }}>{faq.question}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>{faq.answer}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }

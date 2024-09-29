@@ -8,6 +8,8 @@ import ImageGenerator from '../components/ImageGenerator';
 import AIToolLayout from '../components/AIToolLayout';
 import Link from 'next/link';
 
+// 删除 Head 和 Metadata 相关的导入和导出
+
 interface HistoryItem {
   id: string;
   originalPrompt: string;
