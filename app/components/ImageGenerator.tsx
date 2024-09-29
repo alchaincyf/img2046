@@ -16,7 +16,7 @@ interface ImageGeneratorProps {
 
 const steps = ['生成优化提示词', '生成图片', '完成'];
 
-const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onGenerate }) => {
+const ImageGenerator = React.memo(({ onGenerate }: ImageGeneratorProps) => {
   const [userDescription, setUserDescription] = useState('');
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -162,6 +162,6 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onGenerate }) => {
       )}
     </Box>
   );
-};
+});
 
 export default ImageGenerator;

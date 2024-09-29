@@ -26,6 +26,7 @@ const AIToolLayout: React.FC<AIToolLayoutProps> = ({ title, description, iconSrc
             alt={title}
             width={isMobile ? 150 : 200}
             height={isMobile ? 150 : 200}
+            style={{ width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '100%' }}
             priority
           />
           <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
