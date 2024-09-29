@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, useTheme, useMediaQuery } from '@mui/material';
-import Image from 'next/image';
+import { Box, Paper } from '@mui/material';
 import { collection, addDoc, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import ImageGenerator from '../components/ImageGenerator';
 import ImageHistory from '../components/ImageHistory';
-import ImageToolLayout from '../components/ImageToolLayout';
+import AIToolLayout from '../components/AIToolLayout';
 
 interface HistoryItem {
   id: string;
@@ -17,8 +16,6 @@ interface HistoryItem {
 }
 
 const AIImageGeneratorPage: React.FC = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
@@ -48,43 +45,27 @@ const AIImageGeneratorPage: React.FC = () => {
   };
 
   return (
-    <ImageToolLayout
-      title="AI 文生图工具"
-      description="使用我们的 AI 文生图工具，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。"
+    <AIToolLayout
+      title="AI 文生图"
+      description="使用 AI 文生图器，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。"
+      iconSrc="/images/ai-image-generator.svg"
     >
-      <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
-          AI 文生图
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-          <Image 
-            src="/images/ai-image-generator.svg" 
-            alt="AI Image Generator" 
-            width={isMobile ? 150 : 200} 
-            height={isMobile ? 150 : 200}
-            priority
-          />
-          <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
-            使用 AI 文生图器，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。
-          </Typography>
-        </Box>
-        <Paper elevation={3} sx={{ 
-          p: 3, 
-          width: '100%', 
-          boxSizing: 'border-box',
-          mb: 4,
-        }}>
-          <ImageGenerator onGenerate={addToHistory} />
-        </Paper>
-        <Box sx={{ 
-          width: '100%', 
-          overflowX: 'hidden',
-          flexGrow: 1,
-        }}>
-          <ImageHistory history={history} />
-        </Box>
+      <Paper elevation={3} sx={{ 
+        p: 3, 
+        width: '100%', 
+        boxSizing: 'border-box',
+        mb: 4,
+      }}>
+        <ImageGenerator onGenerate={addToHistory} />
+      </Paper>
+      <Box sx={{ 
+        width: '100%', 
+        overflowX: 'hidden',
+        flexGrow: 1,
+      }}>
+        <ImageHistory history={history} />
       </Box>
-    </ImageToolLayout>
+    </AIToolLayout>
   );
 };
 
