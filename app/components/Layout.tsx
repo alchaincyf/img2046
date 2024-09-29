@@ -12,15 +12,14 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 
 const drawerWidth = 240;
 const menuItems = [
-  { text: '图片格式转换', icon: <Image src="/images/format-convert.svg" alt="Format Convert" width={24} height={24} />, href: '/' },
-  // { text: '裁剪', icon: <Image src="/images/crop.svg" alt="Crop" width={24} height={24} />, href: '/crop' },
-  { text: '调整大小', icon: <Image src="/images/resize.svg" alt="Resize" width={24} height={24} />, href: '/resize' },
-  { text: '压缩', icon: <Image src="/images/compress.svg" alt="Compress" width={24} height={24} />, href: '/compress' },
-  // { text: '滤镜', icon: <Image src="/images/filter.svg" alt="Filter" width={24} height={24} />, href: '/filter' },
-  { text: 'SVG 编辑器', icon: <Image src="/images/svg-generator.svg" alt="SVG Generator" width={24} height={24} />, href: '/svg-generator' },
-  { text: '文字卡片生成', icon: <Image src="/images/text-card-generator.svg" alt="Text Card Generator" width={24} height={24} />, href: '/text-card-generator' },
-  { text: '极简Logo设计', icon: <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={24} height={24} />, href: '/ai-logo-design' },
+  { text: '首页', icon: <Image src="/images/home.svg" alt="Home" width={24} height={24} />, href: '/' },
   { text: 'AI 文生图', icon: <Image src="/images/ai-image-generator.svg" alt="AI Image Generator" width={24} height={24} />, href: '/ai-image-generator' },
+  { text: '文字卡片生成', icon: <Image src="/images/text-card-generator.svg" alt="Text Card Generator" width={24} height={24} />, href: '/text-card-generator' },
+  { text: '图片压缩', icon: <Image src="/images/compress.svg" alt="Compress" width={24} height={24} />, href: '/compress' },
+  { text: '调整大小', icon: <Image src="/images/resize.svg" alt="Resize" width={24} height={24} />, href: '/resize' },
+  { text: '图片格式转换', icon: <Image src="/images/format-convert.svg" alt="Format Convert" width={24} height={24} />, href: '/format-convert' },
+  { text: 'SVG 编辑器', icon: <Image src="/images/svg-generator.svg" alt="SVG Generator" width={24} height={24} />, href: '/svg-generator' },
+  { text: '极简Logo设计', icon: <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={24} height={24} />, href: '/ai-logo-design' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {

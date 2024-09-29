@@ -1,296 +1,137 @@
-'use client';
-
-import { useState, useCallback, useEffect } from 'react';
-import { Box, Button, Grid, Typography, Paper, useTheme, useMediaQuery, Modal } from '@mui/material';
+import React from 'react';
+import { Box, Typography, Grid, Paper, Button, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import Image from 'next/image';
-import { useDropzone } from 'react-dropzone';
-import Feedback from './components/Feedback';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
+import Link from 'next/link';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const supportedFormats = ['jpg', 'png', 'webp', 'gif', 'pdf'];
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_FILES = 20;
+const tools = [
+  { 
+    name: 'AI 文生图', 
+    icon: '/images/ai-image-generator.svg', 
+    href: '/ai-image-generator',
+    description: '通过文字描述生成独特的AI图像，激发创意灵感，适用于各种创作场景。'
+  },
+  { 
+    name: '文字卡片生成', 
+    icon: '/images/text-card-generator.svg', 
+    href: '/text-card-generator',
+    description: '创建精美的文字卡片，自定义字体、颜色和背景，适合社交媒体分享和营销使用。'
+  },
+  { 
+    name: '图片压缩', 
+    icon: '/images/compress.svg', 
+    href: '/compress',
+    description: '高效压缩图片文件大小，保持画质的同时优化加载速度，提升网站性能。'
+  },
+  { 
+    name: '调整大小', 
+    icon: '/images/resize.svg', 
+    href: '/resize',
+    description: '快速调整图片尺寸，保持比例或自定义大小，适应各种平台要求。'
+  },
+  { 
+    name: '图片格式转换', 
+    icon: '/images/format-convert.svg', 
+    href: '/format-convert',
+    description: '轻松将图片转换为各种格式，支持JPG、PNG、WEBP、GIF等，满足不同场景需求。'
+  },
+  { 
+    name: 'SVG 编辑器', 
+    icon: '/images/svg-generator.svg', 
+    href: '/svg-generator',
+    description: '在线创建和编辑SVG图形，轻松设计可缩放的矢量图像，适用于各种设计需求。'
+  },
+  { 
+    name: '极简Logo设计', 
+    icon: '/images/ai-logo-design.svg', 
+    href: '/ai-logo-design',
+    description: '使用AI技术快速生成简洁现代的logo设计，为您的品牌打造独特标识。'
+  },
+];
 
-interface ConvertedImage {
-  dataUrl: string;
-  fileName: string;
-}
+const faqs = [
+  {
+    question: "图像魔方是免费使用的吗？",
+    answer: "是的，图像魔方的基础功能完全免费。我们可能会在未来推出一些高级功能，但核心工具将始终保持免费。"
+  },
+  {
+    question: "我的图片数据安全吗？",
+    answer: "我们非常重视用户隐私。所有的图片处理都在您的浏览器中进行，不会上传到我们的服务器。您的图片数据完全安全。"
+  },
+  {
+    question: "图像魔方支持哪些图片格式？",
+    answer: "我们支持大多数常见的图片格式，包括JPG、PNG、WEBP、GIF等。对于特定工具的格式支持，请查看相应工具页面的详细说明。"
+  },
+  {
+    question: "如何报告问题或提出建议？",
+    answer: "我们欢迎您的反馈！请通过页面顶部的GitHub图标访问我们的项目页面，在那里您可以提交问题或建议。"
+  },
+  {
+    question: "图像魔方的AI功能是如何工作的？",
+    answer: "我们的AI功能使用先进的机器学习模型，但所有处理都在本地进行。这既保护了您的隐私，又确保了快速的处理速度。"
+  },
+  {
+    question: "如何联系作者？",
+    answer: "您可以通过以下方式联系作者：微信：alchain，邮箱：alchaincyf@gmail.com"
+  }
+];
 
 export default function Home() {
-  const [files, setFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [selectedFormat, setSelectedFormat] = useState<string>('');
-  const [convertedImages, setConvertedImages] = useState<ConvertedImage[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const validFiles = acceptedFiles.filter(file => file.size <= MAX_FILE_SIZE).slice(0, MAX_FILES);
-    if (validFiles.length < acceptedFiles.length) {
-      setError(`部分文件超过10MB或文件数量超过${MAX_FILES}个，已自动过滤。`);
-    }
-    setFiles(prevFiles => [...prevFiles, ...validFiles]);
-    const newPreviewUrls = validFiles.map(file => URL.createObjectURL(file));
-    setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/*': supportedFormats.filter(format => format !== 'pdf').map(format => `.${format}`),
-      'application/pdf': ['.pdf']
-    },
-    maxSize: MAX_FILE_SIZE
-  });
-
-  useEffect(() => {
-    return () => {
-      previewUrls.forEach(url => URL.revokeObjectURL(url));
-    };
-  }, [previewUrls]);
-
-  const handleConvert = async () => {
-    if (files.length === 0 || !selectedFormat) return;
-    setLoading(true);
-    try {
-      const converted = await Promise.all(
-        files.map(file => convertImage(file, selectedFormat))
-      );
-      setConvertedImages(converted);
-      setSuccess(true);
-    } catch (err) {
-      setError('转换失败，请重试。');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const convertImage = async (file: File, format: string): Promise<ConvertedImage> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('format', format);
-
-    const response = await fetch('/api/convert', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Conversion failed');
-    }
-
-    const blob = await response.blob();
-    const dataUrl = URL.createObjectURL(blob);
-    const fileName = `${file.name.split('.')[0]}_converted.${format}`;
-    return { dataUrl, fileName };
-  };
-
-  const handleDownload = async () => {
-    if (convertedImages.length === 1) {
-      const link = document.createElement('a');
-      link.href = convertedImages[0].dataUrl;
-      link.download = convertedImages[0].fileName;
-      link.click();
-    } else {
-      const zip = new JSZip();
-      convertedImages.forEach(({ dataUrl, fileName }) => {
-        zip.file(fileName, fetch(dataUrl).then(res => res.blob()));
-      });
-      const content = await zip.generateAsync({type: 'blob'});
-      saveAs(content, 'converted_images.zip');
-    }
-    setSuccess(true);
-  };
-
-  const handleClose = () => {
-    setSuccess(false);
-    setError(null);
-  };
-
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedImage(null);
-  };
-
   return (
-    <Box component="main" sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
-      <Typography variant="h1" gutterBottom sx={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 'bold', color: '#2c3e50' }}>
-        图片格式转换
+    <Box sx={{ maxWidth: 1200, margin: '0 auto', padding: '40px 20px' }}>
+      <Typography variant="h1" component="h1" gutterBottom align="center" sx={{ fontSize: { xs: '2rem', md: '3rem' }, fontWeight: 'bold', mb: 4 }}>
+        图像魔方：一站式图像处理工具
       </Typography>
-      <section>
-        <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-          <Image 
-            src="/images/format-convert.svg" 
-            alt="格式转换图标" 
-            width={isMobile ? 150 : 200} 
-            height={isMobile ? 150 : 200} 
-            placeholder="blur"
-            blurDataURL="data:image/svg+xml;base64,..."
-            priority
-          />
-          <Typography variant="h2" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e', fontSize: '1.5rem' }}>
-            欢迎使用我们的图片格式转换工具。上传您的图片或PDF，选择要转换的格式，然后点击转换按钮即可开始。支持JPG、PNG、WEBP、GIF和PDF格式之间的相互转换。文件大小限制为10MB。
-          </Typography>
-        </Box>
-      </section>
-      <section>
-        <Paper
-          {...getRootProps()}
-          sx={{
-            p: 3,
-            textAlign: 'center',
-            cursor: 'pointer',
-            backgroundColor: isDragActive ? '#e8f4fd' : '#f7f9fa',
-            border: '2px dashed #3498db',
-            '&:hover': {
-              backgroundColor: '#e8f4fd',
-            },
-          }}
-        >
-          <input {...getInputProps()} />
-          <Typography variant="h3" gutterBottom sx={{ fontSize: '1.5rem' }}>
-            {isDragActive ? '释放文件以上传' : `拖放文件到这里, 或者点击选择文件（最多${MAX_FILES}个）`}
-          </Typography>
-          <Button variant="contained" sx={{ mt: 2 }}>
-            选择文件
-          </Button>
-        </Paper>
-      </section>
-      {files.length > 0 && (
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom>原图预览</Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-              {previewUrls.map((url, index) => (
-                <img 
-                  key={index} 
-                  src={url} 
-                  style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }} 
-                  alt={`Original ${index + 1}`} 
-                  onClick={() => handleImageClick(url)}
-                />
-              ))}
-            </Box>
+      <Typography variant="h2" component="h2" gutterBottom align="center" sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, mb: 6 }}>
+        轻松处理您的图片，提升工作效率
+      </Typography>
+      <Grid container spacing={4}>
+        {tools.map((tool) => (
+          <Grid item xs={12} sm={6} md={4} key={tool.name}>
+            <Link href={tool.href} passHref style={{ textDecoration: 'none' }}>
+              <Paper elevation={3} sx={{ 
+                p: 3, 
+                height: '100%', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                transition: '0.3s', 
+                '&:hover': { 
+                  transform: 'translateY(-5px)',
+                  boxShadow: 6
+                } 
+              }}>
+                <Image src={tool.icon} alt={tool.name} width={64} height={64} />
+                <Typography variant="h6" component="h3" align="center" sx={{ mt: 2, mb: 1 }}>
+                  {tool.name}
+                </Typography>
+                <Typography variant="body2" align="center" sx={{ flexGrow: 1, color: 'text.secondary' }}>
+                  {tool.description}
+                </Typography>
+              </Paper>
+            </Link>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom>转换后预览</Typography>
-            {convertedImages.length > 0 ? (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                {convertedImages.map((img, index) => (
-                  <img 
-                    key={index} 
-                    src={img.dataUrl} 
-                    style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }} 
-                    alt={`Converted ${index + 1}`} 
-                    onClick={() => handleImageClick(img.dataUrl)}
-                  />
-                ))}
-              </Box>
-            ) : (
-              <Typography>转换后的图片将显示在这里</Typography>
-            )}
-          </Grid>
-        </Grid>
-      )}
-      {files.length > 0 && (
-        <Box sx={{ mt: 3 }}>
-          <Typography variant="h6" gutterBottom>选择转换格式</Typography>
-          <Grid container spacing={2}>
-            {supportedFormats.map((format) => (
-              <Grid item xs={6} sm={4} md={2} key={format}>
-                <Button
-                  variant={selectedFormat === format ? "contained" : "outlined"}
-                  onClick={() => setSelectedFormat(format)}
-                  fullWidth
-                  sx={{
-                    height: '48px',
-                    fontSize: '1rem',
-                    backgroundColor: selectedFormat === format ? '#3498db' : 'transparent',
-                    color: selectedFormat === format ? 'white' : '#3498db',
-                    '&:hover': {
-                      backgroundColor: selectedFormat === format ? '#2980b9' : '#e8f4fd',
-                    }
-                  }}
-                >
-                  {format.toUpperCase()}
-                </Button>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      )}
-      {files.length > 0 && selectedFormat && (
-        <Box sx={{ mt: 3, textAlign: 'center' }}>
-          <Button
-            variant="contained"
-            onClick={handleConvert}
-            sx={{
-              fontSize: '1.1rem',
-              padding: '10px 20px',
-              backgroundColor: '#2ecc71',
-              '&:hover': {
-                backgroundColor: '#27ae60'
-              }
-            }}
-          >
-            批量转换
-          </Button>
-          {convertedImages.length > 0 && (
-            <Button
-              variant="contained"
-              onClick={handleDownload}
-              sx={{
-                ml: 2,
-                fontSize: '1.1rem',
-                padding: '10px 20px',
-                backgroundColor: '#3498db',
-                '&:hover': {
-                  backgroundColor: '#2980b9'
-                }
-              }}
+        ))}
+      </Grid>
+      <Box sx={{ mt: 8 }}>
+        <Typography variant="h3" component="h3" gutterBottom sx={{ fontSize: { xs: '1.5rem', md: '2rem' }, textAlign: 'center', mb: 4 }}>
+          常见问题
+        </Typography>
+        {faqs.map((faq, index) => (
+          <Accordion key={index} sx={{ mb: 2 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`panel${index}a-content`}
+              id={`panel${index}a-header`}
             >
-              {convertedImages.length === 1 ? '下载转换图片' : '下载转换包'}
-            </Button>
-          )}
-        </Box>
-      )}
-      <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
-      <Modal
-        open={!!selectedImage}
-        onClose={handleCloseModal}
-        aria-labelledby="image-modal"
-        aria-describedby="full-size-image"
-      >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          maxWidth: '90%',
-          maxHeight: '90%',
-          overflow: 'auto',
-        }}>
-          {selectedImage && (
-            <img 
-              src={selectedImage} 
-              style={{ width: '100%', height: 'auto' }} 
-              alt="Full size preview" 
-            />
-          )}
-        </Box>
-      </Modal>
+              <Typography sx={{ fontWeight: 'bold' }}>{faq.question}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>{faq.answer}</Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </Box>
     </Box>
   );
 }

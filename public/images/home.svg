@@ -1,0 +1,23 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="homeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <path d="M20 80 L100 20 L180 80 V180 A10 10 0 0 1 170 190 H30 A10 10 0 0 1 20 180 V80 Z" fill="url(#homeGrad)">
+    <animate attributeName="d" values="M20 80 L100 20 L180 80 V180 A10 10 0 0 1 170 190 H30 A10 10 0 0 1 20 180 V80 Z;
+                                       M25 85 L100 25 L175 85 V175 A10 10 0 0 1 165 185 H35 A10 10 0 0 1 25 175 V85 Z;
+                                       M20 80 L100 20 L180 80 V180 A10 10 0 0 1 170 190 H30 A10 10 0 0 1 20 180 V80 Z" 
+             dur="3s" repeatCount="indefinite" />
+  </path>
+  
+  <rect x="70" y="110" width="60" height="80" fill="#ecf0f1" stroke="#34495e" stroke-width="4">
+    <animate attributeName="height" values="80;75;80" dur="3s" repeatCount="indefinite" />
+  </rect>
+  
+  <circle cx="100" cy="150" r="15" fill="#34495e">
+    <animate attributeName="r" values="15;13;15" dur="2s" repeatCount="indefinite" />
+  </circle>
+</svg>
