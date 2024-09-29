@@ -1,0 +1,32 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect x="40" y="40" width="120" height="120" rx="10" fill="url(#cardGrad)">
+    <animate attributeName="width" values="120;110;120" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="height" values="120;110;120" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="x" values="40;45;40" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="y" values="40;45;40" dur="3s" repeatCount="indefinite" />
+  </rect>
+  <line x1="60" y1="70" x2="140" y2="70" stroke="#ffffff" stroke-width="4" stroke-linecap="round">
+    <animate attributeName="x2" values="140;130;140" dur="3s" repeatCount="indefinite" />
+  </line>
+  <line x1="60" y1="90" x2="120" y2="90" stroke="#ffffff" stroke-width="4" stroke-linecap="round">
+    <animate attributeName="x2" values="120;110;120" dur="3s" repeatCount="indefinite" />
+  </line>
+  <line x1="60" y1="110" x2="130" y2="110" stroke="#ffffff" stroke-width="4" stroke-linecap="round">
+    <animate attributeName="x2" values="130;120;130" dur="3s" repeatCount="indefinite" />
+  </line>
+  <circle cx="60" cy="130" r="5" fill="#ffffff">
+    <animate attributeName="r" values="5;4;5" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="80" cy="130" r="5" fill="#ffffff">
+    <animate attributeName="r" values="5;4;5" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="100" cy="130" r="5" fill="#ffffff">
+    <animate attributeName="r" values="5;4;5" dur="3s" repeatCount="indefinite" />
+  </circle>
+</svg>
