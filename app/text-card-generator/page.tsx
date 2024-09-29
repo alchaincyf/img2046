@@ -111,8 +111,11 @@ function TextCard({ text, font, textColor, backgroundColor, imageUrl }: TextCard
   );
 }
 
+// 添加默认卡片内容
+const defaultCardContent = "欢迎使用IMG2046文字卡片生成器！\n\n这是一个强大的工具，可以帮助您创建精美的文字卡片。您可以自定义字体、颜色、背景等多种样式。\n\n开始创作吧！";
+
 const TextCardGeneratorPage: React.FC = () => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState(defaultCardContent);
   const [backgroundColor, setBackgroundColor] = useState('#F0F4F8');
   const [textColor, setTextColor] = useState('#2C3E50');
   const [fontSize, setFontSize] = useState(50);
@@ -416,7 +419,6 @@ const TextCardGeneratorPage: React.FC = () => {
       description="创建优雅美观的文字卡片，支持Markdown格式，适合社交媒体分享或个人使用。"
       iconSrc="/images/text-card-generator.svg"
     >
-      {/* 主要内容区域 */}
       <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 2, backgroundColor: '#f5f5f5' }}>
         <Grid container spacing={2}>
           {/* 文本输入区域 */}
@@ -435,56 +437,59 @@ const TextCardGeneratorPage: React.FC = () => {
           {/* 模板选择区域 */}
           <Grid item xs={12}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>选择模板</Typography>
-            <Tabs 
-              value={selectedTemplate} 
-              onChange={handleTemplateChange} 
-              variant="scrollable" 
-              scrollButtons="auto"
-              sx={{ 
-                backgroundColor: '#ffffff', 
-                borderRadius: 1,
-                '& .MuiTab-root': { 
-                  minWidth: isMobile ? 60 : 120, 
-                  fontSize: isMobile ? '0.7rem' : '1rem',
-                  padding: isMobile ? '6px 8px' : '12px 16px'
-                }
-              }}
-            >
+            <Box sx={{ overflowX: 'auto', whiteSpace: 'nowrap', pb: 1 }}>
               {presetTemplates.map((template, index) => (
-                <Tab key={index} label={template.name} />
+                <Button
+                  key={index}
+                  variant={selectedTemplate === index ? "contained" : "outlined"}
+                  onClick={() => handleTemplateChange(null, index)}
+                  sx={{ 
+                    mr: 1, 
+                    mb: 1,
+                    minWidth: 'auto',
+                    padding: '4px 8px',
+                    fontSize: isMobile ? '0.7rem' : '0.9rem',
+                    backgroundColor: template.backgroundColor,
+                    color: template.textColor,
+                    fontFamily: template.font,
+                    '&:hover': {
+                      backgroundColor: template.backgroundColor,
+                      opacity: 0.9,
+                    },
+                    border: selectedTemplate === index ? `2px solid ${template.textColor}` : 'none',
+                  }}
+                >
+                  {template.name}
+                </Button>
               ))}
-            </Tabs>
+            </Box>
           </Grid>
           {/* 渐变底座选择区域 */}
           <Grid item xs={12}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>选择渐变底座</Typography>
-            <Grid container spacing={1}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {gradientBaseColors.map((gradientColor, index) => (
-                <Grid item key={index} xs={4} sm={3} md={2}>
-                  <Button
-                    onClick={() => {
-                      setGradientBase(gradientColor);
-                      setUseBase(gradientColor.colors.length > 0);
-                    }}
-                    sx={{
-                      width: '100%',
-                      height: isMobile ? 40 : 50,
-                      background: gradientColor.colors.length > 0
-                        ? `linear-gradient(to right, ${gradientColor.colors.join(', ')})`
-                        : '#FFFFFF',
-                      border: gradientBase === gradientColor ? '2px solid #000' : '1px solid #000',
-                      color: '#000000',
-                      fontSize: isMobile ? '18px' : '24px',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {gradientColor.name === '无底座' ? '🚫' : ''}
-                  </Button>
-                </Grid>
+                <Button
+                  key={index}
+                  onClick={() => {
+                    setGradientBase(gradientColor);
+                    setUseBase(gradientColor.colors.length > 0);
+                  }}
+                  sx={{
+                    width: isMobile ? '30px' : '40px',
+                    height: isMobile ? '30px' : '40px',
+                    minWidth: 'auto',
+                    background: gradientColor.colors.length > 0
+                      ? `linear-gradient(to right, ${gradientColor.colors.join(', ')})`
+                      : '#FFFFFF',
+                    border: gradientBase === gradientColor ? '2px solid #000' : '1px solid #000',
+                    p: 0,
+                  }}
+                >
+                  {gradientColor.name === '无底座' ? '🚫' : ''}
+                </Button>
               ))}
-            </Grid>
+            </Box>
           </Grid>
           {/* 字体选择区域 */}
           <Grid item xs={12} sm={6}>
@@ -495,7 +500,7 @@ const TextCardGeneratorPage: React.FC = () => {
                 label="字体"
                 onChange={(e) => {
                   setFont(e.target.value);
-                  generatePreview(); // 立即重新生成预览
+                  generatePreview();
                 }}
                 sx={{ backgroundColor: '#ffffff' }}
               >
@@ -513,7 +518,7 @@ const TextCardGeneratorPage: React.FC = () => {
             </FormControl>
           </Grid>
           {/* 字体大小调整区域 */}
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>字体大小</Typography>
             <Slider
               value={fontSize}
@@ -524,25 +529,30 @@ const TextCardGeneratorPage: React.FC = () => {
               valueLabelDisplay="auto"
             />
           </Grid>
-          {/* 背景颜色选择区域 */}
-          <Grid item xs={6}>
+          {/* 背景颜色和文字颜色选择区域 */}
+          <Grid item xs={12} sm={6}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>背景颜色</Typography>
-            <input
-              type="color"
-              value={backgroundColor}
-              onChange={(e) => setBackgroundColor(e.target.value)}
-              style={{ width: '100%', height: isMobile ? '30px' : '40px' }}
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                type="color"
+                value={backgroundColor}
+                onChange={(e) => setBackgroundColor(e.target.value)}
+                style={{ width: '40px', height: '40px', padding: 0, border: 'none' }}
+              />
+              <Typography sx={{ ml: 1 }}>{backgroundColor}</Typography>
+            </Box>
           </Grid>
-          {/* 文字颜色选择区域 */}
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>文字颜色</Typography>
-            <input
-              type="color"
-              value={textColor}
-              onChange={(e) => setTextColor(e.target.value)}
-              style={{ width: '100%', height: isMobile ? '30px' : '40px' }}
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                type="color"
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                style={{ width: '40px', height: '40px', padding: 0, border: 'none' }}
+              />
+              <Typography sx={{ ml: 1 }}>{textColor}</Typography>
+            </Box>
           </Grid>
           {/* 图片比例选择区域 */}
           <Grid item xs={12} sm={6}>
@@ -589,9 +599,7 @@ const TextCardGeneratorPage: React.FC = () => {
             <img src={card} alt={`Generated Card ${index + 1}`} style={{ width: '100%', height: 'auto' }} />
           </Box>
         ))}
-        {/* 隐藏的画布元素，用于生成图片 */}
         <canvas ref={canvasRef} style={{ display: 'none' }} />
-        {/* 下载按钮 */}
         <Button
           variant="contained"
           onClick={() => {
