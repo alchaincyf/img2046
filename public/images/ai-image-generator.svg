@@ -1,34 +1,43 @@
 <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="magicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#9b59b6;stop-opacity:1" />
+    <linearGradient id="wandGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D2691E;stop-opacity:1" />
     </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
   
-  <!-- 背景圆形 -->
-  <circle cx="100" cy="100" r="90" fill="url(#magicGrad)">
-    <animate attributeName="r" values="90;85;90" dur="4s" repeatCount="indefinite" />
-  </circle>
+  <!-- 魔法棒主体 -->
+  <path d="M40 160 L160 40" stroke="url(#wandGrad)" stroke-width="10" stroke-linecap="round"/>
   
-  <!-- 魔法帽 -->
-  <path d="M60 120 Q100 40 140 120 L140 140 Q100 160 60 140 Z" fill="#34495e">
-    <animate attributeName="d" values="M60 120 Q100 40 140 120 L140 140 Q100 160 60 140 Z;M70 110 Q100 50 130 110 L130 130 Q100 150 70 130 Z;M60 120 Q100 40 140 120 L140 140 Q100 160 60 140 Z" dur="4s" repeatCount="indefinite" />
-  </path>
+  <!-- 魔法棒手柄 -->
+  <path d="M30 170 L50 150" stroke="#8B4513" stroke-width="15" stroke-linecap="round"/>
+  
+  <!-- 魔法棒尖端 -->
+  <circle cx="160" cy="40" r="5" fill="#FFD700" filter="url(#glow)">
+    <animate attributeName="r" values="5;7;5" dur="1s" repeatCount="indefinite"/>
+  </circle>
   
   <!-- 魔法星星 -->
-  <path d="M100 70 L105 85 L120 85 L110 95 L115 110 L100 100 L85 110 L90 95 L80 85 L95 85 Z" fill="#f1c40f">
-    <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" />
-    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -20; 0 0" dur="2s" repeatCount="indefinite" />
-  </path>
+  <g>
+    <path d="M170 30 L173 40 L183 40 L175 47 L178 57 L170 50 L162 57 L165 47 L157 40 L167 40 Z" fill="#FFD700" opacity="0.8">
+      <animateTransform attributeName="transform" type="rotate" from="0 170 30" to="360 170 30" dur="3s" repeatCount="indefinite"/>
+    </path>
+    <path d="M50 150 L53 160 L63 160 L55 167 L58 177 L50 170 L42 177 L45 167 L37 160 L47 160 Z" fill="#FFD700" opacity="0.6">
+      <animateTransform attributeName="transform" type="rotate" from="0 50 150" to="-360 50 150" dur="4s" repeatCount="indefinite"/>
+    </path>
+  </g>
   
-  <!-- 魔法光环 -->
-  <circle cx="100" cy="100" r="70" fill="none" stroke="#ecf0f1" stroke-width="2" stroke-dasharray="10 5">
-    <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="10s" repeatCount="indefinite" />
-  </circle>
-  
-  <!-- 魔法烟雾 -->
-  <path d="M70 140 Q85 120 100 140 Q115 120 130 140" fill="none" stroke="#bdc3c7" stroke-width="3">
-    <animate attributeName="d" values="M70 140 Q85 120 100 140 Q115 120 130 140;M70 130 Q85 150 100 130 Q115 150 130 130;M70 140 Q85 120 100 140 Q115 120 130 140" dur="4s" repeatCount="indefinite" />
-  </path>
+  <!-- 魔法光芒 -->
+  <g filter="url(#glow)">
+    <path d="M160 40 L170 30 M160 40 L170 50 M160 40 L150 30 M160 40 L150 50" stroke="#FFD700" stroke-width="2">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </path>
+  </g>
 </svg>
