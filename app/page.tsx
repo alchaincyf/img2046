@@ -1,34 +1,43 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Box, Button, Grid, Typography, Paper, useTheme, useMediaQuery } from '@mui/material';
+import { useState, useCallback, useEffect } from 'react';
+import { Box, Button, Grid, Typography, Paper, useTheme, useMediaQuery, Modal } from '@mui/material';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import Feedback from './components/Feedback';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const supportedFormats = ['jpg', 'png', 'webp', 'gif', 'pdf'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILES = 20;
+
+interface ConvertedImage {
+  dataUrl: string;
+  fileName: string;
+}
 
 export default function Home() {
-  const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [selectedFormat, setSelectedFormat] = useState<string>('');
+  const [convertedImages, setConvertedImages] = useState<ConvertedImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles && acceptedFiles.length > 0) {
-      const selectedFile = acceptedFiles[0];
-      if (selectedFile.size > MAX_FILE_SIZE) {
-        setError('文件大小不能超过10MB');
-        return;
-      }
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
-      reader.readAsDataURL(selectedFile);
+    const validFiles = acceptedFiles.filter(file => file.size <= MAX_FILE_SIZE).slice(0, MAX_FILES);
+    if (validFiles.length < acceptedFiles.length) {
+      setError(`部分文件超过10MB或文件数量超过${MAX_FILES}个，已自动过滤。`);
     }
+    setFiles(prevFiles => [...prevFiles, ...validFiles]);
+    const newPreviewUrls = validFiles.map(file => URL.createObjectURL(file));
+    setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -40,32 +49,20 @@ export default function Home() {
     maxSize: MAX_FILE_SIZE
   });
 
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
+
   const handleConvert = async () => {
-    if (!file || !selectedFormat) return;
+    if (files.length === 0 || !selectedFormat) return;
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('format', selectedFormat);
-
-      const response = await fetch('/api/convert', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Conversion failed');
-      }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `converted.${selectedFormat}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
+      const converted = await Promise.all(
+        files.map(file => convertImage(file, selectedFormat))
+      );
+      setConvertedImages(converted);
       setSuccess(true);
     } catch (err) {
       setError('转换失败，请重试。');
@@ -74,13 +71,55 @@ export default function Home() {
     }
   };
 
+  const convertImage = async (file: File, format: string): Promise<ConvertedImage> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('format', format);
+
+    const response = await fetch('/api/convert', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Conversion failed');
+    }
+
+    const blob = await response.blob();
+    const dataUrl = URL.createObjectURL(blob);
+    const fileName = `${file.name.split('.')[0]}_converted.${format}`;
+    return { dataUrl, fileName };
+  };
+
+  const handleDownload = async () => {
+    if (convertedImages.length === 1) {
+      const link = document.createElement('a');
+      link.href = convertedImages[0].dataUrl;
+      link.download = convertedImages[0].fileName;
+      link.click();
+    } else {
+      const zip = new JSZip();
+      convertedImages.forEach(({ dataUrl, fileName }) => {
+        zip.file(fileName, fetch(dataUrl).then(res => res.blob()));
+      });
+      const content = await zip.generateAsync({type: 'blob'});
+      saveAs(content, 'converted_images.zip');
+    }
+    setSuccess(true);
+  };
+
   const handleClose = () => {
     setSuccess(false);
     setError(null);
   };
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+  };
 
   return (
     <Box component="main" sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
@@ -119,20 +158,50 @@ export default function Home() {
         >
           <input {...getInputProps()} />
           <Typography variant="h3" gutterBottom sx={{ fontSize: '1.5rem' }}>
-            {isDragActive ? '释放文件以上传' : '拖放文件到这里, 或者点击选择文件'}
+            {isDragActive ? '释放文件以上传' : `拖放文件到这里, 或者点击选择文件（最多${MAX_FILES}个）`}
           </Typography>
           <Button variant="contained" sx={{ mt: 2 }}>
             选择文件
           </Button>
         </Paper>
       </section>
-      {previewUrl && (
-        <Box sx={{ mt: 3 }}>
-          <Typography variant="h6" gutterBottom>预览</Typography>
-          <img src={previewUrl} alt="Preview" style={{ maxWidth: '100%', maxHeight: '300px' }} />
-        </Box>
+      {files.length > 0 && (
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" gutterBottom>原图预览</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+              {previewUrls.map((url, index) => (
+                <img 
+                  key={index} 
+                  src={url} 
+                  style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }} 
+                  alt={`Original ${index + 1}`} 
+                  onClick={() => handleImageClick(url)}
+                />
+              ))}
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" gutterBottom>转换后预览</Typography>
+            {convertedImages.length > 0 ? (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                {convertedImages.map((img, index) => (
+                  <img 
+                    key={index} 
+                    src={img.dataUrl} 
+                    style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }} 
+                    alt={`Converted ${index + 1}`} 
+                    onClick={() => handleImageClick(img.dataUrl)}
+                  />
+                ))}
+              </Box>
+            ) : (
+              <Typography>转换后的图片将显示在这里</Typography>
+            )}
+          </Grid>
+        </Grid>
       )}
-      {file && (
+      {files.length > 0 && (
         <Box sx={{ mt: 3 }}>
           <Typography variant="h6" gutterBottom>选择转换格式</Typography>
           <Grid container spacing={2}>
@@ -159,7 +228,7 @@ export default function Home() {
           </Grid>
         </Box>
       )}
-      {file && selectedFormat && (
+      {files.length > 0 && selectedFormat && (
         <Box sx={{ mt: 3, textAlign: 'center' }}>
           <Button
             variant="contained"
@@ -173,11 +242,55 @@ export default function Home() {
               }
             }}
           >
-            转换并下载
+            批量转换
           </Button>
+          {convertedImages.length > 0 && (
+            <Button
+              variant="contained"
+              onClick={handleDownload}
+              sx={{
+                ml: 2,
+                fontSize: '1.1rem',
+                padding: '10px 20px',
+                backgroundColor: '#3498db',
+                '&:hover': {
+                  backgroundColor: '#2980b9'
+                }
+              }}
+            >
+              {convertedImages.length === 1 ? '下载转换图片' : '下载转换包'}
+            </Button>
+          )}
         </Box>
       )}
       <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
+      <Modal
+        open={!!selectedImage}
+        onClose={handleCloseModal}
+        aria-labelledby="image-modal"
+        aria-describedby="full-size-image"
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+          maxWidth: '90%',
+          maxHeight: '90%',
+          overflow: 'auto',
+        }}>
+          {selectedImage && (
+            <img 
+              src={selectedImage} 
+              style={{ width: '100%', height: 'auto' }} 
+              alt="Full size preview" 
+            />
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 }
