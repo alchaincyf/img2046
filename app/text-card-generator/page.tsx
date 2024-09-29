@@ -118,6 +118,7 @@ const defaultCardContent = "欢迎使用IMG2046文字卡片生成器！\n\n这�
 
 const TextCardGeneratorPage: React.FC = () => {
   const [text, setText] = useState(defaultCardContent);
+  const [isFirstInput, setIsFirstInput] = useState(true);
   const [backgroundColor, setBackgroundColor] = useState('#F0F4F8');
   const [textColor, setTextColor] = useState('#2C3E50');
   const [fontSize, setFontSize] = useState(50);
@@ -405,14 +406,30 @@ const TextCardGeneratorPage: React.FC = () => {
 
     setGeneratedCards(cards);
   };
-  // 处理模板变更的函数
-  const handleTemplateChange = (event: React.SyntheticEvent, newValue: number) => {
+  // 修改 handleTemplateChange 函数
+  const handleTemplateChange = (newValue: number) => {
     setSelectedTemplate(newValue);
     const template = presetTemplates[newValue];
     setBackgroundColor(template.backgroundColor);
     setTextColor(template.textColor);
     setFont(template.font);
     setFontSize(template.fontSize);
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isFirstInput) {
+      setText(e.target.value);
+      setIsFirstInput(false);
+    } else {
+      setText(e.target.value);
+    }
+  };
+
+  const handleTextFocus = () => {
+    if (isFirstInput) {
+      setText('');
+      setIsFirstInput(false);
+    }
   };
 
   return (
@@ -432,7 +449,8 @@ const TextCardGeneratorPage: React.FC = () => {
               variant="outlined"
               label="输入文字（支持Markdown格式）"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={handleTextChange}
+              onFocus={handleTextFocus}
               sx={{ mb: 2, backgroundColor: '#ffffff' }}
             />
           </Grid>
@@ -444,7 +462,7 @@ const TextCardGeneratorPage: React.FC = () => {
                 <Button
                   key={index}
                   variant={selectedTemplate === index ? "contained" : "outlined"}
-                  onClick={() => handleTemplateChange(null, index)}
+                  onClick={() => handleTemplateChange(index)}
                   sx={{ 
                     mr: 1, 
                     mb: 1,
