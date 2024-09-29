@@ -35,16 +35,21 @@ const presetTemplates = [
   { name: '典雅灰', backgroundColor: '#FAFAFA', textColor: '#37474F', font: 'Source Han Sans CN', fontSize: 50 },
 ];
 
-// 更新字体列表，增加三种新字体，并将默认字体设置为思源黑体
+// 更新字体列表，增加五种新字体，并将字体名称改为中文
 const fonts = [
-  'Source Han Sans CN', // 思源黑体
-  'Noto Sans SC',
-  'PingFang SC',
-  'Hiragino Sans GB',
-  'Microsoft YaHei',
-  'FZLTHJW', // 方正兰亭黑
-  'FZLTXHJW', // 方正兰亭细黑
-  'HYQiHei', // 汉仪旗黑
+  { value: 'Source Han Sans CN', label: '思源黑体' },
+  { value: 'Noto Sans SC', label: '思源宋体' },
+  { value: 'PingFang SC', label: '苹方' },
+  { value: 'Hiragino Sans GB', label: '冬青黑体' },
+  { value: 'Microsoft YaHei', label: '微软雅黑' },
+  { value: 'FZLTHJW', label: '方正兰亭黑' },
+  { value: 'FZLTXHJW', label: '方正兰亭细黑' },
+  { value: 'HYQiHei', label: '汉仪旗黑' },
+  { value: 'DouyinMeihaoTi', label: '抖音美好体' },
+  { value: 'MaokenZhuyuanTi', label: '猫啃珠圆体' },
+  { value: 'YunfengFeiyunTi', label: '云峰飞云体' },
+  { value: 'XimaiXihuanTi', label: '喜脉喜欢体' },
+  { value: 'Slidexiaxing-Regular', label: 'Slide下行体' },
 ];
 
 // 扩展渐变底座颜色选项
@@ -90,7 +95,7 @@ function TextCard({ text, font, textColor, backgroundColor, imageUrl }: TextCard
           <div className="absolute inset-0 flex flex-col justify-between p-6">
             {/* 顶部文字 */}
             <div className="text-center">
-              <h2 className={`text-2xl font-bold mb-2 ${font} ${textColor}`}>{text}</h2>
+              <h2 style={{ fontFamily: font, color: textColor, fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{text}</h2>
             </div>
 
             {/* 中间图片 */}
@@ -127,6 +132,32 @@ const TextCardGeneratorPage: React.FC = () => {
   useEffect(() => {
     generatePreview();
   }, [text, backgroundColor, textColor, fontSize, font, selectedTemplate, gradientBase, autoSplit, aspectRatio]);
+
+  useEffect(() => {
+    // 加载自定义字体
+    const loadFonts = async () => {
+      const fontFaces = [
+        { name: 'DouyinMeihaoTi', url: '/fonts/抖音美好体.otf' },
+        { name: 'MaokenZhuyuanTi', url: '/fonts/猫啃珠圆体 MaokenZhuyuanTi.ttf' },
+        { name: 'YunfengFeiyunTi', url: '/fonts/云峰飞云体.ttf' },
+        { name: 'XimaiXihuanTi', url: '/fonts/喜脉喜欢体.ttf' },
+        { name: 'Slidexiaxing-Regular', url: '/fonts/Slidexiaxing-Regular.ttf' },
+      ];
+
+      for (const fontFace of fontFaces) {
+        try {
+          const font = new FontFace(fontFace.name, `url(${fontFace.url})`);
+          await font.load();
+          document.fonts.add(font);
+          console.log(`Font ${fontFace.name} loaded successfully`);
+        } catch (error) {
+          console.error(`Error loading font ${fontFace.name}:`, error);
+        }
+      }
+    };
+
+    loadFonts();
+  }, []);
 
   const getWrappedLines = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
     const words = text.split('');
@@ -332,6 +363,9 @@ const TextCardGeneratorPage: React.FC = () => {
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
 
+      // 确保使用选择的字体，添加后备字体
+      ctx.font = `${fontSize}px "${font}", "Source Han Sans CN", sans-serif`;
+
       const maxWidth = cardWidth - paddingSide * 2;
       const maxHeight = cardHeight - paddingTop - paddingBottom;
 
@@ -366,7 +400,7 @@ const TextCardGeneratorPage: React.FC = () => {
 
     setGeneratedCards(cards);
   };
-
+  // 处理模板变更的函数
   const handleTemplateChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTemplate(newValue);
     const template = presetTemplates[newValue];
@@ -382,13 +416,15 @@ const TextCardGeneratorPage: React.FC = () => {
       description="创建优雅美观的文字卡片，支持Markdown格式，适合社交媒体分享或个人使用。"
       iconSrc="/images/text-card-generator.svg"
     >
+      {/* 主要内容区域 */}
       <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 2, backgroundColor: '#f5f5f5' }}>
         <Grid container spacing={2}>
+          {/* 文本输入区域 */}
           <Grid item xs={12}>
             <TextField
               fullWidth
               multiline
-              rows={4}
+              rows={isMobile ? 3 : 4}
               variant="outlined"
               label="输入文字（支持Markdown格式）"
               value={text}
@@ -396,6 +432,7 @@ const TextCardGeneratorPage: React.FC = () => {
               sx={{ mb: 2, backgroundColor: '#ffffff' }}
             />
           </Grid>
+          {/* 模板选择区域 */}
           <Grid item xs={12}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>选择模板</Typography>
             <Tabs 
@@ -406,7 +443,11 @@ const TextCardGeneratorPage: React.FC = () => {
               sx={{ 
                 backgroundColor: '#ffffff', 
                 borderRadius: 1,
-                '& .MuiTab-root': { minWidth: isMobile ? 80 : 120, fontSize: isMobile ? '0.8rem' : '1rem' }
+                '& .MuiTab-root': { 
+                  minWidth: isMobile ? 60 : 120, 
+                  fontSize: isMobile ? '0.7rem' : '1rem',
+                  padding: isMobile ? '6px 8px' : '12px 16px'
+                }
               }}
             >
               {presetTemplates.map((template, index) => (
@@ -414,25 +455,26 @@ const TextCardGeneratorPage: React.FC = () => {
               ))}
             </Tabs>
           </Grid>
+          {/* 渐变底座选择区域 */}
           <Grid item xs={12}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>选择渐变底座</Typography>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
               {gradientBaseColors.map((gradientColor, index) => (
-                <Grid item key={index}>
+                <Grid item key={index} xs={4} sm={3} md={2}>
                   <Button
                     onClick={() => {
                       setGradientBase(gradientColor);
                       setUseBase(gradientColor.colors.length > 0);
                     }}
                     sx={{
-                      width: 100,
-                      height: 50,
+                      width: '100%',
+                      height: isMobile ? 40 : 50,
                       background: gradientColor.colors.length > 0
                         ? `linear-gradient(to right, ${gradientColor.colors.join(', ')})`
-                        : '#FFFFFF',  // 使用白色背景
-                      border: gradientBase === gradientColor ? '2px solid #000' : '1px solid #000',  // 添加边框以区分白色背景
-                      color: '#000000',  // 使用黑色符号
-                      fontSize: '24px',
+                        : '#FFFFFF',
+                      border: gradientBase === gradientColor ? '2px solid #000' : '1px solid #000',
+                      color: '#000000',
+                      fontSize: isMobile ? '18px' : '24px',
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
@@ -444,24 +486,33 @@ const TextCardGeneratorPage: React.FC = () => {
               ))}
             </Grid>
           </Grid>
+          {/* 字体选择区域 */}
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth size={isMobile ? 'small' : 'medium'}>
               <InputLabel>字体</InputLabel>
               <Select
                 value={font}
                 label="字体"
-                onChange={(e) => setFont(e.target.value)}
+                onChange={(e) => {
+                  setFont(e.target.value);
+                  generatePreview(); // 立即重新生成预览
+                }}
                 sx={{ backgroundColor: '#ffffff' }}
               >
-                {fonts.map((fontName) => (
-                  <MenuItem key={fontName} value={fontName}>
-                    <Typography style={{ fontFamily: fontName }}>{fontName}</Typography>
+                {fonts.map((fontOption) => (
+                  <MenuItem key={fontOption.value} value={fontOption.value}>
+                    <Typography style={{ 
+                      fontFamily: `"${fontOption.value}", "Source Han Sans CN", sans-serif`,
+                      fontSize: isMobile ? '14px' : '16px'
+                    }}>
+                      {fontOption.label}
+                    </Typography>
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
-          {/* 删除布局选择的 Grid 项 */}
+          {/* 字体大小调整区域 */}
           <Grid item xs={12}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>字体大小</Typography>
             <Slider
@@ -473,6 +524,7 @@ const TextCardGeneratorPage: React.FC = () => {
               valueLabelDisplay="auto"
             />
           </Grid>
+          {/* 背景颜色选择区域 */}
           <Grid item xs={6}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>背景颜色</Typography>
             <input
@@ -482,6 +534,7 @@ const TextCardGeneratorPage: React.FC = () => {
               style={{ width: '100%', height: isMobile ? '30px' : '40px' }}
             />
           </Grid>
+          {/* 文字颜色选择区域 */}
           <Grid item xs={6}>
             <Typography variant={isMobile ? 'body2' : 'body1'} gutterBottom>文字颜色</Typography>
             <input
@@ -491,6 +544,7 @@ const TextCardGeneratorPage: React.FC = () => {
               style={{ width: '100%', height: isMobile ? '30px' : '40px' }}
             />
           </Grid>
+          {/* 图片比例选择区域 */}
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth size={isMobile ? 'small' : 'medium'}>
               <InputLabel>图片比例</InputLabel>
@@ -506,6 +560,7 @@ const TextCardGeneratorPage: React.FC = () => {
               </Select>
             </FormControl>
           </Grid>
+          {/* 自动分割长文本开关 */}
           <Grid item xs={12} sm={6}>
             <FormControlLabel
               control={
@@ -519,6 +574,7 @@ const TextCardGeneratorPage: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
+      {/* 卡片预览和下载区域 */}
       <Box sx={{ mt: 4, textAlign: 'center' }}>
         <Typography variant={isMobile ? 'h6' : 'h5'} gutterBottom>卡片预览</Typography>
         {generatedCards.map((card, index) => (
@@ -533,7 +589,9 @@ const TextCardGeneratorPage: React.FC = () => {
             <img src={card} alt={`Generated Card ${index + 1}`} style={{ width: '100%', height: 'auto' }} />
           </Box>
         ))}
+        {/* 隐藏的画布元素，用于生成图片 */}
         <canvas ref={canvasRef} style={{ display: 'none' }} />
+        {/* 下载按钮 */}
         <Button
           variant="contained"
           onClick={() => {
@@ -544,7 +602,7 @@ const TextCardGeneratorPage: React.FC = () => {
               link.click();
             });
           }}
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, width: isMobile ? '100%' : 'auto' }}
         >
           下载卡片
         </Button>
