@@ -1,0 +1,22 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bookGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 书本形状 -->
+  <rect x="40" y="40" width="120" height="120" fill="url(#bookGradient)" rx="10">
+    <animate attributeName="height" values="120;100;120" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="y" values="40;50;40" dur="3s" repeatCount="indefinite" />
+  </rect>
+
+  <!-- 动态效果 -->
+  <rect x="60" y="60" width="80" height="80" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="10 5">
+    <animate attributeName="stroke-dashoffset" values="0;15;0" dur="3s" repeatCount="indefinite" />
+  </rect>
+
+  <!-- AI文字 -->
+  <text x="100" y="105" font-family="Helvetica, Arial, sans-serif" font-size="60" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">AI</text>
+</svg>

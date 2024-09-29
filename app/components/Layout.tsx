@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import MenuIcon from '@mui/icons-material/Menu';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const drawerWidth = 240;
 
@@ -98,6 +99,40 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Typography>
             </a>
           </Link>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton
+            color="inherit"
+            href="https://www.bookai.top/"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              mr: 1,
+              '&:hover': {
+                bgcolor: 'rgba(255, 255, 255, 0.1)',
+              },
+            }}
+          >
+            <Image 
+              src="/images/bookai-icon.svg" 
+              alt="BookAI" 
+              width={48} 
+              height={48} 
+            />
+          </IconButton>
+          <IconButton
+            color="inherit"
+            href="https://github.com/alchaincyf/img2046"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+              '&:hover': {
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+              },
+            }}
+          >
+            <GitHubIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box

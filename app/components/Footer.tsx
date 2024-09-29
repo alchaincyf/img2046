@@ -51,21 +51,22 @@ const Footer: React.FC = () => {
           </svg>
           Copyright{' '}
           <Link color="inherit" href="https://www.youtube.com/@Alchain" target="_blank" rel="noopener noreferrer">
-            AI进化论-花生
+            {' '}AI进化论-花生
           </Link>
-          , Created with {' '}
+          , Created with  {' '}
           <Link color="inherit" href="https://www.bookai.top/cursor/intro" target="_blank" rel="noopener noreferrer">
-            Cursor
+            {' '}Cursor
           </Link>
         </Typography>
         <Typography variant="body2" sx={{ color: '#666', mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" style={{ marginRight: '8px' }}>
             <path fill="currentColor" d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
           </svg>
-          回到{' '}
+          前往{' '}
           <Link color="inherit" href="https://www.bookai.top/" target="_blank" rel="noopener noreferrer">
-            bookai.top首页
+            bookai.top
           </Link>
+          {' '}学习ChatGPT、Cursor教程
         </Typography>
       </Box>
     </Box>
