@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Menu, MenuItem, IconButton } from '@mui/material';
+import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Menu, MenuItem, IconButton, Collapse } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 import pptxgen from 'pptxgenjs';
@@ -12,6 +12,9 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CloseIcon from '@mui/icons-material/Close';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 // ... 其他导入
 
@@ -25,6 +28,7 @@ export default function PPTGeneratorPage() {
   const [error, setError] = useState<string | null>(null);
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [tipsOpen, setTipsOpen] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -220,6 +224,16 @@ export default function PPTGeneratorPage() {
     }
   };
 
+  const promptText = `作为具有20年经验的苹果发布会的keynote设计师，我希望你帮我使用同样的专业设计技巧和视觉审美，帮我把把这篇文章变成一系列结构清晰、重点突出，适合用来演讲的中文keynote，你可以使用svg实现keynote页面设计。
+
+你也是svg的视觉设计专家，非常理解svg的限制和特色，有着极好的审美，会选择好看的无衬线字体，进行出色的有呼吸感的文字布局，通过界面的组块化清晰呈现信息。
+
+每张svg图标的高度都是1920*1080。`;
+
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText(promptText);
+  };
+
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
@@ -233,10 +247,47 @@ export default function PPTGeneratorPage() {
         </Typography>
       </Box>
       
+      <Box sx={{ mb: 3, backgroundColor: '#f0f4f8', borderRadius: '10px', padding: '15px' }}>
+        <Button
+          onClick={() => setTipsOpen(!tipsOpen)}
+          endIcon={tipsOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          sx={{ mb: 1 }}
+        >
+          使用提示
+        </Button>
+        <Collapse in={tipsOpen}>
+          <Typography variant="body1" gutterBottom>
+            请先试用以下prompt为文章生成svg代码：
+          </Typography>
+          <TextField
+            multiline
+            rows={6}
+            fullWidth
+            variant="outlined"
+            value={promptText}
+            InputProps={{
+              readOnly: true,
+            }}
+            sx={{ mb: 2, backgroundColor: '#ffffff' }}
+          />
+          <Button
+            variant="outlined"
+            startIcon={<ContentCopyIcon />}
+            onClick={handleCopyPrompt}
+            sx={{ mb: 2 }}
+          >
+            复制Prompt
+          </Button>
+          <Typography variant="body2">
+            再将代码复制到代码框中生成PPT。更多细节请参考<a href="https://www.youtube.com/watch?v=X4LFQmnrGig" target="_blank" rel="noopener noreferrer" style={{color: '#007bff', textDecoration: 'underline'}}>这期视频8分钟以后的内容</a>。
+          </Typography>
+        </Collapse>
+      </Box>
+
       {/* SVG代码输入区域 */}
       <TextField
         multiline
-        rows={10}  // 减小输入框的高度
+        rows={10}
         fullWidth
         variant="outlined"
         value={svgCodes.join('\n\n')}
