@@ -22,21 +22,22 @@ export default function SVGGeneratorPage() {
     const defaultSvg = `
       <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="resizeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="compressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
             <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
           </linearGradient>
         </defs>
-        <rect x="40" y="40" width="120" height="120" fill="url(#resizeGrad)" rx="10">
-          <animate attributeName="width" values="120;110;120" dur="3s" repeatCount="indefinite" />
-          <animate attributeName="height" values="120;110;120" dur="3s" repeatCount="indefinite" />
+        <rect x="40" y="40" width="120" height="120" fill="url(#compressGrad)" rx="10">
+          <animate attributeName="height" values="120;80;120" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="y" values="40;60;40" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="width" values="120;100;120" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="x" values="40;50;40" dur="3s" repeatCount="indefinite" />
         </rect>
-        <path d="M40 100 L160 100 M100 40 L100 160" stroke="#ecf0f1" stroke-width="4" />
-        <circle cx="100" cy="100" r="10" fill="#2ecc71">
-          <animate attributeName="r" values="10;8;10" dur="2s" repeatCount="indefinite" />
-        </circle>
-        <path d="M30 30 L50 50 M170 170 L150 150" stroke="#34495e" stroke-width="4">
-          <animate attributeName="d" values="M30 30 L50 50 M170 170 L150 150;M35 35 L55 55 M165 165 L145 145;M30 30 L50 50 M170 170 L150 150" dur="3s" repeatCount="indefinite" />
+        <path d="M60 100 L140 100" stroke="#ecf0f1" stroke-width="4" stroke-linecap="round">
+          <animate attributeName="d" values="M60 100 L140 100;M70 100 L130 100;M60 100 L140 100" dur="3s" repeatCount="indefinite" />
+        </path>
+        <path d="M70 60 L130 60 M70 140 L130 140" stroke="#34495e" stroke-width="4" stroke-linecap="round">
+          <animate attributeName="d" values="M70 60 L130 60 M70 140 L130 140;M80 80 L120 80 M80 120 L120 120;M70 60 L130 60 M70 140 L130 140" dur="3s" repeatCount="indefinite" />
         </path>
       </svg>
     `;

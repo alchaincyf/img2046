@@ -36,7 +36,10 @@ export default function PPTGeneratorPage() {
   // ... 其他状态引用
 
   const updatePreviews = (codes: string[]) => {
-    const urls = codes.map(code => URL.createObjectURL(new Blob([code], { type: 'image/svg+xml' })));
+    const urls = codes.map(code => {
+      const blob = new Blob([code], { type: 'image/svg+xml' });
+      return URL.createObjectURL(blob);
+    });
     setPreviewUrls(urls);
   };
 
@@ -44,52 +47,28 @@ export default function PPTGeneratorPage() {
     // 初始化默认SVG代码
     const defaultSvg = `
 <svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="#F5F5F7"/>
-  <rect x="0" y="980" width="1920" height="100" fill="#34C759" opacity="0.2">
-    <animate attributeName="y" from="980" to="0" dur="25s" repeatCount="indefinite"/>
-  </rect>
-  <rect x="-100" y="0" width="100" height="1080" fill="#007AFF" opacity="0.2">
-    <animate attributeName="x" from="-100" to="1920" dur="30s" repeatCount="indefinite"/>
-  </rect>
-  <text x="960" y="120" font-family="SF Pro Display, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="#1D1D1F">
-    技术原理
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E1E1E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2C2C2C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg-gradient)"/>
+  <circle cx="960" cy="540" r="400" fill="none" stroke="#E0E0E0" stroke-width="2">
+    <animate attributeName="r" values="400;420;400" dur="4s" repeatCount="indefinite" />
+  </circle>
+  <text x="960" y="540" font-family="微软雅黑, sans-serif" font-size="96" font-weight="bold" text-anchor="middle" fill="#E0E0E0">
+    实时API：开启语音交互新纪元
+    <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite" />
   </text>
-  <g transform="translate(100, 200)">
-    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
-      WebSocket持久连接
-    </text>
-    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
-      实现实时双向通信
-    </text>
-  </g>
-  <g transform="translate(980, 200)">
-    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
-      支持函数调用
-    </text>
-    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
-      增强交互能力和灵活性
-    </text>
-  </g>
-  <g transform="translate(100, 460)">
-    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
-      自动处理中断
-    </text>
-    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
-      提供更自然的对话体验
-    </text>
-  </g>
-  <g transform="translate(980, 460)">
-    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
-      流式音频输入输出
-    </text>
-    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
-      实现实时语音交互
-    </text>
-  </g>
+  
+  <!-- 动态线条 -->
+  <path d="M0 0 Q960 540, 1920 0" stroke="#FFD700" stroke-width="2" fill="none">
+    <animate attributeName="d" values="M0 0 Q960 540, 1920 0; M0 1080 Q960 540, 1920 1080; M0 0 Q960 540, 1920 0" dur="10s" repeatCount="indefinite" />
+  </path>
+  <path d="M0 1080 Q960 540, 1920 1080" stroke="#FF69B4" stroke-width="2" fill="none">
+    <animate attributeName="d" values="M0 1080 Q960 540, 1920 1080; M0 0 Q960 540, 1920 0; M0 1080 Q960 540, 1920 1080" dur="12s" repeatCount="indefinite" />
+  </path>
 </svg>`;
     setSvgCodes([defaultSvg]);
     updatePreviews([defaultSvg]);
