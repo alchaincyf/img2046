@@ -35,6 +35,11 @@ export default function SvgToPptPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const updatePreviews = (codes: string[]) => {
+    const urls = codes.map(code => URL.createObjectURL(new Blob([code], { type: 'image/svg+xml' })));
+    setPreviewUrls(urls);
+  };
+
   useEffect(() => {
     const defaultSvg = `
       <svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">

@@ -15,6 +15,8 @@ import { saveAs } from 'file-saver';
 
 // ... 其他导入
 
+import { toPng } from 'html-to-image';
+
 export default function PPTGeneratorPage() {
   const [svgCodes, setSvgCodes] = useState<string[]>(['']);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -167,6 +169,42 @@ export default function PPTGeneratorPage() {
     }
   };
 
+  const handleExportLongImage = async () => {
+    setLoading(true);
+    try {
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+
+      for (const url of previewUrls) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        container.appendChild(img);
+      }
+
+      document.body.appendChild(container);
+
+      const dataUrl = await toPng(container);
+      
+      document.body.removeChild(container);
+
+      const link = document.createElement('a');
+      link.download = 'long_image.png';
+      link.href = dataUrl;
+      link.click();
+
+      setSuccess(true);
+    } catch (err) {
+      console.error('长图导出错误:', err);
+      setError('长图导出失败，请重试。');
+    } finally {
+      setLoading(false);
+      handleExportClose();
+    }
+  };
+
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
@@ -201,6 +239,7 @@ export default function PPTGeneratorPage() {
       >
         <MenuItem onClick={handleExportPPT}>导出为PPT</MenuItem>
         <MenuItem onClick={handleExportImages}>导出为图片</MenuItem>
+        <MenuItem onClick={handleExportLongImage}>导出为长图</MenuItem>
       </Menu>
 
       {/* 预览区域 */}
