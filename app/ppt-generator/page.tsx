@@ -41,34 +41,49 @@ export default function PPTGeneratorPage() {
     const defaultSvg = `
 <svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="#F5F5F7"/>
-  <text x="960" y="120" font-family="SF Pro Display, sans-serif" font-size="56" font-weight="bold" text-anchor="middle" fill="#1D1D1F">
-    视觉微调的核心优势
+  <rect x="0" y="980" width="1920" height="100" fill="#34C759" opacity="0.2">
+    <animate attributeName="y" from="980" to="0" dur="25s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="-100" y="0" width="100" height="1080" fill="#007AFF" opacity="0.2">
+    <animate attributeName="x" from="-100" to="1920" dur="30s" repeatCount="indefinite"/>
+  </rect>
+  <text x="960" y="120" font-family="SF Pro Display, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="#1D1D1F">
+    技术原理
   </text>
-  <g transform="translate(240, 240)">
-    <rect width="1440" height="200" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-    <text x="40" y="60" font-family="SF Pro Text, sans-serif" font-size="36" fill="#1D1D1F">
-      增强图像理解能力
+  <g transform="translate(100, 200)">
+    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
+      WebSocket持久连接
     </text>
-    <text x="40" y="120" font-family="SF Pro Text, sans-serif" font-size="24" fill="#86868B">
-      提升视觉搜索、物体检测和医疗图像分析等应用的准确性
-    </text>
-  </g>
-  <g transform="translate(240, 480)">
-    <rect width="1440" height="200" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-    <text x="40" y="60" font-family="SF Pro Text, sans-serif" font-size="36" fill="#1D1D1F">
-      低样本学习
-    </text>
-    <text x="40" y="120" font-family="SF Pro Text, sans-serif" font-size="24" fill="#86868B">
-      仅需100张图像即可显著提升模型性能
+    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
+      实现实时双向通信
     </text>
   </g>
-  <g transform="translate(240, 720)">
-    <rect width="1440" height="200" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
-    <text x="40" y="60" font-family="SF Pro Text, sans-serif" font-size="36" fill="#1D1D1F">
-      灵活的数据组合
+  <g transform="translate(980, 200)">
+    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
+      支持函数调用
     </text>
-    <text x="40" y="120" font-family="SF Pro Text, sans-serif" font-size="24" fill="#86868B">
-      支持文本和图像数据的混合微调，实现更强大的模型定制
+    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
+      增强交互能力和灵活性
+    </text>
+  </g>
+  <g transform="translate(100, 460)">
+    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
+      自动处理中断
+    </text>
+    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
+      提供更自然的对话体验
+    </text>
+  </g>
+  <g transform="translate(980, 460)">
+    <rect width="840" height="220" rx="20" ry="20" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="2"/>
+    <text x="60" y="80" font-family="SF Pro Text, sans-serif" font-size="40" fill="#1D1D1F">
+      流式音频输入输出
+    </text>
+    <text x="60" y="150" font-family="SF Pro Text, sans-serif" font-size="28" fill="#86868B">
+      实现实时语音交互
     </text>
   </g>
 </svg>`;
