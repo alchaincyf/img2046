@@ -24,7 +24,7 @@ export default function PPTGeneratorPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // ... 其他状态和引用
+  // ... 其他状态���引用
 
   useEffect(() => {
     // 初始化默认SVG代码
@@ -132,7 +132,7 @@ export default function PPTGeneratorPage() {
         canvas.height = 1080;
         const ctx = canvas.getContext('2d');
         
-        const img = new Image();
+        const img = new Image(1920, 1080);
         await new Promise((resolve, reject) => {
           img.onload = resolve;
           img.onerror = reject;
@@ -148,7 +148,7 @@ export default function PPTGeneratorPage() {
       pdf.save('presentation.pdf');
       setSuccess(true);
     } catch (err) {
-      console.error('PDF export error:', err);
+      console.error('PDF导出错误:', err);
       setError('PDF导出失败，请重试。');
     } finally {
       setLoading(false);
@@ -220,7 +220,7 @@ export default function PPTGeneratorPage() {
         sx={{ mb: 2 }}
       />
       
-      <Button onClick={handlePreview}>预览所有幻灯片</Button>
+      <Button onClick={handlePreview}>预��所有幻灯片</Button>
       <Button onClick={handleExportClick}>导出</Button>
       <Menu
         anchorEl={anchorEl}
