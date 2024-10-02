@@ -1,0 +1,38 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="svgToPptGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2ecc71;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- PPT幻灯片背景 -->
+  <rect x="30" y="40" width="140" height="120" fill="#ecf0f1" stroke="#34495e" stroke-width="4" rx="10">
+    <animate attributeName="height" values="120;110;120" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="y" values="40;45;40" dur="3s" repeatCount="indefinite" />
+  </rect>
+  
+  <!-- SVG图标 -->
+  <path d="M60 80 L90 80 L90 110 L60 110 Z" fill="url(#svgToPptGrad)" stroke="#2c3e50" stroke-width="2">
+    <animate attributeName="d" values="M60 80 L90 80 L90 110 L60 110 Z;M65 85 L85 85 L85 105 L65 105 Z;M60 80 L90 80 L90 110 L60 110 Z" dur="3s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- 箭头 -->
+  <path d="M100 95 L120 95 L115 90 M120 95 L115 100" stroke="#34495e" stroke-width="3" fill="none">
+    <animate attributeName="d" values="M100 95 L120 95 L115 90 M120 95 L115 100;M105 95 L125 95 L120 90 M125 95 L120 100;M100 95 L120 95 L115 90 M120 95 L115 100" dur="3s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- PPT图标 -->
+  <rect x="130" y="80" width="30" height="30" fill="#e74c3c" rx="5">
+    <animate attributeName="width" values="30;28;30" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="height" values="30;28;30" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="x" values="130;131;130" dur="3s" repeatCount="indefinite" />
+    <animate attributeName="y" values="80;81;80" dur="3s" repeatCount="indefinite" />
+  </rect>
+  <text x="145" y="102" font-family="Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle">PPT</text>
+  
+  <!-- 动态线条 -->
+  <path d="M40 140 L160 140" stroke="#3498db" stroke-width="2" stroke-dasharray="5,5">
+    <animate attributeName="stroke-dashoffset" values="0;10;0" dur="3s" repeatCount="indefinite" />
+  </path>
+</svg>
