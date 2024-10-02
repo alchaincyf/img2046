@@ -1,14 +1,17 @@
+//ts-nocheck
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Menu, MenuItem, IconButton } from '@mui/material';
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
-import { jsPDF } from 'jspdf';
 import pptxgen from 'pptxgenjs';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CloseIcon from '@mui/icons-material/Close';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 // ... 其他导入
 
@@ -24,7 +27,7 @@ export default function PPTGeneratorPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // ... 其他状态���引用
+  // ... 其他状态引用
 
   useEffect(() => {
     // 初始化默认SVG代码
@@ -114,48 +117,6 @@ export default function PPTGeneratorPage() {
     setAnchorEl(null);
   };
 
-  const handleExportPDF = async () => {
-    setLoading(true);
-    try {
-      const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'px',
-        format: [1920, 1080]
-      });
-
-      for (let i = 0; i < svgCodes.length; i++) {
-        if (i > 0) pdf.addPage([1920, 1080], 'landscape');
-        
-        // 将SVG转换为Canvas
-        const canvas = document.createElement('canvas');
-        canvas.width = 1920;
-        canvas.height = 1080;
-        const ctx = canvas.getContext('2d');
-        
-        const img = new Image(1920, 1080);
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-          img.src = 'data:image/svg+xml;base64,' + btoa(svgCodes[i]);
-        });
-        
-        ctx?.drawImage(img, 0, 0, 1920, 1080);
-        
-        // 将Canvas添加到PDF
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 1920, 1080);
-      }
-
-      pdf.save('presentation.pdf');
-      setSuccess(true);
-    } catch (err) {
-      console.error('PDF导出错误:', err);
-      setError('PDF导出失败，请重试。');
-    } finally {
-      setLoading(false);
-      handleExportClose();
-    }
-  };
-
   const handleExportPPT = async () => {
     setLoading(true);
     try {
@@ -167,7 +128,7 @@ export default function PPTGeneratorPage() {
       await pptx.writeFile({ fileName: 'presentation.pptx' });
       setSuccess(true);
     } catch (err) {
-      console.error('PPT export error:', err);
+      console.error('PPT导出错误:', err);
       setError('PPT导出失败，请重试。');
     } finally {
       setLoading(false);
@@ -175,26 +136,37 @@ export default function PPTGeneratorPage() {
     }
   };
 
-  const handleExportImages = () => {
+  const handleExportImages = async () => {
     setLoading(true);
     try {
-      previewUrls.forEach((url, index) => {
+      if (previewUrls.length === 1) {
         const link = document.createElement('a');
-        link.href = url;
-        link.download = `slide_${index + 1}.svg`;
+        link.href = previewUrls[0];
+        link.download = 'slide.svg';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-      });
+      } else {
+        const zip = new JSZip();
+        const promises = previewUrls.map((url, index) =>
+          fetch(url).then(res => res.blob()).then(blob => {
+            zip.file(`slide_${index + 1}.svg`, blob);
+          })
+        );
+        await Promise.all(promises);
+        const content = await zip.generateAsync({type: 'blob'});
+        saveAs(content, 'slides.zip');
+      }
       setSuccess(true);
     } catch (err) {
-      console.error('Image export error:', err);
-      setError('图片出失败，请重试。');
+      console.error('图片导出错误:', err);
+      setError('图片导出失败，请重试。');
     } finally {
       setLoading(false);
       handleExportClose();
     }
   };
+
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
@@ -220,14 +192,13 @@ export default function PPTGeneratorPage() {
         sx={{ mb: 2 }}
       />
       
-      <Button onClick={handlePreview}>预��所有幻灯片</Button>
+      <Button onClick={handlePreview}>预览所有幻灯片</Button>
       <Button onClick={handleExportClick}>导出</Button>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleExportClose}
       >
-        <MenuItem onClick={handleExportPDF}>导出为PDF</MenuItem>
         <MenuItem onClick={handleExportPPT}>导出为PPT</MenuItem>
         <MenuItem onClick={handleExportImages}>导出为图片</MenuItem>
       </Menu>
