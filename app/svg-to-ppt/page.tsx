@@ -53,6 +53,13 @@ export default function SvgToPptPage() {
     updatePreviews([defaultSvg]);
   }, []);
 
+  const handleSvgCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const svgRegex = /<svg[\s\S]*?<\/svg>/g;
+    const newSvgCodes = event.target.value.match(svgRegex) || [];
+    setSvgCodes(newSvgCodes);
+    updatePreviews(newSvgCodes);
+  };
+
   // ... 其他函数保持不变
 
   return (
