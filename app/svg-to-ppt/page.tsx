@@ -60,6 +60,18 @@ export default function SvgToPptPage() {
     updatePreviews(newSvgCodes);
   };
 
+  const handlePreview = () => {
+    updatePreviews(svgCodes);
+  };
+
+  const handleExportClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleExportClose = () => {
+    setAnchorEl(null);
+  };
+
   // ... 其他函数保持不变
 
   return (
