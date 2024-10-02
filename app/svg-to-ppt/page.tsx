@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   Button, 
@@ -22,6 +22,8 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CloseIcon from '@mui/icons-material/Close';
 import AIToolLayout from '../components/AIToolLayout';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 export default function SvgToPptPage() {
   const [svgCodes, setSvgCodes] = useState<string[]>(['']);
@@ -72,7 +74,99 @@ export default function SvgToPptPage() {
     setAnchorEl(null);
   };
 
-  // ... 其他函数保持不变
+  const handleFullscreen = (index: number) => {
+    setFullscreenIndex(index);
+  };
+
+  const handleCloseFullscreen = () => {
+    setFullscreenIndex(null);
+  };
+
+  const handlePrevSlide = () => {
+    if (fullscreenIndex !== null && fullscreenIndex > 0) {
+      setFullscreenIndex(fullscreenIndex - 1);
+    }
+  };
+
+  const handleNextSlide = () => {
+    if (fullscreenIndex !== null && fullscreenIndex < previewUrls.length - 1) {
+      setFullscreenIndex(fullscreenIndex + 1);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setLoading(true);
+    try {
+      const pdf = new jsPDF('l', 'px', [1920, 1080]);
+      for (let i = 0; i < previewUrls.length; i++) {
+        if (i > 0) pdf.addPage();
+        await pdf.svg(svgCodes[i], {
+          x: 0,
+          y: 0,
+          width: 1920,
+          height: 1080
+        });
+      }
+      pdf.save('presentation.pdf');
+      setSuccess(true);
+    } catch (err) {
+      console.error('PDF导出错误:', err);
+      setError('PDF导出失败，请重试。');
+    } finally {
+      setLoading(false);
+      handleExportClose();
+    }
+  };
+
+  const handleExportPPT = async () => {
+    setLoading(true);
+    try {
+      const pptx = new pptxgen();
+      for (const url of previewUrls) {
+        const slide = pptx.addSlide();
+        slide.addImage({ path: url, x: 0, y: 0, w: '100%', h: '100%' });
+      }
+      await pptx.writeFile({ fileName: 'presentation.pptx' });
+      setSuccess(true);
+    } catch (err) {
+      console.error('PPT导出错误:', err);
+      setError('PPT导出失败，请重试。');
+    } finally {
+      setLoading(false);
+      handleExportClose();
+    }
+  };
+
+  const handleExportImages = async () => {
+    setLoading(true);
+    try {
+      if (previewUrls.length === 1) {
+        const link = document.createElement('a');
+        link.href = previewUrls[0];
+        link.download = 'slide.svg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        const zip = new JSZip();
+        const promises = previewUrls.map((url, index) =>
+          fetch(url).then(res => res.blob()).then(blob => {
+            zip.file(`slide_${index + 1}.svg`, blob);
+          })
+        );
+        await Promise.all(promises);
+        const content = await zip.generateAsync({type: 'blob'});
+        saveAs(content, 'slides.zip');
+      }
+      setSuccess(true);
+    } catch (err) {
+      console.error('图片导出错误:', err);
+      setError('图片导出失败，请重试。');
+    } finally {
+      setLoading(false);
+      handleExportClose();
+    }
+  };
 
   return (
     <AIToolLayout
@@ -129,7 +223,6 @@ export default function SvgToPptPage() {
           <MenuItem onClick={handleExportImages}>导出为图片</MenuItem>
         </Menu>
 
-        {/* 预览区域 */}
         <Typography variant="h5" gutterBottom sx={{ mt: 4, color: '#34495e' }}>
           幻灯片预览
         </Typography>
@@ -159,7 +252,6 @@ export default function SvgToPptPage() {
           ))}
         </Grid>
 
-        {/* 全屏预览 */}
         {fullscreenIndex !== null && (
           <Box
             sx={{
