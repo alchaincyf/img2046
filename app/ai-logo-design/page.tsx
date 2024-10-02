@@ -118,7 +118,7 @@ export default function AILogoDesign() {
 
   return (
     <ImageToolLayout
-      title="AI Logo 设计工具"
+      title="免费 AI Logo 设计工具"
       description="使用我们的 AI Logo 设计工具，只需输入您的 logo 名称，即可生成独特的 SVG 格式 logo。支持下载 SVG、PNG 和 JPG 格式。"
     >
       <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>

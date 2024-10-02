@@ -136,7 +136,7 @@ const AIImageGeneratorPage: React.FC = () => {
 
   return (
     <AIToolLayout
-      title="AI 文生图"
+      title="免费 AI 文生图工具"
       description="使用 AI 文生图器，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。"
       iconSrc="/images/ai-image-generator.svg"
     >
