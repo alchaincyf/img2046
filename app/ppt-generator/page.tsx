@@ -29,6 +29,11 @@ export default function PPTGeneratorPage() {
 
   // ... 其他状态引用
 
+  const updatePreviews = (codes: string[]) => {
+    const urls = codes.map(code => URL.createObjectURL(new Blob([code], { type: 'image/svg+xml' })));
+    setPreviewUrls(urls);
+  };
+
   useEffect(() => {
     // 初始化默认SVG代码
     const defaultSvg = `
@@ -77,11 +82,6 @@ export default function PPTGeneratorPage() {
 
   const handleAddSlide = () => {
     setSvgCodes([...svgCodes, '']);
-  };
-
-  const updatePreviews = (codes: string[]) => {
-    const urls = codes.map(code => URL.createObjectURL(new Blob([code], { type: 'image/svg+xml' })));
-    setPreviewUrls(urls);
   };
 
   const handlePreview = () => {
