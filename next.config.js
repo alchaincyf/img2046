@@ -1,12 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.aliyuncs.com',
-      },
-    ],
+  experimental: {
+    serverComponentsExternalPackages: ['sharp', 'node-fetch', 'form-data'],
   },
 }
 
