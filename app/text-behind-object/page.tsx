@@ -253,7 +253,7 @@ export default function TextBehindSubject() {
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('无法获取 canvas 上下文');
 
-    const originalImage = new HTMLImageElement();
+    const originalImage = document.createElement('img');
     originalImage.src = imagePreview;
     await new Promise((resolve) => { originalImage.onload = resolve; });
 
@@ -293,7 +293,7 @@ export default function TextBehindSubject() {
 
     ctx.restore();
 
-    const removedBgImg = new HTMLImageElement();
+    const removedBgImg = document.createElement('img');
     removedBgImg.src = removedBgImage;
     await new Promise((resolve) => { removedBgImg.onload = resolve; });
     ctx.globalCompositeOperation = 'source-over';
