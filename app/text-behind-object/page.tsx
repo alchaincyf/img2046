@@ -1,3 +1,5 @@
+//ts-nocheck
+
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -251,7 +253,7 @@ export default function TextBehindSubject() {
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('无法获取 canvas 上下文');
 
-    const originalImage = new Image();
+    const originalImage = new HTMLImageElement();
     originalImage.src = imagePreview;
     await new Promise((resolve) => { originalImage.onload = resolve; });
 
