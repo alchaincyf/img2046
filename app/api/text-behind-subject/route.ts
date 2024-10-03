@@ -2,19 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
-const REMOVE_BG_API_KEY = process.env.REMOVE_BG_API_KEY;
+const DEFAULT_REMOVE_BG_API_KEY = process.env.REMOVE_BG_API_KEY;
 
 export async function POST(req: NextRequest) {
   try {
     console.log('Received request to remove background');
     
-    if (!REMOVE_BG_API_KEY) {
-      console.error('REMOVE_BG_API_KEY is not set');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
-
     const formData = await req.formData();
     const image = formData.get('image') as File;
+    const userApiKey = formData.get('api_key') as string;
 
     if (!image) {
       console.error('No image file received');
@@ -32,11 +28,19 @@ export async function POST(req: NextRequest) {
       contentType: image.type,
     });
 
+    // 使用用户提供的 API key，如果没有则使用默认的
+    const apiKey = userApiKey || DEFAULT_REMOVE_BG_API_KEY;
+
+    if (!apiKey) {
+      console.error('No API key available');
+      return NextResponse.json({ error: '缺少 API key' }, { status: 400 });
+    }
+
     console.log('Sending request to remove.bg API');
     const removeBgResponse = await fetch('https://api.remove.bg/v1.0/removebg', {
       method: 'POST',
       headers: {
-        'X-Api-Key': REMOVE_BG_API_KEY,
+        'X-Api-Key': apiKey,
       },
       body: removeBgFormData,
     });

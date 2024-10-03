@@ -21,6 +21,7 @@ const menuItems = [
   { text: 'SVG 编辑器', icon: <Image src="/images/svg-generator.svg" alt="SVG Generator" width={24} height={24} />, href: '/svg-generator' },
   { text: 'SVG to PPT', icon: <Image src="/images/svg-to-ppt.svg" alt="PPT Generator" width={24} height={24} />, href: '/ppt-generator' },
   { text: '极简Logo设计', icon: <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={24} height={24} />, href: '/ai-logo-design' },
+  { text: 'Text Behind Object', icon: <Image src="/images/text-behind-object.svg" alt="Text Behind Object" width={24} height={24} />, href: '/text-behind-subject' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {

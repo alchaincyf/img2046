@@ -1,0 +1,50 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4ECDC4;stop-opacity:1" />
+    </linearGradient>
+    <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect x="0" y="0" width="200" height="200" fill="url(#bgGradient)" />
+  
+  <!-- 动态几何形状 -->
+  <g>
+    <polygon points="0,100 100,0 200,100 100,200" fill="none" stroke="#FFD93D" stroke-width="2">
+      <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="20s" repeatCount="indefinite" />
+    </polygon>
+    <circle cx="100" cy="100" r="80" fill="none" stroke="#6E44FF" stroke-width="2">
+      <animate attributeName="r" values="80;90;80" dur="4s" repeatCount="indefinite" />
+    </circle>
+  </g>
+  
+  <!-- "TEXT" 文字 -->
+  <text x="100" y="110" font-family="Arial" font-size="48" font-weight="bold" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle" filter="url(#neonGlow)">TEXT</text>
+  
+  <!-- 未来主义物体 -->
+  <g transform="translate(100, 100)">
+    <!-- 中心圆 -->
+    <circle cx="0" cy="0" r="30" fill="#4ECDC4">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
+    </circle>
+    <!-- 旋转线条 -->
+    <g>
+      <line x1="-40" y1="0" x2="40" y2="0" stroke="#FF6B6B" stroke-width="4" stroke-linecap="round" />
+      <line x1="0" y1="-40" x2="0" y2="40" stroke="#FF6B6B" stroke-width="4" stroke-linecap="round" />
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="10s" repeatCount="indefinite" />
+    </g>
+    <!-- 脉冲效果 -->
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#FFD93D" stroke-width="2">
+      <animate attributeName="r" values="50;60;50" dur="2s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+</svg>
