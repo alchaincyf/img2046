@@ -293,7 +293,7 @@ export default function TextBehindSubject() {
 
     ctx.restore();
 
-    const removedBgImg = new Image();
+    const removedBgImg = new HTMLImageElement();
     removedBgImg.src = removedBgImage;
     await new Promise((resolve) => { removedBgImg.onload = resolve; });
     ctx.globalCompositeOperation = 'source-over';
