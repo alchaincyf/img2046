@@ -36,16 +36,22 @@ const sidebarAds = [
     tag: '热门',
   },
   {
-    title: 'ChatGPT会员合租',
-    description: '29元/月，国内镜像直连，快速获取ChatGPT Plus会员（优惠码：huasheng）',
-    link: 'https://nf.video/hh9tsf/?gid=18',
-    tag: '优惠',
-  },
-  {
     title: '境外虚拟信用卡WILDCARD',
     description: '0月租,可用于购买ChatGPT、Claude会员,绑定美区AppStore（优惠码：AIHS）',
     link: 'https://bewildcard.com/i/AIHS',
     tag: '推荐',
+  },
+  {
+    title: '最全面的Chrome AI助手',
+    description: '一站式AI工具集,支持ChatGPT、Claude等多种模型。提供写作、翻译、绘画等功能',
+    link: 'https://monica.im?ref=nmjkm2e',
+    tag: '智能助手',
+  },
+  {
+    title: 'ChatGPT会员合租',
+    description: '29元/月，国内镜像直连，快速获取ChatGPT Plus会员（优惠码：huasheng）',
+    link: 'https://nf.video/hh9tsf/?gid=18',
+    tag: '优惠',
   },
 ];
 
