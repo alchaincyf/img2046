@@ -3,9 +3,11 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { TextField, Box, Typography, Slider, Select, MenuItem, Grid, Paper, Switch, FormControlLabel, Button, Tabs, Tab, Tooltip, Link, Alert } from '@mui/material';
+import { TextField, Box, Typography, Slider, Select, MenuItem, Grid, Paper, Switch, FormControlLabel, Button, Tabs, Tab, Tooltip, Link, Alert, IconButton } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import InfoIcon from '@mui/icons-material/Info';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import debounce from 'lodash/debounce';
 import Image from 'next/image';
 
@@ -231,6 +233,8 @@ export default function TextBehindSubject() {
   const [customColor, setCustomColor] = useState('#000000');
   const [colorSchemeType, setColorSchemeType] = useState<keyof typeof colorSchemes>('莫兰迪');
   const [removeBgApiKey, setRemoveBgApiKey] = useState('');
+  const [isApiKeyEditable, setIsApiKeyEditable] = useState(true);
+  const [savedApiKey, setSavedApiKey] = useState('');
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -381,21 +385,44 @@ export default function TextBehindSubject() {
             <InfoIcon sx={{ ml: 1, verticalAlign: 'middle', fontSize: 20 }} />
           </Tooltip>
         </Typography>
-        <TextField
-          label="Remove.bg API Key"
-          value={removeBgApiKey}
-          onChange={(e) => setRemoveBgApiKey(e.target.value)}
-          fullWidth
-          margin="dense"
-          helperText={
-            <span>
-              获取 API key: {' '}
-              <Link href="https://www.remove.bg/api" target="_blank" rel="noopener noreferrer">
-                https://www.remove.bg/api
-              </Link>
-            </span>
-          }
-        />
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <TextField
+            label="Remove.bg API Key"
+            value={isApiKeyEditable ? removeBgApiKey : savedApiKey}
+            onChange={(e) => setRemoveBgApiKey(e.target.value)}
+            fullWidth
+            margin="dense"
+            disabled={!isApiKeyEditable}
+            type={isApiKeyEditable ? "text" : "password"}
+            InputProps={{
+              endAdornment: (
+                <IconButton
+                  onClick={() => setIsApiKeyEditable(!isApiKeyEditable)}
+                  edge="end"
+                >
+                  {isApiKeyEditable ? <SaveIcon /> : <EditIcon />}
+                </IconButton>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={() => {
+              setSavedApiKey(removeBgApiKey);
+              setIsApiKeyEditable(false);
+            }}
+            disabled={!isApiKeyEditable || !removeBgApiKey}
+            sx={{ ml: 1, height: '56px' }}
+          >
+            保存
+          </Button>
+        </Box>
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+          获取 API key: {' '}
+          <Link href="https://www.remove.bg/api" target="_blank" rel="noopener noreferrer">
+            https://www.remove.bg/api
+          </Link>
+        </Typography>
         <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
           提示：本功能需要使用remove.bg的API，请自行设置，每个用户可以从 remove.bg 获得 50 次免费的 API 使用权益。
         </Typography>
