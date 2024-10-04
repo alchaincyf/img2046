@@ -39,7 +39,7 @@ const sidebarAds = [
   {
     title: 'ChatGPT会员合租',
     description: '国内镜像直连，快速获取ChatGPT Plus会员（优惠码：huasheng）',
-    link: 'https://nf.video/s3y0zi/?gid=18',
+    link: 'https://nf.video/hh9tsf/?gid=18',
     tag: '29元/月',
     socialProof: '已有10万+人购买'
   },
