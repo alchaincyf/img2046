@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, useTheme, IconButton, useMediaQuery, Paper, Button, Chip } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, useTheme, IconButton, useMediaQuery, Paper, Button, Chip, Divider } from '@mui/material';
 import NextLinkComposed from './CustomLink';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -31,27 +31,38 @@ const menuItems = [
 const sidebarAds = [
   {
     title: 'ChatGPT进阶课程',
-    description: '100万人学过的AI课程讲师，带你全面掌握ChatGPT应用技巧。提升工作、学习效率',
+    description: '带你全面掌握ChatGPT应用技巧。提升工作、学习效率',
     link: 'https://xiaobot.net/p/AIclass',
-    tag: '热门',
+    tag: '100万人学过',
+    socialProof: '已有640人订阅'
   },
   {
-    title: '境外虚拟信用卡WILDCARD',
-    description: '0月租,可用于购买ChatGPT、Claude会员,绑定美区AppStore（优惠码：AIHS）',
+    title: 'ChatGPT会员合租',
+    description: '国内镜像直连，快速获取ChatGPT Plus会员（优惠码：huasheng）',
+    link: 'https://nf.video/s3y0zi/?gid=18',
+    tag: '29元/月',
+    socialProof: '已有10万+人购买'
+  },
+  {
+    title: '美国虚拟信用卡WILDCARD',
+    description: '可用于购买ChatGPT、Claude会员,绑定美区AppStore（优惠码：AIHS）',
     link: 'https://bewildcard.com/i/AIHS',
-    tag: '推荐',
+    tag: '0月租',
+    socialProof: '已有5万+人体验'
   },
   {
     title: '最全面的Chrome AI助手',
     description: '一站式AI工具集,支持ChatGPT、Claude等多种模型。提供写作、翻译、绘画等功能',
     link: 'https://monica.im?ref=nmjkm2e',
-    tag: '智能助手',
+    tag: '中国隐形AI出海冠军',
+    socialProof: '200万+Chrome用户'
   },
   {
-    title: 'ChatGPT会员合租',
-    description: '29元/月，国内镜像直连，快速获取ChatGPT Plus会员（优惠码：huasheng）',
-    link: 'https://nf.video/hh9tsf/?gid=18',
-    tag: '优惠',
+    title: 'Chathub - 多合一AI聊天客户端',
+    description: '一个应用畅聊多个AI模型,支持ChatGPT、Claude、Bard等。提高生产力,激发创意',
+    link: 'http://chathub.gg/?ref=aihs',
+    tag: 'AI聊天新体验',
+    socialProof: '20万+Chrome用户'
   },
 ];
 
@@ -116,15 +127,30 @@ const theme = createTheme({
   },
 });
 
+// 在 Layout 组件之前添加这个函数
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [adSidebarOpen, setAdSidebarOpen] = useState(true);
+  const [shuffledAds, setShuffledAds] = useState(sidebarAds);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  useEffect(() => {
+    setShuffledAds(shuffleArray(sidebarAds));
+  }, []);
 
   const drawer = (
     <Box sx={{ overflow: 'auto' }}>
@@ -327,46 +353,54 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.main' }}>
                   推荐资源
                 </Typography>
-                {sidebarAds.map((ad, index) => (
-                  <Paper 
-                    key={index} 
-                    elevation={2} 
-                    sx={{ 
-                      mb: 2, 
-                      p: 2, 
-                      borderRadius: 2,
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-4px)',
-                        boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
-                      },
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{ad.title}</Typography>
-                      <Chip 
-                        label={ad.tag} 
-                        size="small" 
-                        color="secondary" 
-                        sx={{ fontWeight: 'bold' }}
-                      />
-                    </Box>
-                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>{ad.description}</Typography>
-                    <Button 
-                      variant="contained" 
-                      href={ad.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      endIcon={<LaunchIcon />}
-                      fullWidth
-                      sx={{
-                        borderRadius: 8,
-                        fontWeight: 'bold',
+                {shuffledAds.map((ad, index) => (
+                  <React.Fragment key={index}>
+                    <Paper 
+                      elevation={2} 
+                      sx={{ 
+                        mb: 2, 
+                        p: 2, 
+                        borderRadius: 2,
+                        transition: 'transform 0.3s, box-shadow 0.3s',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
+                        },
                       }}
                     >
-                      了解更多
-                    </Button>
-                  </Paper>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: 'primary.main' }}>{ad.title}</Typography>
+                        <Chip 
+                          label={ad.tag} 
+                          size="small" 
+                          color="secondary" 
+                          sx={{ fontWeight: 'bold' }}
+                        />
+                      </Box>
+                      <Typography variant="body2" sx={{ mb: 1, color: 'text.secondary' }}>{ad.description}</Typography>
+                      <Divider sx={{ my: 1 }} />
+                      <Typography variant="caption" sx={{ display: 'block', mb: 1, color: 'text.secondary', fontStyle: 'italic' }}>
+                        {ad.socialProof}
+                      </Typography>
+                      <Button 
+                        variant="outlined" 
+                        href={ad.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        endIcon={<LaunchIcon />}
+                        fullWidth
+                        sx={{
+                          borderRadius: 8,
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        了解更多
+                      </Button>
+                    </Paper>
+                    {index < shuffledAds.length - 1 && (
+                      <Divider sx={{ my: 2, borderStyle: 'dashed' }} />
+                    )}
+                  </React.Fragment>
                 ))}
               </Box>
             )}
