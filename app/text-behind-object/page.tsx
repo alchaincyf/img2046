@@ -263,7 +263,7 @@ export default function TextBehindSubject() {
       try {
         const formData = new FormData();
         formData.append('image', file);
-        formData.append('api_key', removeBgApiKey); // 添加用户的 API key
+        formData.append('api_key', removeBgApiKey);
 
         const response = await fetch('/api/text-behind-subject', {
           method: 'POST',
@@ -279,7 +279,8 @@ export default function TextBehindSubject() {
         setRemovedBgImage(url);
       } catch (error) {
         console.error('Error:', error);
-        alert('处理图像时出错，请重试。');
+        alert('移除背景失败，将在原始图片上添加文字。');
+        // 即使失败，也不设置 removedBgImage，这样会使用原始图片
       } finally {
         setLoading(false);
       }
@@ -287,7 +288,7 @@ export default function TextBehindSubject() {
   };
 
   const handleImageProcess = useCallback(debounce(async () => {
-    if (!imagePreview || !text || !canvasRef.current || !removedBgImage) return;
+    if (!imagePreview || !text || !canvasRef.current) return;
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -324,8 +325,8 @@ export default function TextBehindSubject() {
     const textY = (canvas.height * textPositionY) / 100;
 
     // 文字换行处理
-    const lines = text.split('\n').slice(0, 3);  // 最多三行
-    const lineHeight = calculatedFontSize * 1.2;  // 行高为字体大小的1.2倍
+    const lines = text.split('\n').slice(0, 3);
+    const lineHeight = calculatedFontSize * 1.2;
     lines.forEach((line, index) => {
       const yPosition = textY + (index - (lines.length - 1) / 2) * lineHeight;
       ctx.fillText(line, textX, yPosition);
@@ -333,11 +334,13 @@ export default function TextBehindSubject() {
 
     ctx.restore();
 
-    const removedBgImg = document.createElement('img');
-    removedBgImg.src = removedBgImage;
-    await new Promise((resolve) => { removedBgImg.onload = resolve; });
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.drawImage(removedBgImg, 0, 0, canvas.width, canvas.height);
+    if (removedBgImage) {
+      const removedBgImg = document.createElement('img');
+      removedBgImg.src = removedBgImage;
+      await new Promise((resolve) => { removedBgImg.onload = resolve; });
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.drawImage(removedBgImg, 0, 0, canvas.width, canvas.height);
+    }
 
     setResult(canvas.toDataURL());
   }, 100), [imagePreview, text, font, textSize, textPositionX, textPositionY, textOpacity, gradientColors, removedBgImage, isBold]);
