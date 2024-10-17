@@ -51,19 +51,26 @@ const sidebarAds = [
     socialProof: '已有5万+人体验'
   },
   {
-    title: '最全面的Chrome AI助手',
-    description: '一站式AI工具集,支持ChatGPT、Claude等多种模型。提供写作、翻译、绘画等功能',
-    link: 'https://monica.im?ref=nmjkm2e',
-    tag: '中国隐形AI出海冠军',
-    socialProof: '200万+Chrome用户'
+    title: 'Midjourney会员购买',
+    description: '真实感拉满，AI绘图top1（优惠码：huasheng）',
+    link: 'https://nf.video/7zwro3/?gid=26',
+    tag: '29元/月',
+    socialProof: '1000万+月付费用户'
   },
   {
-    title: 'Chathub - 多合一AI聊天客户端',
-    description: '一个应用畅聊多个AI模型,支持ChatGPT、Claude、Bard等。提高生产力,激发创意',
-    link: 'http://chathub.gg/?ref=aihs',
-    tag: 'AI聊天新体验',
-    socialProof: '20万+Chrome用户'
+    title: 'Claude会员购买',
+    description: '无需翻墙，国内直连（优惠码：huasheng）',
+    link: 'https://nf.video/j02hw9/?gid=75',
+    tag: '写作能力超ChatGPT',
+    socialProof: '8元单日体验卡'
   },
+  {
+    title: 'Cursor学习小组招募中',
+    description: '我的cursor教学视频已经超30万人观看，可能是中文互联网最佳了',
+    link: 'https://www.bookai.top/docs/cursor-introduction',
+    tag: '199终身会员',
+    socialProof: '113人已加入'
+  }
 ];
 
 // 创建自定义主题
