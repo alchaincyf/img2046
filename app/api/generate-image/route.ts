@@ -2,11 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 const FLUX_API_URL = 'https://api.siliconflow.cn/v1/images/generations';
+const MODELS = [
+  "black-forest-labs/FLUX.1-schnell",
+  "stabilityai/stable-diffusion-3-5-large"
+];
+let modelIndex = 0;
 
 async function makeRequest(prompt: string, retries = 3) {
   try {
+    const model = MODELS[modelIndex];
+    modelIndex = (modelIndex + 1) % MODELS.length; // Update modelIndex for next request
+
     const response = await axios.post(FLUX_API_URL, {
-      model: "black-forest-labs/FLUX.1-schnell",
+      model,
       prompt,
       image_size: "1024x1024",
     }, {
