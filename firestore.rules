@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /imageHistory/{imageId} {
+      // 允许已认证的用户读取和创建图片历史记录
+      allow read, create: if request.auth != null;
+      
+      // 只允许创建包含所有必要字段的文档
+      allow create: if request.resource.data.keys().hasAll(['createdAt', 'imageUrl', 'optimizedPrompt', 'originalPrompt'])
+                    && request.resource.data.createdAt is timestamp
+                    && request.resource.data.imageUrl is string
+                    && request.resource.data.optimizedPrompt is string
+                    && request.resource.data.originalPrompt is string;
+      
+      // 禁止更新和删除操作
+      allow update, delete: false;
+    }
+  }
+}
