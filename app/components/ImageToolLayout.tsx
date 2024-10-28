@@ -2,12 +2,12 @@ import React from 'react';
 import Head from 'next/head';
 
 interface ImageToolLayoutProps {
-  children: React.ReactNode;
   title: string;
-  description: string;
+  description: React.ReactNode;
+  children: React.ReactNode;
 }
 
-const ImageToolLayout: React.FC<ImageToolLayoutProps> = ({ children, title, description }) => {
+const ImageToolLayout: React.FC<ImageToolLayoutProps> = ({ title, description, children }) => {
   const fullTitle = `${title} - 图像魔方`;
 
   return (
