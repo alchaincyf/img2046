@@ -5,7 +5,7 @@ import ImageToolLayout from './ImageToolLayout';
 
 interface AIToolLayoutProps {
   title: string;
-  description: string;
+  description: React.ReactNode; // 修改这里，从 string 改为 ReactNode
   iconSrc: string;
   children: React.ReactNode;
 }

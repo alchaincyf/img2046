@@ -137,7 +137,26 @@ const AIImageGeneratorPage: React.FC = () => {
   return (
     <AIToolLayout
       title="免费 AI 文生图工具"
-      description="使用 AI 文生图器，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。"
+      description={
+        <div>
+          <p>使用 AI 文生图器，只需输入描述性的提示词，我们就能为您自动优化提示词内容，再自动完成图片生成。</p>
+          <p>
+            最佳文生图工具
+            <a 
+              href="https://nf.video/7zwro3/?gid=26" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ 
+                color: '#1976d2',
+                textDecoration: 'underline',
+                marginLeft: '4px'
+              }}
+            >
+              Midjourney
+            </a>
+          </p>
+        </div>
+      }
       iconSrc="/images/ai-image-generator.svg"
     >
       <Paper elevation={3} sx={{ 

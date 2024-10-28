@@ -44,7 +44,7 @@ const fonts = [
   { value: 'PingFang SC', label: '苹方' },
   { value: 'Hiragino Sans GB', label: '冬青黑体' },
   { value: 'Microsoft YaHei', label: '微软雅黑' },
-  { value: 'FZLTHJW', label: '方正兰亭黑' },
+  { value: 'FZLTHJW', label: '方���兰亭黑' },
   { value: 'FZLTXHJW', label: '方正兰亭细黑' },
   { value: 'HYQiHei', label: '汉仪旗黑' },
   { value: 'DouyinMeihaoTi', label: '抖音美好体' },
@@ -67,8 +67,12 @@ const gradientBaseColors = [
   { name: '无底座', colors: [] }, // 保留这个选项
 ];
 
-// 添加比例选项
-const aspectRatios = [
+// 在文件顶部添加类型定义
+type AspectRatioType = number | 'auto';
+
+// 修改 aspectRatios 的类型定义
+const aspectRatios: { label: string; value: AspectRatioType }[] = [
+  { label: '自由比例', value: 'auto' },
   { label: '3:4', value: 3/4 },
   { label: '4:3', value: 4/3 },
   { label: '16:9', value: 16/9 },
@@ -223,6 +227,7 @@ const TextCardGeneratorPage: React.FC = () => {
     const lines = text.split('\n');
     let renderedText = '';
     let currentY = y;
+    let lastLineWasEmpty = false;
 
     for (let i = 0; i < lines.length; i++) {
       let line = lines[i];
@@ -241,6 +246,16 @@ const TextCardGeneratorPage: React.FC = () => {
       }
 
       ctx.font = lineFont;
+
+      // 处理空行（段落间距）
+      if (line.trim() === '') {
+        if (!lastLineWasEmpty) {
+          currentY += fontSize * 0.8; // 减小段落间距，从原来的 lineHeight 改为 fontSize * 0.8
+          lastLineWasEmpty = true;
+        }
+        continue;
+      }
+      lastLineWasEmpty = false;
 
       let chars = line.split('');
       let currentLine = '';
@@ -281,7 +296,8 @@ const TextCardGeneratorPage: React.FC = () => {
 
     return {
       renderedText: renderedText.trim(),
-      leftoverText: ''
+      leftoverText: '',
+      totalHeight: currentY - y // 返回实际文本高度
     };
   };
 
@@ -293,16 +309,50 @@ const TextCardGeneratorPage: React.FC = () => {
     if (!ctx) return;
 
     const baseWidth = 1200;
-    const baseHeight = baseWidth / aspectRatio;
-
-    canvas.width = baseWidth;
-    canvas.height = baseHeight;
-
-    const paddingBottom = 140; // 增加到 140px (原来的 40px + 新增的 100px)
+    let baseHeight: number;
+    
+    // 定义所有常量
+    const paddingBottom = 140;
     const paddingTop = 200;
     const paddingSide = 60;
     const lineSpacing = 2.0;
     const gradientPadding = 30;
+    const cardMargin = useBase ? 20 + gradientPadding : 0;
+    
+    // 处理自由比例
+    if (aspectRatio === 'auto') {
+      // 创建临时画布计算文本高度
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      if (!tempCtx) return;
+      
+      tempCanvas.width = baseWidth;
+      tempCanvas.height = 1000; // 临时高度
+      
+      // 计算文本实际高度
+      tempCtx.font = `${fontSize}px "${font}", "Source Han Sans CN", sans-serif`;
+      const result = drawTextWithLimit(
+        tempCtx,
+        text,
+        cardMargin + paddingSide,
+        cardMargin + paddingTop,
+        baseWidth - (cardMargin + paddingSide) * 2,
+        fontSize * 1.5,
+        10000 // 足够大的高度限制
+      );
+      
+      // 根据实际文本高度设置画布高度
+      const textHeight = (result as any).totalHeight || 0;
+      baseHeight = Math.max(
+        textHeight + paddingTop + paddingBottom + cardMargin * 2,
+        baseWidth * 0.5 // 最小高度为宽度的一半
+      );
+    } else {
+      baseHeight = baseWidth / (aspectRatio as number);
+    }
+
+    canvas.width = baseWidth;
+    canvas.height = baseHeight;
 
     // 文本分割和多卡片生成
     const cards: string[] = [];
@@ -325,7 +375,6 @@ const TextCardGeneratorPage: React.FC = () => {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // 绘制卡片背景
-      const cardMargin = useBase ? 20 + gradientPadding : 0;
       const cardWidth = canvas.width - cardMargin * 2;
       const cardHeight = canvas.height - cardMargin * 2;
       const cornerRadius = 20;
@@ -435,7 +484,26 @@ const TextCardGeneratorPage: React.FC = () => {
   return (
     <AIToolLayout
       title="文字卡片生成器"
-      description="创建优雅美观的文字卡片，支持Markdown格式，适合社交媒体分享或个人使用。"
+      description={
+        <div>
+          <p>创建优雅美观的文字卡片，支持Markdown格式，适合社交媒体分享或个人使用。</p>
+          <p>
+            最佳文生图工具
+            <a 
+              href="https://nf.video/7zwro3/?gid=26" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ 
+                color: '#1976d2',
+                textDecoration: 'underline',
+                marginLeft: '4px'
+              }}
+            >
+              Midjourney
+            </a>
+          </p>
+        </div>
+      }
       iconSrc="/images/text-card-generator.svg"
     >
       <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 2, backgroundColor: '#f5f5f5' }}>
