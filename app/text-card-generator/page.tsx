@@ -44,7 +44,7 @@ const fonts = [
   { value: 'PingFang SC', label: '苹方' },
   { value: 'Hiragino Sans GB', label: '冬青黑体' },
   { value: 'Microsoft YaHei', label: '微软雅黑' },
-  { value: 'FZLTHJW', label: '方���兰亭黑' },
+  { value: 'FZLTHJW', label: '方兰亭黑' },
   { value: 'FZLTXHJW', label: '方正兰亭细黑' },
   { value: 'HYQiHei', label: '汉仪旗黑' },
   { value: 'DouyinMeihaoTi', label: '抖音美好体' },
@@ -504,6 +504,7 @@ const TextCardGeneratorPage: React.FC = () => {
           </p>
         </div>
       }
+      metaDescription="创建优雅美观的文字卡片，支持Markdown格式，适合社交媒体分享或个人使用。"
       iconSrc="/images/text-card-generator.svg"
     >
       <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 2, backgroundColor: '#f5f5f5' }}>
