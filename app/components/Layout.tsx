@@ -13,6 +13,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Script from 'next/script';
 
 const drawerWidth = 240;
 const menuItems = [
@@ -161,7 +162,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const drawer = (
     <Box sx={{ overflow: 'auto' }}>
-      <Toolbar /> {/* 添加这一行，为AppBar腾出空间 */}
+      <Toolbar />
       <List>
         {menuItems.map((item) => (
           <ListItem
@@ -186,6 +187,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </ListItem>
         ))}
       </List>
+      
+      <Box sx={{ p: 2, mt: 2 }}>
+        <Script 
+          src="https://apis.google.com/js/platform.js" 
+          strategy="lazyOnload"
+        />
+        <div
+          className="g-ytsubscribe"
+          data-channelid="UCzbSuf_A_D8dARJ33HzoDew"
+          data-layout="full"
+          data-count="default"
+        />
+      </Box>
     </Box>
   );
 
