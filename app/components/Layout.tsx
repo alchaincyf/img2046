@@ -66,11 +66,11 @@ const sidebarAds = [
     socialProof: '8元单日体验卡'
   },
   {
-    title: 'Cursor学习小组招募中',
+    title: 'AI编程：从入门到精通',
     description: '我的cursor教学视频已经超30万人观看，可能是中文互联网最佳了',
     link: 'https://www.bookai.top/docs/cursor-introduction',
-    tag: '199终身会员',
-    socialProof: '113人已加入'
+    tag: '365元',
+    socialProof: '400+人已加入'
   }
 ];
 
