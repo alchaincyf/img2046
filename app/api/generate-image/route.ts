@@ -4,7 +4,7 @@ import axios from 'axios';
 const FLUX_API_URL = 'https://api.siliconflow.cn/v1/images/generations';
 const MODELS = [
   "black-forest-labs/FLUX.1-schnell",
-  "stabilityai/stable-diffusion-3-5-large"
+  "stabilityai/stable-diffusion-xl-base-1.0"
 ];
 let modelIndex = 0;
 

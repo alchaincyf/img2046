@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
 
 const client = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY,
-  baseURL: 'https://api.deepseek.com',
+  apiKey: process.env.SILICONFLOW_API_KEY,
+  baseURL: 'https://api.siliconflow.cn/v1/',
 });
 
 const systemPrompt = `You are an AI artist skilled in creating vivid and detailed image descriptions. Your task is to generate an optimized English prompt for Stable Diffusion based on the user's description. Please follow these guidelines:
@@ -26,11 +26,13 @@ export async function POST(req: NextRequest) {
     const { userDescription } = await req.json();
 
     const response = await client.chat.completions.create({
-      model: 'deepseek-chat',
+      model: 'deepseek-ai/DeepSeek-V3',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userDescription }
       ],
+      temperature: 0.7,
+      max_tokens: 500
     });
 
     const generatedPrompt = response.choices[0].message.content;
@@ -38,6 +40,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ prompt: generatedPrompt });
   } catch (error) {
     console.error('Prompt generation error:', error);
-    return NextResponse.json({ error: 'Prompt 生成失败: ' + (error as Error).message }, { status: 500 });
+    return NextResponse.json(
+      { error: `Prompt generation failed: ${(error as Error).message}` }, 
+      { status: 500 }
+    );
   }
 }
