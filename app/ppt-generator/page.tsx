@@ -15,13 +15,13 @@ import { saveAs } from 'file-saver';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useDropzone } from 'react-dropzone';
 
 // ... 其他导入
 
 import { toPng } from 'html-to-image';
 
-export default function PPTGeneratorPage() {
-  const [svgCodes, setSvgCodes] = useState<string[]>(['']);
+export default function BatchSVGConverterPage() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -35,59 +35,26 @@ export default function PPTGeneratorPage() {
 
   // ... 其他状态引用
 
-  const updatePreviews = (codes: string[]) => {
-    const urls = codes.map(code => {
-      const blob = new Blob([code], { type: 'image/svg+xml' });
-      return URL.createObjectURL(blob);
-    });
+  const onDrop = async (acceptedFiles: File[]) => {
+    const svgFiles = acceptedFiles.filter(file => file.type === 'image/svg+xml');
+    if (svgFiles.length === 0) {
+      setError('请只上传SVG文件');
+      return;
+    }
+
+    const urls = await Promise.all(
+      svgFiles.map(file => URL.createObjectURL(file))
+    );
     setPreviewUrls(urls);
   };
 
-  useEffect(() => {
-    // 初始化默认SVG代码
-    const defaultSvg = `
-<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1E1E1E;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#2C2C2C;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" fill="url(#bg-gradient)"/>
-  <circle cx="960" cy="540" r="400" fill="none" stroke="#E0E0E0" stroke-width="2">
-    <animate attributeName="r" values="400;420;400" dur="4s" repeatCount="indefinite" />
-  </circle>
-  <text x="960" y="540" font-family="微软雅黑, sans-serif" font-size="96" font-weight="bold" text-anchor="middle" fill="#E0E0E0">
-    实时API：开启语音交互新纪元
-    <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite" />
-  </text>
-  
-  <!-- 动态线条 -->
-  <path d="M0 0 Q960 540, 1920 0" stroke="#FFD700" stroke-width="2" fill="none">
-    <animate attributeName="d" values="M0 0 Q960 540, 1920 0; M0 1080 Q960 540, 1920 1080; M0 0 Q960 540, 1920 0" dur="10s" repeatCount="indefinite" />
-  </path>
-  <path d="M0 1080 Q960 540, 1920 1080" stroke="#FF69B4" stroke-width="2" fill="none">
-    <animate attributeName="d" values="M0 1080 Q960 540, 1920 1080; M0 0 Q960 540, 1920 0; M0 1080 Q960 540, 1920 1080" dur="12s" repeatCount="indefinite" />
-  </path>
-</svg>`;
-    setSvgCodes([defaultSvg]);
-    updatePreviews([defaultSvg]);
-  }, []);
-
-  const handleSvgCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const svgRegex = /<svg[\s\S]*?<\/svg>/g;
-    const newSvgCodes = event.target.value.match(svgRegex) || [];
-    setSvgCodes(newSvgCodes);
-  };
-
-  const handleAddSlide = () => {
-    setSvgCodes([...svgCodes, '']);
-  };
-
-  const handlePreview = () => {
-    const urls = svgCodes.map(code => URL.createObjectURL(new Blob([code], { type: 'image/svg+xml' })));
-    setPreviewUrls(urls);
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/svg+xml': ['.svg']
+    },
+    multiple: true
+  });
 
   const handleFullscreen = (index: number) => {
     setFullscreenIndex(index);
@@ -213,96 +180,156 @@ export default function PPTGeneratorPage() {
     navigator.clipboard.writeText(promptText);
   };
 
+  const convertSvgToPng = async (svgUrl: string, index: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      fetch(svgUrl)
+        .then(response => response.text())
+        .then(svgText => {
+          // 创建一个新的 Blob，包含完整的 SVG 数据
+          const svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+          const img = new window.Image();
+          img.crossOrigin = 'anonymous';  // 添加跨域支持
+          
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            // 保持原始 SVG 的宽高比
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              reject(new Error('Failed to get canvas context'));
+              return;
+            }
+            
+            // 设置白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.drawImage(img, 0, 0);
+            
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  resolve(blob);
+                } else {
+                  reject(new Error('Failed to convert to PNG'));
+                }
+              },
+              'image/png',
+              1.0
+            );
+          };
+
+          img.onerror = () => reject(new Error('Failed to load SVG'));
+          img.src = URL.createObjectURL(svgBlob);
+        })
+        .catch(error => reject(error));
+    });
+  };
+
+  const handleExportPNG = async () => {
+    if (previewUrls.length === 0) {
+      setError('请先上传SVG文件');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const zip = new JSZip();
+      
+      // 创建所有转换的 Promise
+      const conversions = previewUrls.map(async (url, index) => {
+        try {
+          const pngBlob = await convertSvgToPng(url, index);
+          zip.file(`image_${String(index + 1).padStart(3, '0')}.png`, pngBlob);
+        } catch (err) {
+          console.error(`Error converting SVG ${index + 1}:`, err);
+        }
+      });
+
+      // 等待所有转换完成
+      await Promise.all(conversions);
+
+      // 生成并下载 zip 文件
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, 'svg_to_png_images.zip');
+      
+      setSuccess(true);
+    } catch (err) {
+      console.error('PNG导出错误:', err);
+      setError('PNG导出失败，请重试');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
-        SVG to PPT
+        SVG批量转换PNG
       </Typography>
       
       <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
-        <Image src="/images/svg-to-ppt.svg" alt="SVG to PPT" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
+        <Image src="/images/svg-to-ppt.svg" alt="SVG to PNG" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
         <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
-          使用我们的PPT生成器，您可以轻松地将SVG代码转换为精美的PPT幻灯片。只需输入SVG代码，即可生成和导出您的演示文稿。
+          批量将SVG图片转换为PNG格式。支持拖拽上传多个SVG文件，并一键导出为PNG格式。
         </Typography>
       </Box>
-      
-      <Box sx={{ mb: 3, backgroundColor: '#f0f4f8', borderRadius: '10px', padding: '15px' }}>
-        <Button
-          onClick={() => setTipsOpen(!tipsOpen)}
-          endIcon={tipsOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          sx={{ mb: 1 }}
-        >
-          使用提示
-        </Button>
-        <Collapse in={tipsOpen}>
-          <Typography variant="body1" gutterBottom>
-            请先试用以下prompt为文章生成svg代码：
-          </Typography>
-          <TextField
-            multiline
-            rows={6}
-            fullWidth
-            variant="outlined"
-            value={promptText}
-            InputProps={{
-              readOnly: true,
-            }}
-            sx={{ mb: 2, backgroundColor: '#ffffff' }}
-          />
-          <Button
-            variant="outlined"
-            startIcon={<ContentCopyIcon />}
-            onClick={handleCopyPrompt}
-            sx={{ mb: 2 }}
-          >
-            复制Prompt
-          </Button>
-          <Typography variant="body2">
-            再将代码复制到代码框中生成PPT。更多细节请参考<a href="https://www.youtube.com/watch?v=X4LFQmnrGig" target="_blank" rel="noopener noreferrer" style={{color: '#007bff', textDecoration: 'underline'}}>这期视频8分钟以后的内容</a>。
-          </Typography>
-        </Collapse>
+
+      {/* 文件上传区域 */}
+      <Box
+        {...getRootProps()}
+        sx={{
+          border: '2px dashed #ccc',
+          borderRadius: '10px',
+          padding: '20px',
+          textAlign: 'center',
+          backgroundColor: isDragActive ? '#f0f4f8' : 'transparent',
+          cursor: 'pointer',
+          mb: 3
+        }}
+      >
+        <input {...getInputProps()} />
+        <Typography>
+          {isDragActive ? '放开以添加文件' : '拖拽SVG文件到此处，或点击选择文件'}
+        </Typography>
       </Box>
 
-      {/* SVG代码输入区域 */}
-      <TextField
-        multiline
-        rows={10}
-        fullWidth
-        variant="outlined"
-        value={svgCodes.join('\n\n')}
-        onChange={handleSvgCodeChange}
-        placeholder="在这里输入SVG代码，每个完整的<svg>...</svg>将作为一个独立的幻灯片"
-        sx={{ mb: 2 }}
-      />
-      
-      <Button onClick={handlePreview}>预览所有幻灯片</Button>
-      <Button onClick={handleExportClick}>导出</Button>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleExportClose}
+      <Button 
+        variant="contained" 
+        onClick={handleExportPNG}
+        disabled={loading || previewUrls.length === 0}
+        sx={{
+          mb: 3,
+          backgroundColor: '#2ecc71',
+          '&:hover': {
+            backgroundColor: '#27ae60'
+          }
+        }}
       >
-        <MenuItem onClick={handleExportPPT}>导出为PPT</MenuItem>
-        <MenuItem onClick={handleExportImages}>导出为图片</MenuItem>
-        <MenuItem onClick={handleExportLongImage}>导出为长图</MenuItem>
-      </Menu>
+        {loading ? '导出中...' : '导出为PNG'}
+      </Button>
 
       {/* 预览区域 */}
       <Grid container spacing={2}>
         {previewUrls.map((url, index) => (
-          <Grid item xs={12} key={index}>  {/* 修改为占据整行 */}
+          <Grid item xs={12} sm={6} md={4} key={index}>
             <Box
               sx={{
                 position: 'relative',
                 width: '100%',
-                paddingTop: '56.25%', // 16:9 宽高比
+                paddingTop: '100%',
                 cursor: 'pointer',
+                border: '1px solid #eee',
+                borderRadius: '8px',
+                overflow: 'hidden'
               }}
               onClick={() => handleFullscreen(index)}
             >
               <Image
                 src={url}
-                alt={`Slide ${index + 1}`}
+                alt={`SVG ${index + 1}`}
                 layout="fill"
                 objectFit="contain"
               />
@@ -330,18 +357,20 @@ export default function PPTGeneratorPage() {
           <IconButton
             onClick={handlePrevSlide}
             sx={{ position: 'absolute', left: 20, color: 'white' }}
+            disabled={fullscreenIndex === 0}
           >
             <ArrowBackIosNewIcon />
           </IconButton>
           <Image
             src={previewUrls[fullscreenIndex]}
-            alt={`Fullscreen Slide ${fullscreenIndex + 1}`}
+            alt={`Fullscreen SVG ${fullscreenIndex + 1}`}
             layout="fill"
             objectFit="contain"
           />
           <IconButton
             onClick={handleNextSlide}
             sx={{ position: 'absolute', right: 20, color: 'white' }}
+            disabled={fullscreenIndex === previewUrls.length - 1}
           >
             <ArrowForwardIosIcon />
           </IconButton>
