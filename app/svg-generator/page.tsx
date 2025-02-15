@@ -7,8 +7,8 @@ import Feedback from '../components/Feedback';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 export default function SVGGeneratorPage() {
-  const [svgCode, setSvgCode] = useState('');
-  const [previewUrl, setPreviewUrl] = useState('');
+  const [svgCodes, setSvgCodes] = useState<string[]>(['']);
+  const [previewUrls, setPreviewUrls] = useState<string[]>(['']);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,12 +41,40 @@ export default function SVGGeneratorPage() {
         </path>
       </svg>
     `;
-    setSvgCode(defaultSvg);
-    setPreviewUrl(URL.createObjectURL(new Blob([defaultSvg], { type: 'image/svg+xml' })));
+    setSvgCodes([defaultSvg]);
+    setPreviewUrls([URL.createObjectURL(new Blob([defaultSvg], { type: 'image/svg+xml' }))]);
   }, []);
 
   const handleSvgCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setSvgCode(event.target.value);
+    const newValue = event.target.value;
+    // Split multiple SVGs if detected
+    const svgRegex = /<svg[\s\S]*?<\/svg>/g;
+    const matches = newValue.match(svgRegex);
+    
+    if (matches && matches.length > 0) {
+      setSvgCodes(matches);
+      const newUrls = matches.map(svg => {
+        const sanitizedSvg = sanitizeSvg(svg);
+        return URL.createObjectURL(new Blob([sanitizedSvg], { type: 'image/svg+xml' }));
+      });
+      setPreviewUrls(newUrls);
+    } else {
+      setSvgCodes([newValue]);
+      if (newValue.trim()) {
+        const sanitizedSvg = sanitizeSvg(newValue);
+        setPreviewUrls([URL.createObjectURL(new Blob([sanitizedSvg], { type: 'image/svg+xml' }))]);
+      } else {
+        setPreviewUrls(['']);
+      }
+    }
+  };
+
+  const sanitizeSvg = (svg: string): string => {
+    // Add missing xmlns if not present
+    if (!svg.includes('xmlns="http://www.w3.org/2000/svg"')) {
+      svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+    return svg;
   };
 
   const handleUpload = () => {
@@ -54,14 +82,26 @@ export default function SVGGeneratorPage() {
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        setSvgCode(content);
-      };
-      reader.readAsText(file);
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const readers = Array.from(files).map(file => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            resolve(e.target?.result as string || '');
+          };
+          reader.readAsText(file);
+        });
+      });
+
+      Promise.all(readers).then(results => {
+        setSvgCodes(results);
+        const newUrls = results.map(svg => {
+          const sanitizedSvg = sanitizeSvg(svg);
+          return URL.createObjectURL(new Blob([sanitizedSvg], { type: 'image/svg+xml' }));
+        });
+        setPreviewUrls(newUrls);
+      });
     }
   };
 
@@ -72,39 +112,42 @@ export default function SVGGeneratorPage() {
   const handleDownload = async (format: 'svg' | 'png' | 'jpg') => {
     setLoading(true);
     try {
-      if (format === 'svg') {
-        const blob = new Blob([svgCode], { type: 'image/svg+xml' });
-        downloadBlob(blob, `image.${format}`);
-      } else {
-        const svgBlob = new Blob([svgCode], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(svgBlob);
-        const img = new window.Image();
-        await new Promise<void>((resolve, reject) => {
-          img.onload = () => resolve();
-          img.onerror = () => reject(new Error('Image loading failed'));
-          img.src = url;
-        });
-
-        const canvas = document.createElement('canvas');
-        const svgSize = getSvgSize(svgCode);
-        canvas.width = svgSize.width * scaleFactor;
-        canvas.height = svgSize.height * scaleFactor;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.scale(scaleFactor, scaleFactor);
-          ctx.drawImage(img, 0, 0);
-          const blob = await new Promise<Blob | null>((resolve) => {
-            canvas.toBlob(resolve, `image/${format}`);
-          });
-          if (blob) {
-            downloadBlob(blob, `image_${scaleFactor}x.${format}`);
-          } else {
-            throw new Error('Failed to create blob');
-          }
+      for (let i = 0; i < svgCodes.length; i++) {
+        const svgCode = svgCodes[i];
+        if (format === 'svg') {
+          const sanitizedSvg = sanitizeSvg(svgCode);
+          const blob = new Blob([sanitizedSvg], { type: 'image/svg+xml' });
+          downloadBlob(blob, `image_${i + 1}.${format}`);
         } else {
-          throw new Error('Failed to get canvas context');
+          const sanitizedSvg = sanitizeSvg(svgCode);
+          const svgBlob = new Blob([sanitizedSvg], { type: 'image/svg+xml' });
+          const url = URL.createObjectURL(svgBlob);
+          const img = new window.Image();
+          await new Promise<void>((resolve, reject) => {
+            img.onload = () => resolve();
+            img.onerror = () => reject(new Error('Image loading failed'));
+            img.src = url;
+          });
+
+          const canvas = document.createElement('canvas');
+          const svgSize = getSvgSize(svgCode);
+          canvas.width = svgSize.width * scaleFactor;
+          canvas.height = svgSize.height * scaleFactor;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.scale(scaleFactor, scaleFactor);
+            ctx.drawImage(img, 0, 0);
+            const blob = await new Promise<Blob | null>((resolve) => {
+              canvas.toBlob(resolve, `image/${format}`);
+            });
+            if (blob) {
+              downloadBlob(blob, `image_${i + 1}_${scaleFactor}x.${format}`);
+            } else {
+              throw new Error('Failed to create blob');
+            }
+          }
+          URL.revokeObjectURL(url);
         }
-        URL.revokeObjectURL(url);
       }
       setSuccess(true);
     } catch (err) {
@@ -124,8 +167,11 @@ export default function SVGGeneratorPage() {
   };
 
   const handlePreview = () => {
-    const blob = new Blob([svgCode], { type: 'image/svg+xml' });
-    setPreviewUrl(URL.createObjectURL(blob));
+    const newUrls = svgCodes.map(svg => {
+      const sanitizedSvg = sanitizeSvg(svg);
+      return URL.createObjectURL(new Blob([sanitizedSvg], { type: 'image/svg+xml' }));
+    });
+    setPreviewUrls(newUrls);
   };
 
   const handleClose = () => {
@@ -178,9 +224,9 @@ export default function SVGGeneratorPage() {
             rows={10}
             fullWidth
             variant="outlined"
-            value={svgCode}
+            value={svgCodes.join('\n\n')}
             onChange={handleSvgCodeChange}
-            placeholder="在这里输入或粘贴SVG代码"
+            placeholder="在这里输入或粘贴SVG代码，支持多个SVG"
           />
           <Box sx={{ mt: 2 }}>
             <Button 
@@ -215,22 +261,44 @@ export default function SVGGeneratorPage() {
           </Box>
           <input
             type="file"
-            accept=".svg"
             ref={fileInputRef}
-            style={{ display: 'none' }}
             onChange={handleFileChange}
+            style={{ display: 'none' }}
+            accept=".svg"
+            multiple
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom>预览</Typography>
-          {previewUrl ? (
-            <img src={previewUrl} alt="SVG Preview" style={{ maxWidth: '100%', height: 'auto' }} />
-          ) : (
-            <Typography>SVG预览将显示在这里</Typography>
-          )}
+          <Box sx={{ 
+            border: '1px solid #e0e0e0', 
+            borderRadius: '4px', 
+            p: 2,
+            minHeight: '300px',
+            overflowY: 'auto'
+          }}>
+            <Typography variant="h6" gutterBottom>预览</Typography>
+            {previewUrls.map((url, index) => (
+              url && (
+                <Box key={index} sx={{ mb: 2, textAlign: 'center' }}>
+                  <img
+                    src={url}
+                    alt={`SVG Preview ${index + 1}`}
+                    style={{ 
+                      maxWidth: '100%',
+                      height: 'auto',
+                      marginBottom: '10px'
+                    }}
+                  />
+                  <Typography variant="body2" color="textSecondary">
+                    SVG {index + 1}
+                  </Typography>
+                </Box>
+              )
+            ))}
+          </Box>
         </Grid>
       </Grid>
-      {previewUrl && (
+      {previewUrls.length > 0 && (
         <Box sx={{ mt: 3 }}>
           <Typography variant="h6" gutterBottom>下载选项</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>

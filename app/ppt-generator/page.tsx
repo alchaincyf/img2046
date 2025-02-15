@@ -23,6 +23,7 @@ import { toPng } from 'html-to-image';
 
 export default function BatchSVGConverterPage() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [svgFiles, setSvgFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,9 +43,8 @@ export default function BatchSVGConverterPage() {
       return;
     }
 
-    const urls = await Promise.all(
-      svgFiles.map(file => URL.createObjectURL(file))
-    );
+    setSvgFiles(svgFiles);
+    const urls = svgFiles.map(file => URL.createObjectURL(file));
     setPreviewUrls(urls);
   };
 
@@ -180,56 +180,65 @@ export default function BatchSVGConverterPage() {
     navigator.clipboard.writeText(promptText);
   };
 
-  const convertSvgToPng = async (svgUrl: string, index: number): Promise<Blob> => {
+  const convertSvgToPng = async (file: File, index: number): Promise<Blob> => {
     return new Promise((resolve, reject) => {
-      fetch(svgUrl)
-        .then(response => response.text())
-        .then(svgText => {
-          // 创建一个新的 Blob，包含完整的 SVG 数据
-          const svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
-          const img = new window.Image();
-          img.crossOrigin = 'anonymous';  // 添加跨域支持
+      const reader = new FileReader();
+      
+      reader.onload = async (e) => {
+        try {
+          const svgText = e.target?.result as string;
           
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            // 保持原始 SVG 的宽高比
-            canvas.width = img.naturalWidth || img.width;
-            canvas.height = img.naturalHeight || img.height;
+          // 创建一个容器div
+          const container = document.createElement('div');
+          container.style.position = 'absolute';
+          container.style.left = '-9999px';
+          container.style.top = '-9999px';
+          container.innerHTML = svgText;
+          
+          // 获取SVG元素并设置尺寸
+          const svgElement = container.querySelector('svg');
+          if (!svgElement) {
+            throw new Error('Invalid SVG file');
+          }
+          
+          // 确保SVG有明确的尺寸
+          if (!svgElement.hasAttribute('width')) {
+            svgElement.setAttribute('width', '1920');
+          }
+          if (!svgElement.hasAttribute('height')) {
+            svgElement.setAttribute('height', '1080');
+          }
+          
+          // 添加到文档中
+          document.body.appendChild(container);
+          
+          try {
+            // 使用html-to-image转换
+            const dataUrl = await toPng(container, {
+              quality: 1.0,
+              backgroundColor: '#ffffff'
+            });
             
-            const ctx = canvas.getContext('2d');
-            if (!ctx) {
-              reject(new Error('Failed to get canvas context'));
-              return;
-            }
-            
-            // 设置白色背景
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.drawImage(img, 0, 0);
-            
-            canvas.toBlob(
-              (blob) => {
-                if (blob) {
-                  resolve(blob);
-                } else {
-                  reject(new Error('Failed to convert to PNG'));
-                }
-              },
-              'image/png',
-              1.0
-            );
-          };
-
-          img.onerror = () => reject(new Error('Failed to load SVG'));
-          img.src = URL.createObjectURL(svgBlob);
-        })
-        .catch(error => reject(error));
+            // 转换dataUrl为Blob
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+            resolve(blob);
+          } finally {
+            // 确保总是移除容器
+            document.body.removeChild(container);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      reader.onerror = () => reject(new Error('Failed to read SVG file'));
+      reader.readAsText(file);
     });
   };
 
   const handleExportPNG = async () => {
-    if (previewUrls.length === 0) {
+    if (svgFiles.length === 0) {
       setError('请先上传SVG文件');
       return;
     }
@@ -237,25 +246,31 @@ export default function BatchSVGConverterPage() {
     setLoading(true);
     try {
       const zip = new JSZip();
+      let successCount = 0;
       
       // 创建所有转换的 Promise
-      const conversions = previewUrls.map(async (url, index) => {
+      const conversions = svgFiles.map(async (file, index) => {
         try {
-          const pngBlob = await convertSvgToPng(url, index);
+          const pngBlob = await convertSvgToPng(file, index);
           zip.file(`image_${String(index + 1).padStart(3, '0')}.png`, pngBlob);
+          successCount++;
         } catch (err) {
           console.error(`Error converting SVG ${index + 1}:`, err);
+          setError(`转换第 ${index + 1} 个文件失败`);
         }
       });
 
       // 等待所有转换完成
       await Promise.all(conversions);
 
-      // 生成并下载 zip 文件
-      const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, 'svg_to_png_images.zip');
-      
-      setSuccess(true);
+      // 如果有成功转换的文件，则生成zip
+      if (successCount > 0) {
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, 'svg_to_png_images.zip');
+        setSuccess(true);
+      } else {
+        throw new Error('所有文件转换失败');
+      }
     } catch (err) {
       console.error('PNG导出错误:', err);
       setError('PNG导出失败，请重试');
