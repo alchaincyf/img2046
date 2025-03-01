@@ -17,8 +17,6 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useDropzone } from 'react-dropzone';
 
-// ... 其他导入
-
 import { toPng } from 'html-to-image';
 
 export default function BatchSVGConverterPage() {
@@ -30,11 +28,71 @@ export default function BatchSVGConverterPage() {
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [tipsOpen, setTipsOpen] = useState(false);
+  const [svgCode, setSvgCode] = useState<string>(getDefaultSvgCode());
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // ... 其他状态引用
+  function getDefaultSvgCode() {
+    return `<svg width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E1E1E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2C2C2C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg-gradient)"/>
+  <circle cx="960" cy="540" r="400" fill="none" stroke="#E0E0E0" stroke-width="2">
+    <animate attributeName="r" values="400;420;400" dur="4s" repeatCount="indefinite" />
+  </circle>
+  <text x="960" y="540" font-family="微软雅黑, sans-serif" font-size="96" font-weight="bold" text-anchor="middle" fill="#E0E0E0">
+    实时API：开启语音交互新纪元
+    <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite" />
+  </text>
+  
+  <!-- 动态线条 -->
+  <path d="M0 0 Q960 540, 1920 0" stroke="#FFD700" stroke-width="2" fill="none">
+    <animate attributeName="d" values="M0 0 Q960 540, 1920 0; M0 1080 Q960 540, 1920 1080; M0 0 Q960 540, 1920 0" dur="10s" repeatCount="indefinite" />
+  </path>
+  <path d="M0 1080 Q960 540, 1920 1080" stroke="#FF69B4" stroke-width="2" fill="none">
+    <animate attributeName="d" values="M0 1080 Q960 540, 1920 1080; M0 0 Q960 540, 1920 0; M0 1080 Q960 540, 1920 1080" dur="12s" repeatCount="indefinite" />
+  </path>
+</svg>`;
+  }
+
+  const handleSvgCodeFocus = () => {
+    // 当用户点击代码框时，清空默认内容
+    if (svgCode === getDefaultSvgCode()) {
+      setSvgCode('');
+    }
+  };
+
+  const handleSvgCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSvgCode(e.target.value);
+  };
+
+  const handlePreviewSvgCode = () => {
+    if (!svgCode.trim()) {
+      setError('请输入有效的SVG代码');
+      return;
+    }
+
+    try {
+      // 创建一个Blob对象
+      const blob = new Blob([svgCode], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      
+      // 创建一个File对象
+      const file = new File([blob], 'custom-svg.svg', { type: 'image/svg+xml' });
+      
+      // 更新状态
+      setSvgFiles([file]);
+      setPreviewUrls([url]);
+    } catch (err) {
+      console.error('SVG预览错误:', err);
+      setError('SVG代码无效，请检查后重试');
+    }
+  };
 
   const onDrop = async (acceptedFiles: File[]) => {
     const svgFiles = acceptedFiles.filter(file => file.type === 'image/svg+xml');
@@ -237,39 +295,98 @@ export default function BatchSVGConverterPage() {
     });
   };
 
+  // 检测是否为移动设备
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
+  // 检测是否支持Web Share API
+  const supportsWebShareAPI = () => {
+    return navigator && navigator.share;
+  };
+
+  // 使用Web Share API分享图片到相册
+  const shareImageToGallery = async (blob: Blob, fileName: string) => {
+    try {
+      const file = new File([blob], fileName, { type: 'image/png' });
+      
+      if (navigator.share) {
+        await navigator.share({
+          files: [file],
+          title: '保存图片',
+          text: '将SVG转换的PNG图片保存到相册'
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('分享失败:', error);
+      return false;
+    }
+  };
+
   const handleExportPNG = async () => {
     if (svgFiles.length === 0) {
-      setError('请先上传SVG文件');
+      setError('请先上传SVG文件或输入SVG代码');
       return;
     }
 
     setLoading(true);
     try {
-      const zip = new JSZip();
-      let successCount = 0;
-      
-      // 创建所有转换的 Promise
-      const conversions = svgFiles.map(async (file, index) => {
-        try {
-          const pngBlob = await convertSvgToPng(file, index);
-          zip.file(`image_${String(index + 1).padStart(3, '0')}.png`, pngBlob);
-          successCount++;
-        } catch (err) {
-          console.error(`Error converting SVG ${index + 1}:`, err);
-          setError(`转换第 ${index + 1} 个文件失败`);
+      // 移动设备单个文件处理
+      if (isMobileDevice() && svgFiles.length === 1) {
+        const pngBlob = await convertSvgToPng(svgFiles[0], 0);
+        const fileName = `image_001.png`;
+        
+        // 尝试使用Web Share API
+        if (supportsWebShareAPI()) {
+          const shared = await shareImageToGallery(pngBlob, fileName);
+          if (shared) {
+            setSuccess(true);
+            setLoading(false);
+            return;
+          }
         }
-      });
-
-      // 等待所有转换完成
-      await Promise.all(conversions);
-
-      // 如果有成功转换的文件，则生成zip
-      if (successCount > 0) {
-        const content = await zip.generateAsync({ type: 'blob' });
-        saveAs(content, 'svg_to_png_images.zip');
+        
+        // 如果Web Share API不可用或分享失败，回退到传统下载
+        const url = URL.createObjectURL(pngBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
         setSuccess(true);
-      } else {
-        throw new Error('所有文件转换失败');
+      } 
+      // 桌面设备或多个文件处理
+      else {
+        const zip = new JSZip();
+        let successCount = 0;
+        
+        // 创建所有转换的 Promise
+        const conversions = svgFiles.map(async (file, index) => {
+          try {
+            const pngBlob = await convertSvgToPng(file, index);
+            zip.file(`image_${String(index + 1).padStart(3, '0')}.png`, pngBlob);
+            successCount++;
+          } catch (err) {
+            console.error(`Error converting SVG ${index + 1}:`, err);
+            setError(`转换第 ${index + 1} 个文件失败`);
+          }
+        });
+
+        // 等待所有转换完成
+        await Promise.all(conversions);
+
+        // 如果有成功转换的文件，则生成zip
+        if (successCount > 0) {
+          const content = await zip.generateAsync({ type: 'blob' });
+          saveAs(content, 'svg_to_png_images.zip');
+          setSuccess(true);
+        } else {
+          throw new Error('所有文件转换失败');
+        }
       }
     } catch (err) {
       console.error('PNG导出错误:', err);
@@ -288,8 +405,39 @@ export default function BatchSVGConverterPage() {
       <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
         <Image src="/images/svg-to-ppt.svg" alt="SVG to PNG" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
         <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>
-          批量将SVG图片转换为PNG格式。支持拖拽上传多个SVG文件，并一键导出为PNG格式。
+          批量将SVG图片转换为PNG格式。支持拖拽上传多个SVG文件，或直接输入SVG代码，并一键导出为PNG格式。
         </Typography>
+      </Box>
+
+      {/* SVG代码输入区域 */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          输入SVG代码
+        </Typography>
+        <TextField
+          multiline
+          rows={10}
+          fullWidth
+          variant="outlined"
+          value={svgCode}
+          onChange={handleSvgCodeChange}
+          onFocus={handleSvgCodeFocus}
+          placeholder="在这里输入SVG代码"
+          sx={{ mb: 2, fontFamily: 'monospace' }}
+        />
+        <Button 
+          variant="contained" 
+          onClick={handlePreviewSvgCode}
+          sx={{
+            mb: 2,
+            backgroundColor: '#3498db',
+            '&:hover': {
+              backgroundColor: '#2980b9'
+            }
+          }}
+        >
+          预览SVG代码
+        </Button>
       </Box>
 
       {/* 文件上传区域 */}
@@ -307,7 +455,7 @@ export default function BatchSVGConverterPage() {
       >
         <input {...getInputProps()} />
         <Typography>
-          {isDragActive ? '放开以添加文件' : '拖拽SVG文件到此处，或点击选择文件'}
+          {isDragActive ? '放开以添加文件' : '或拖拽SVG文件到此处，或点击选择文件'}
         </Typography>
       </Box>
 
@@ -323,7 +471,7 @@ export default function BatchSVGConverterPage() {
           }
         }}
       >
-        {loading ? '导出中...' : '导出为PNG'}
+        {loading ? '导出中...' : isMobileDevice() && svgFiles.length === 1 ? '保存到相册' : '导出为PNG'}
       </Button>
 
       {/* 预览区域 */}

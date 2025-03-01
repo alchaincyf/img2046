@@ -2,9 +2,14 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import Feedback from '../components/Feedback';
 import { SelectChangeEvent } from '@mui/material/Select';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
+// 动态导入 Image 组件，但在客户端不使用它
+const NextImage = dynamic(() => import('next/image'), { ssr: false });
 
 export default function SVGGeneratorPage() {
   const [svgCodes, setSvgCodes] = useState<string[]>(['']);
@@ -14,6 +19,7 @@ export default function SVGGeneratorPage() {
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [scaleFactor, setScaleFactor] = useState(1);
+  const [svgCodeFocused, setSvgCodeFocused] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -69,6 +75,15 @@ export default function SVGGeneratorPage() {
     }
   };
 
+  const handleSvgCodeFocus = () => {
+    // 当用户点击代码框时，如果是第一次点击，清空默认内容
+    if (!svgCodeFocused) {
+      setSvgCodeFocused(true);
+      setSvgCodes(['']);
+      setPreviewUrls(['']);
+    }
+  };
+
   const sanitizeSvg = (svg: string): string => {
     // Add missing xmlns if not present
     if (!svg.includes('xmlns="http://www.w3.org/2000/svg"')) {
@@ -109,44 +124,62 @@ export default function SVGGeneratorPage() {
     setScaleFactor(Number(event.target.value));
   };
 
-  const handleDownload = async (format: 'svg' | 'png' | 'jpg') => {
+  const handleDownload = async (format: 'svg' | 'png' | 'jpg' | 'zip') => {
     setLoading(true);
     try {
-      for (let i = 0; i < svgCodes.length; i++) {
-        const svgCode = svgCodes[i];
-        if (format === 'svg') {
+      if (format === 'zip') {
+        // Create a zip file for multiple images
+        const zip = new JSZip();
+        const promises = svgCodes.map(async (svgCode, i) => {
           const sanitizedSvg = sanitizeSvg(svgCode);
-          const blob = new Blob([sanitizedSvg], { type: 'image/svg+xml' });
-          downloadBlob(blob, `image_${i + 1}.${format}`);
-        } else {
-          const sanitizedSvg = sanitizeSvg(svgCode);
-          const svgBlob = new Blob([sanitizedSvg], { type: 'image/svg+xml' });
-          const url = URL.createObjectURL(svgBlob);
-          const img = new window.Image();
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => resolve();
-            img.onerror = () => reject(new Error('Image loading failed'));
-            img.src = url;
+          if (svgCode.trim()) {
+            zip.file(`image_${i + 1}.svg`, sanitizedSvg);
+          }
+        });
+
+        await Promise.all(promises);
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, `images.zip`);
+      } else {
+        // Single file download
+        if (svgCodes.length > 1) {
+          // Create a zip file for multiple images
+          const zip = new JSZip();
+          const promises = svgCodes.map(async (svgCode, i) => {
+            const sanitizedSvg = sanitizeSvg(svgCode);
+            if (svgCode.trim()) {
+              if (format === 'svg') {
+                zip.file(`image_${i + 1}.svg`, sanitizedSvg);
+              } else {
+                const blob = await convertSvgToImage(sanitizedSvg, format, scaleFactor);
+                if (blob) {
+                  zip.file(`image_${i + 1}.${format}`, blob);
+                }
+              }
+            }
           });
 
-          const canvas = document.createElement('canvas');
-          const svgSize = getSvgSize(svgCode);
-          canvas.width = svgSize.width * scaleFactor;
-          canvas.height = svgSize.height * scaleFactor;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.scale(scaleFactor, scaleFactor);
-            ctx.drawImage(img, 0, 0);
-            const blob = await new Promise<Blob | null>((resolve) => {
-              canvas.toBlob(resolve, `image/${format}`);
-            });
-            if (blob) {
-              downloadBlob(blob, `image_${i + 1}_${scaleFactor}x.${format}`);
+          await Promise.all(promises);
+          const content = await zip.generateAsync({ type: 'blob' });
+          saveAs(content, `images.zip`);
+        } else {
+          const sanitizedSvg = sanitizeSvg(svgCodes[0]);
+          if (sanitizedSvg.trim()) {
+            if (format === 'svg') {
+              const blob = new Blob([sanitizedSvg], { type: 'image/svg+xml' });
+              downloadBlob(blob, `image.${format}`);
             } else {
-              throw new Error('Failed to create blob');
+              const blob = await convertSvgToImage(sanitizedSvg, format, scaleFactor);
+              if (blob) {
+                // 在移动设备上使用Web Share API
+                if (isMobileDevice() && supportsWebShareAPI()) {
+                  await shareImageToGallery(blob, `image.${format}`);
+                } else {
+                  downloadBlob(blob, `image.${format}`);
+                }
+              }
             }
           }
-          URL.revokeObjectURL(url);
         }
       }
       setSuccess(true);
@@ -156,6 +189,116 @@ export default function SVGGeneratorPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const convertSvgToImage = async (svgCode: string, format: 'png' | 'jpg', scale: number): Promise<Blob | null> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Create a temporary SVG element with proper XML declaration and encoding
+        const svgWithXmlDeclaration = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>${svgCode}`;
+        const svgBlob = new Blob([svgWithXmlDeclaration], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        
+        const img = document.createElement('img');
+        img.crossOrigin = 'anonymous';  // 添加跨域属性
+        
+        img.onload = () => {
+          try {
+            // Get SVG dimensions
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(svgCode, 'image/svg+xml');
+            const svgElement = svgDoc.documentElement;
+            
+            // Get dimensions from viewBox or width/height attributes
+            let width: number;
+            let height: number;
+            
+            const viewBox = svgElement.getAttribute('viewBox');
+            if (viewBox) {
+              const [, , w, h] = viewBox.split(' ').map(Number);
+              width = w;
+              height = h;
+            } else {
+              width = parseInt(svgElement.getAttribute('width') || '0');
+              height = parseInt(svgElement.getAttribute('height') || '0');
+            }
+            
+            // Fallback dimensions if none are specified
+            if (!width || !height) {
+              width = img.naturalWidth || 1024;
+              height = img.naturalHeight || 1024;
+            }
+            
+            // Create canvas with proper dimensions
+            const canvas = document.createElement('canvas');
+            canvas.width = width * scale;
+            canvas.height = height * scale;
+            
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            if (!ctx) {
+              throw new Error('Failed to get canvas context');
+            }
+            
+            // Set white background for JPG
+            if (format === 'jpg') {
+              ctx.fillStyle = '#FFFFFF';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Scale the context to match the desired size
+            ctx.scale(scale, scale);
+            
+            // Create an off-screen canvas for the SVG
+            const offscreenCanvas = document.createElement('canvas');
+            offscreenCanvas.width = width;
+            offscreenCanvas.height = height;
+            const offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+            
+            if (!offscreenCtx) {
+              throw new Error('Failed to get offscreen canvas context');
+            }
+            
+            // Draw on offscreen canvas first
+            offscreenCtx.drawImage(img, 0, 0, width, height);
+            
+            // Then draw the offscreen canvas onto the main canvas
+            ctx.drawImage(offscreenCanvas, 0, 0);
+            
+            // Convert to blob
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  resolve(blob);
+                } else {
+                  reject(new Error('Failed to create blob'));
+                }
+              },
+              `image/${format}`,
+              0.95
+            );
+          } catch (err) {
+            reject(err);
+          } finally {
+            URL.revokeObjectURL(url);
+          }
+        };
+        
+        img.onerror = (error) => {
+          console.error('Image loading error:', error);
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to load image'));
+        };
+        
+        // 使用data URL而不是Blob URL
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          img.src = e.target?.result as string;
+        };
+        reader.readAsDataURL(svgBlob);
+      } catch (err) {
+        reject(err);
+      }
+    });
   };
 
   const downloadBlob = (blob: Blob, fileName: string) => {
@@ -199,6 +342,36 @@ export default function SVGGeneratorPage() {
     return { width: width || 1024, height: height || 1024 };
   };
 
+  // 检测是否为移动设备
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
+  // 检测是否支持Web Share API
+  const supportsWebShareAPI = () => {
+    return navigator && navigator.share;
+  };
+
+  // 使用Web Share API分享图片到相册
+  const shareImageToGallery = async (blob: Blob, fileName: string) => {
+    try {
+      const file = new File([blob], fileName, { type: blob.type });
+      
+      if (navigator.share) {
+        await navigator.share({
+          files: [file],
+          title: '保存图片',
+          text: '将SVG转换的图片保存到相册'
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('分享失败:', error);
+      return false;
+    }
+  };
+
   return (
     <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
@@ -206,7 +379,7 @@ export default function SVGGeneratorPage() {
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
         <div style={{ position: 'relative', width: isMobile ? '150px' : '200px', height: isMobile ? '150px' : '200px' }}>
-          <Image 
+          <NextImage 
             src="/images/svg-generator.svg" 
             alt="SVG Generator" 
             layout="fill"
@@ -226,6 +399,7 @@ export default function SVGGeneratorPage() {
             variant="outlined"
             value={svgCodes.join('\n\n')}
             onChange={handleSvgCodeChange}
+            onFocus={handleSvgCodeFocus}
             placeholder="在这里输入或粘贴SVG代码，支持多个SVG"
           />
           <Box sx={{ mt: 2 }}>
@@ -329,14 +503,14 @@ export default function SVGGeneratorPage() {
               onClick={() => handleDownload('png')}
               sx={{ mr: 2, mb: 2 }}
             >
-              下载PNG
+              {isMobileDevice() && svgCodes.length === 1 ? '保存PNG到相册' : '下载PNG'}
             </Button>
             <Button 
               variant="contained" 
               onClick={() => handleDownload('jpg')}
               sx={{ mb: 2 }}
             >
-              下载JPG
+              {isMobileDevice() && svgCodes.length === 1 ? '保存JPG到相册' : '下载JPG'}
             </Button>
           </Box>
         </Box>
