@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, useTheme, IconButton, useMediaQuery, Paper, Button, Chip, Divider } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, useTheme, IconButton, useMediaQuery, Paper, Button, Chip, Divider, Tooltip } from '@mui/material';
 import NextLinkComposed from './CustomLink';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -9,11 +9,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Script from 'next/script';
+import AdPopup from './AdPopup';
 
 const drawerWidth = 240;
 const menuItems = [
@@ -206,6 +207,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
+        <AdPopup adLink="https://nf.video/3j99py" />
         <AppBar 
           position="fixed" 
           sx={{ 
@@ -312,11 +314,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           sx={{
             flexGrow: 1,
             p: 3,
-            width: { sm: `calc(100% - ${drawerWidth}px - 300px)` },
+            width: { 
+              xs: '100%',
+              sm: `calc(100% - ${drawerWidth}px - ${adSidebarOpen ? 300 : 50}px)` 
+            },
             minHeight: '100vh',
             display: 'flex',
             flexDirection: 'column',
             bgcolor: 'background.default',
+            transition: 'width 0.3s ease',
           }}
         >
           <Toolbar />
@@ -335,8 +341,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           sx={{
             width: 300,
             flexShrink: 0,
-            transition: 'width 0.3s',
-            ...(adSidebarOpen ? {} : { width: 40 }),
+            transition: 'width 0.3s ease',
+            ...(adSidebarOpen ? {} : { width: 50 }),
+            display: { xs: 'none', sm: 'block' },
           }}
         >
           <Paper
@@ -345,35 +352,76 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               position: 'fixed',
               top: 64,
               right: 0,
-              width: adSidebarOpen ? 300 : 40,
+              width: adSidebarOpen ? 300 : 50,
               height: 'calc(100vh - 64px)',
               overflow: 'hidden',
-              transition: 'width 0.3s',
+              transition: 'width 0.3s ease',
               display: 'flex',
               flexDirection: 'column',
               bgcolor: 'background.paper',
               borderLeft: '1px solid rgba(0, 0, 0, 0.12)',
             }}
           >
-            <IconButton
-              onClick={() => setAdSidebarOpen(!adSidebarOpen)}
-              sx={{ 
-                alignSelf: 'flex-start', 
-                m: 1,
-                bgcolor: 'primary.main',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
-                },
-              }}
-            >
-              {adSidebarOpen ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-            </IconButton>
+            <Box sx={{ 
+              position: 'absolute',
+              top: '20px',
+              left: adSidebarOpen ? '8px' : '7px',
+              zIndex: 10,
+              transition: 'left 0.3s ease',
+            }}>
+              <Tooltip title={adSidebarOpen ? "收起推荐资源" : "展开推荐资源"} placement="left">
+                <IconButton
+                  onClick={() => setAdSidebarOpen(!adSidebarOpen)}
+                  sx={{ 
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    '&:hover': {
+                      bgcolor: 'primary.dark',
+                      transform: 'scale(1.1)',
+                    },
+                    border: '2px solid white',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    transition: 'transform 0.2s',
+                    padding: '4px',
+                  }}
+                  size="small"
+                >
+                  {adSidebarOpen ? <ChevronRightIcon fontSize="small" /> : <ChevronLeftIcon fontSize="small" />}
+                </IconButton>
+              </Tooltip>
+            </Box>
+            
             {adSidebarOpen && (
-              <Box sx={{ p: 2, overflowY: 'auto' }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.main' }}>
-                  推荐资源
-                </Typography>
+              <Box sx={{ p: 2, pt: 5, overflowY: 'auto' }}>
+                <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <motion.div
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <Typography 
+                      variant="h6" 
+                      sx={{ 
+                        fontWeight: 'bold', 
+                        color: 'primary.main',
+                        textAlign: 'center',
+                        position: 'relative',
+                        display: 'inline-block',
+                        '&:after': {
+                          content: '""',
+                          position: 'absolute',
+                          bottom: -5,
+                          left: 0,
+                          width: '100%',
+                          height: 2,
+                          backgroundColor: 'secondary.main',
+                          borderRadius: 1,
+                        }
+                      }}
+                    >
+                      推荐资源
+                    </Typography>
+                  </motion.div>
+                </Box>
                 {shuffledAds.map((ad, index) => (
                   <React.Fragment key={index}>
                     <Paper 
@@ -423,6 +471,51 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     )}
                   </React.Fragment>
                 ))}
+              </Box>
+            )}
+            
+            {!adSidebarOpen && (
+              <Box 
+                sx={{ 
+                  writingMode: 'vertical-rl',
+                  textOrientation: 'mixed',
+                  transform: 'rotate(180deg)',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  pt: 6,
+                  cursor: 'pointer',
+                }}
+                onClick={() => setAdSidebarOpen(true)}
+              >
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                  <Typography 
+                    variant="subtitle1" 
+                    sx={{ 
+                      fontWeight: 'bold', 
+                      color: 'primary.main',
+                      opacity: 0.8,
+                      letterSpacing: '3px',
+                      textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                    }}
+                  >
+                    推荐资源
+                  </Typography>
+                  
+                  <motion.div
+                    animate={{ 
+                      x: [0, -5, 0],
+                    }}
+                    transition={{ 
+                      repeat: Infinity, 
+                      duration: 1.5,
+                      repeatType: "reverse"
+                    }}
+                  >
+                    <ChevronLeftIcon color="primary" />
+                  </motion.div>
+                </Box>
               </Box>
             )}
           </Paper>
