@@ -1,4 +1,4 @@
-//ts-nocheck
+// @ts-nocheck
 
 'use client';
 
@@ -29,6 +29,7 @@ export default function BatchSVGConverterPage() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [tipsOpen, setTipsOpen] = useState(false);
   const [svgCode, setSvgCode] = useState<string>(getDefaultSvgCode());
+  const [copied, setCopied] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -235,7 +236,16 @@ export default function BatchSVGConverterPage() {
 每张svg图标的高度都是1920*1080。`;
 
   const handleCopyPrompt = () => {
-    navigator.clipboard.writeText(promptText);
+    if (typeof window === 'undefined') return;
+    try {
+      navigator.clipboard.writeText(promptText);
+      // 显示复制成功的提示（如果有UI组件显示这个状态）
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('复制失败:', err);
+      setError('复制失败');
+    }
   };
 
   const convertSvgToPng = async (file: File, index: number): Promise<Blob> => {
@@ -297,32 +307,31 @@ export default function BatchSVGConverterPage() {
 
   // 检测是否为移动设备
   const isMobileDevice = () => {
+    if (typeof window === 'undefined') return false;
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   };
 
   // 检测是否支持Web Share API
   const supportsWebShareAPI = () => {
-    return navigator && navigator.share;
+    if (typeof window === 'undefined') return false;
+    return navigator && 'share' in navigator;
   };
 
   // 使用Web Share API分享图片到相册
   const shareImageToGallery = async (blob: Blob, fileName: string) => {
     try {
-      const file = new File([blob], fileName, { type: 'image/png' });
-      
+      if (typeof window === 'undefined') return false;
       if (navigator.share) {
         await navigator.share({
-          files: [file],
-          title: '保存图片',
-          text: '将SVG转换的PNG图片保存到相册'
+          files: [new File([blob], fileName, { type: blob.type })],
+          title: '图像魔方 - 分享图片',
         });
         return true;
       }
-      return false;
     } catch (error) {
       console.error('分享失败:', error);
-      return false;
     }
+    return false;
   };
 
   const handleExportPNG = async () => {

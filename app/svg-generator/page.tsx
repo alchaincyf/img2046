@@ -344,32 +344,31 @@ export default function SVGGeneratorPage() {
 
   // 检测是否为移动设备
   const isMobileDevice = () => {
+    if (typeof window === 'undefined') return false;
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   };
 
   // 检测是否支持Web Share API
   const supportsWebShareAPI = () => {
-    return navigator && navigator.share;
+    if (typeof window === 'undefined') return false;
+    return navigator && 'share' in navigator;
   };
 
   // 使用Web Share API分享图片到相册
   const shareImageToGallery = async (blob: Blob, fileName: string) => {
     try {
-      const file = new File([blob], fileName, { type: blob.type });
-      
+      if (typeof window === 'undefined') return false;
       if (navigator.share) {
         await navigator.share({
-          files: [file],
-          title: '保存图片',
-          text: '将SVG转换的图片保存到相册'
+          files: [new File([blob], fileName, { type: blob.type })],
+          title: '图像魔方 - 分享图片',
         });
         return true;
       }
-      return false;
     } catch (error) {
       console.error('分享失败:', error);
-      return false;
     }
+    return false;
   };
 
   return (
