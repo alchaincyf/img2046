@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Script from 'next/script';
-import AdPopup from './AdPopup';
+import MultiAdsPopup from './MultiAdsPopup';
 
 const drawerWidth = 240;
 const menuItems = [
@@ -207,7 +207,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
-        <AdPopup adLink="https://nf.video/3j99py" />
+        <MultiAdsPopup />
         <AppBar 
           position="fixed" 
           sx={{ 
