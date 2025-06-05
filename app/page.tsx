@@ -1,52 +1,60 @@
-import React from 'react';
-import { Box, Typography, Grid, Paper, Button, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import Image from 'next/image';
-import Link from 'next/link';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+'use client';
+
+import React, { useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
+import Image from 'next/image';
+import './styles/homepage.css';
 
 const tools = [
   { 
     name: 'AI 文生图', 
     icon: '/images/ai-image-generator.svg', 
     href: '/ai-image-generator',
-    description: '通过文字描述生成独特的AI图像，激发创意灵感，适用于各种创作场景。'
+    description: '通过文字描述生成独特的AI图像，激发创意灵感',
+    gradient: 'from-purple-500 to-pink-500'
   },
   { 
     name: '文字卡片生成', 
     icon: '/images/text-card-generator.svg', 
     href: '/text-card-generator',
-    description: '创建精美的文字卡片，自定义字体、颜色和背景，适合社交媒体分享和营销使用。'
+    description: '创建精美的文字卡片，自定义字体、颜色和背景',
+    gradient: 'from-blue-500 to-cyan-500'
   },
   { 
     name: '图片压缩', 
     icon: '/images/compress.svg', 
     href: '/compress',
-    description: '高效压缩图片文件大小，保持画质的同时优化加载速度，提升网站性能。'
+    description: '高效压缩图片文件大小，保持画质的同时优化加载速度',
+    gradient: 'from-green-500 to-emerald-500'
   },
   { 
     name: '调整大小', 
     icon: '/images/resize.svg', 
     href: '/resize',
-    description: '快速调整图片尺寸，保持比例或自定义大小，适应各种平台要求。'
+    description: '快速调整图片尺寸，保持比例或自定义大小',
+    gradient: 'from-orange-500 to-red-500'
   },
   { 
     name: '图片格式转换', 
     icon: '/images/format-convert.svg', 
     href: '/format-convert',
-    description: '轻松将图片转换为各种格式，支持JPG、PNG、WEBP、GIF等，满足不同场景需求。'
+    description: '轻松将图片转换为各种格式，支持多种图片类型',
+    gradient: 'from-indigo-500 to-purple-500'
   },
   { 
     name: 'SVG 编辑器', 
     icon: '/images/svg-generator.svg', 
     href: '/svg-generator',
-    description: '在线创建和编辑SVG图形，轻松设计可缩放的矢量图像，适用于各种设计需求。'
+    description: '在线创建和编辑SVG图形，设计可缩放的矢量图像',
+    gradient: 'from-teal-500 to-blue-500'
   },
   { 
     name: '极简Logo设计', 
     icon: '/images/ai-logo-design.svg', 
     href: '/ai-logo-design',
-    description: '使用AI技术快速生成简洁现代的logo设计，为您的品牌打造独特标识。'
+    description: '使用AI技术快速生成简洁现代的logo设计',
+    gradient: 'from-rose-500 to-pink-500'
   },
 ];
 
@@ -78,67 +86,153 @@ const faqs = [
 ];
 
 export default function Home() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
+
   return (
     <>
       <Head>
         <title>图像魔方 - 一站式在线图像处理工具 | img2046.com</title>
         <meta name="description" content="图像魔方提供多种免费在线图像处理工具,包括AI文生图、图片压缩、调整大小、格式转换等。轻松处理您的图片,提升工作效率。" />
       </Head>
-      <Box sx={{ maxWidth: 1200, margin: '0 auto', padding: '40px 20px' }}>
-        <Typography variant="h1" component="h1" gutterBottom align="center" sx={{ fontSize: { xs: '2rem', md: '3rem' }, fontWeight: 'bold', mb: 4 }}>
-          图像魔方：一站式图像处理工具
-        </Typography>
-        <Typography variant="h2" component="h2" gutterBottom align="center" sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' }, mb: 6 }}>
-          轻松处理您的图片，提升工作效率
-        </Typography>
-        <Grid container spacing={4}>
-          {tools.map((tool) => (
-            <Grid item xs={12} sm={6} md={4} key={tool.name}>
-              <Link href={tool.href} passHref style={{ textDecoration: 'none' }}>
-                <Paper elevation={3} sx={{ 
-                  p: 3, 
-                  height: '100%', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
-                  transition: '0.3s', 
-                  '&:hover': { 
-                    transform: 'translateY(-5px)',
-                    boxShadow: 6
-                  } 
-                }}>
-                  <Image src={tool.icon} alt={tool.name} width={64} height={64} />
-                  <Typography variant="h6" component="h3" align="center" sx={{ mt: 2, mb: 1 }}>
-                    {tool.name}
-                  </Typography>
-                  <Typography variant="body2" align="center" sx={{ flexGrow: 1, color: 'text.secondary' }}>
-                    {tool.description}
-                  </Typography>
-                </Paper>
+      
+      <div className="homepage">
+        {/* Hero Section */}
+        <div className="hero-section">
+          <div className="hero-content">
+            <div className="hero-badge">
+              <span>✨ 全新体验</span>
+            </div>
+            <h1 className="hero-title">
+              图像魔方
+              <span className="hero-subtitle">专业图像处理工具</span>
+            </h1>
+            <p className="hero-description">
+              集AI智能、专业处理、便捷操作于一体的图像处理平台<br />
+              让创意触手可及，让工作更高效
+            </p>
+            <div className="hero-stats">
+              <div className="stat-item">
+                <span className="stat-number">100万+</span>
+                <span className="stat-label">用户信赖</span>
+              </div>
+              <div className="stat-divider"></div>
+              <div className="stat-item">
+                <span className="stat-number">7+</span>
+                <span className="stat-label">专业工具</span>
+              </div>
+              <div className="stat-divider"></div>
+              <div className="stat-item">
+                <span className="stat-number">100%</span>
+                <span className="stat-label">隐私保护</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tools Section */}
+        <div className="tools-section">
+          <div className="section-header">
+            <h2 className="section-title">专业工具</h2>
+            <p className="section-subtitle">为您精心打造的图像处理解决方案</p>
+          </div>
+          
+          <div className="tools-grid">
+            {tools.map((tool, index) => (
+              <Link href={tool.href} key={tool.name} className="tool-card-link">
+                <div 
+                  className="tool-card"
+                  style={{ '--delay': `${index * 100}ms` } as React.CSSProperties}
+                >
+                  <div className={`tool-icon-wrapper bg-gradient-to-br ${tool.gradient}`}>
+                    <Image 
+                      src={tool.icon} 
+                      alt={tool.name} 
+                      width={32} 
+                      height={32}
+                      className="tool-icon"
+                    />
+                  </div>
+                  <div className="tool-content">
+                    <h3 className="tool-name">{tool.name}</h3>
+                    <p className="tool-description">{tool.description}</p>
+                  </div>
+                  <div className="tool-arrow">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path 
+                        d="M7 17L17 7M17 7H7M17 7V17" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </Link>
-            </Grid>
-          ))}
-        </Grid>
-        <Box sx={{ mt: 8 }}>
-          <Typography variant="h3" component="h3" gutterBottom sx={{ fontSize: { xs: '1.5rem', md: '2rem' }, textAlign: 'center', mb: 4 }}>
-            常见问题
-          </Typography>
-          {faqs.map((faq, index) => (
-            <Accordion key={index} sx={{ mb: 2 }}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${index}a-content`}
-                id={`panel${index}a-header`}
-              >
-                <Typography sx={{ fontWeight: 'bold' }}>{faq.question}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>{faq.answer}</Typography>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </Box>
-      </Box>
+            ))}
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="faq-section">
+          <div className="section-header">
+            <h2 className="section-title">常见问题</h2>
+            <p className="section-subtitle">快速了解图像魔方的使用方法</p>
+          </div>
+          
+          <div className="faq-list">
+            {faqs.map((faq, index) => (
+              <div key={index} className={`faq-item ${openFaq === index ? 'open' : ''}`}>
+                <div className="faq-question" onClick={() => toggleFaq(index)}>
+                  {faq.question}
+                  <svg 
+                    className={`faq-icon ${openFaq === index ? 'rotated' : ''}`} 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none"
+                  >
+                    <path 
+                      d="M6 9L12 15L18 9" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                {openFaq === index && (
+                  <div className="faq-answer">
+                    <p>{faq.answer}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="cta-section">
+          <div className="cta-content">
+            <h2 className="cta-title">立即开始创作</h2>
+            <p className="cta-description">
+              选择您需要的工具，开启高效的图像处理之旅
+            </p>
+            <div className="cta-buttons">
+              <Link href="/ai-image-generator" className="cta-button primary">
+                开始创作
+              </Link>
+              <Link href="#tools" className="cta-button secondary">
+                浏览工具
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
