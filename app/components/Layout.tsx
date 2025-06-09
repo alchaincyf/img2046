@@ -15,6 +15,7 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Script from 'next/script';
 import MultiAdsPopup from './MultiAdsPopup';
+import AWSMiniProgramPromo from './AWSMiniProgramPromo';
 
 const drawerWidth = 240;
 const menuItems = [
@@ -208,6 +209,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
         <MultiAdsPopup />
+        <AWSMiniProgramPromo />
         <AppBar 
           position="fixed" 
           sx={{ 

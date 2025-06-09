@@ -292,13 +292,23 @@ export default function ResizePage() {
                   type="number"
                   value={width}
                   onChange={handleWidthChange}
-                  sx={{ mr: 2 }}
+                  sx={{ 
+                    mr: 2,
+                    '& .MuiInputBase-root': {
+                      height: '50px'
+                    }
+                  }}
                 />
                 <TextField
                   label="高度"
                   type="number"
                   value={height}
                   onChange={handleHeightChange}
+                  sx={{ 
+                    '& .MuiInputBase-root': {
+                      height: '50px'
+                    }
+                  }}
                 />
               </Box>
               <FormControlLabel
