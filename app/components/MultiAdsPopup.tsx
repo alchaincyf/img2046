@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, Box, Typography, Button, IconButton, Badge } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
@@ -21,18 +20,6 @@ const ADS_CONFIG = [
     description: '国内直连，无需科学上网，立即体验AI领域顶级工具，提升工作效率与创意表现力',
     couponCode: 'huasheng',
     buttonText: '立即领取特惠 →'
-  },
-  {
-    id: 'wildcardVCC',
-    link: 'https://yeka.ai/i/AIHS',
-    title: '美国虚拟信用卡Wildcard',
-    titleIcon: <CreditCardIcon sx={{ color: '#4caf50' }} />,
-    bgGradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
-    titleText: ['美国虚拟信用卡', 'Wildcard零月租'],
-    mainTitle: 'AI服务付费必备工具',
-    description: '无需SSN，轻松开卡，用于ChatGPT、Claude会员付费及绑定美区App Store，安全便捷',
-    couponCode: 'AIHS',
-    buttonText: '立即获取Wildcard →'
   }
 ];
 
@@ -53,20 +40,13 @@ export default function MultiAdsPopup() {
         ads: []
       }));
       
-      // 随机选择第一个要显示的广告
-      setCurrentAdIndex(Math.floor(Math.random() * ADS_CONFIG.length));
-    } else if (adsShownToday.ads.length < ADS_CONFIG.length) {
-      // 如果今天已经显示过一些广告，但还没显示全部，选择一个还没显示过的
-      const shownAdsIds = new Set(adsShownToday.ads);
-      const availableAds = ADS_CONFIG.filter(ad => !shownAdsIds.has(ad.id));
-      
-      if (availableAds.length > 0) {
-        // 随机选择一个未显示过的广告
-        const randomAd = availableAds[Math.floor(Math.random() * availableAds.length)];
-        setCurrentAdIndex(ADS_CONFIG.findIndex(ad => ad.id === randomAd.id));
-      }
+      // 设置显示第一个（也是唯一的）广告
+      setCurrentAdIndex(0);
+    } else if (!adsShownToday.ads.includes(ADS_CONFIG[0].id)) {
+      // 如果今天还没有显示过广告，显示它
+      setCurrentAdIndex(0);
     } else {
-      // 如果所有广告今天都已经显示过了，不再显示
+      // 如果广告今天已经显示过了，不再显示
       return;
     }
     

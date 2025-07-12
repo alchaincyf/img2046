@@ -46,13 +46,7 @@ const sidebarAds = [
     tag: '29元/月',
     socialProof: '已有10万+人购买'
   },
-  {
-    title: '美国虚拟信用卡WILDCARD',
-    description: '可用于购买ChatGPT、Claude会员,绑定美区AppStore（优惠码：AIHS）',
-    link: 'https://bewildcard.com/i/AIHS',
-    tag: '0月租',
-    socialProof: '已有5万+人体验'
-  },
+
   {
     title: 'Midjourney会员购买',
     description: '真实感拉满，AI绘图top1（优惠码：huasheng）',
