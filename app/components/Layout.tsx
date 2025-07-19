@@ -16,6 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Script from 'next/script';
 import MultiAdsPopup from './MultiAdsPopup';
 import AWSMiniProgramPromo from './AWSMiniProgramPromo';
+import AWSBedrockFullScreenPopup from './AWSBedrockFullScreenPopup';
 
 const drawerWidth = 240;
 const menuItems = [
@@ -202,6 +203,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
+        <AWSBedrockFullScreenPopup />
         <MultiAdsPopup />
         <AWSMiniProgramPromo />
         <AppBar 
