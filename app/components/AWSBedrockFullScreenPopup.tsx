@@ -60,7 +60,7 @@ export default function AWSBedrockFullScreenPopup() {
     {
       icon: <SmartToyIcon sx={{ fontSize: 40, color: '#FF9900' }} />,
       title: '顶级AI模型',
-      description: 'Claude 3、GPT-4、Llama 2等多个领先模型'
+      description: 'Claude 4、GPT-4、Llama 3等多个领先模型'
     },
     {
       icon: <CodeIcon sx={{ fontSize: 40, color: '#FF9900' }} />,
@@ -140,16 +140,35 @@ export default function AWSBedrockFullScreenPopup() {
             alignItems: 'center',
             minHeight: '100vh',
             position: 'relative',
-            zIndex: 1
+            zIndex: 1,
+            overflowY: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'rgba(255, 255, 255, 0.1)',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'rgba(255, 153, 0, 0.5)',
+              borderRadius: '3px',
+            },
           }}>
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              style={{ width: '100%', maxWidth: '1200px', padding: '20px' }}
+              style={{ 
+                width: '100%', 
+                maxWidth: '1400px', 
+                padding: isMobile ? '40px 16px' : '60px 40px',
+                minHeight: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}
             >
               {/* 主标题区域 */}
-              <Box sx={{ textAlign: 'center', mb: 6 }}>
+              <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -196,7 +215,7 @@ export default function AWSBedrockFullScreenPopup() {
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 4 }}>
                     <Chip 
-                      label="Claude 3.5 Sonnet" 
+                      label="Claude 4" 
                       sx={{ 
                         backgroundColor: 'rgba(255, 153, 0, 0.2)', 
                         color: '#FFB84D',
@@ -214,7 +233,7 @@ export default function AWSBedrockFullScreenPopup() {
                       }} 
                     />
                     <Chip 
-                      label="Llama 2" 
+                      label="Llama 3" 
                       sx={{ 
                         backgroundColor: 'rgba(255, 153, 0, 0.2)', 
                         color: '#FFB84D',
@@ -241,31 +260,38 @@ export default function AWSBedrockFullScreenPopup() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.8 }}
               >
-                <Grid container spacing={3} sx={{ mb: 6 }}>
+                <Grid container spacing={4} sx={{ mb: 8, px: 2 }}>
                   {features.map((feature, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Grid item xs={12} sm={6} lg={2.4} key={index}>
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 1 + index * 0.1 }}
                       >
                         <Box sx={{
-                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                          borderRadius: '16px',
-                          padding: '24px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                          borderRadius: '20px',
+                          padding: '28px 20px',
                           textAlign: 'center',
-                          border: '1px solid rgba(255, 153, 0, 0.2)',
-                          backdropFilter: 'blur(10px)',
+                          border: '1px solid rgba(255, 153, 0, 0.3)',
+                          backdropFilter: 'blur(15px)',
                           transition: 'all 0.3s ease',
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          minHeight: '200px',
                           '&:hover': {
-                            backgroundColor: 'rgba(255, 153, 0, 0.1)',
-                            transform: 'translateY(-5px)',
-                            boxShadow: '0 10px 30px rgba(255, 153, 0, 0.2)'
+                            backgroundColor: 'rgba(255, 153, 0, 0.12)',
+                            transform: 'translateY(-8px)',
+                            boxShadow: '0 15px 40px rgba(255, 153, 0, 0.25)',
+                            borderColor: 'rgba(255, 153, 0, 0.5)'
                           }
                         }}>
                           <motion.div
-                            whileHover={{ scale: 1.1 }}
-                            transition={{ duration: 0.2 }}
+                            whileHover={{ scale: 1.15, rotate: 5 }}
+                            transition={{ duration: 0.3 }}
+                            style={{ marginBottom: '16px' }}
                           >
                             {feature.icon}
                           </motion.div>
@@ -274,8 +300,8 @@ export default function AWSBedrockFullScreenPopup() {
                             sx={{ 
                               color: 'white', 
                               fontWeight: 'bold', 
-                              mb: 1, 
-                              mt: 2 
+                              mb: 2,
+                              fontSize: '1.1rem'
                             }}
                           >
                             {feature.title}
@@ -283,8 +309,9 @@ export default function AWSBedrockFullScreenPopup() {
                           <Typography 
                             variant="body2" 
                             sx={{ 
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              lineHeight: 1.6
+                              color: 'rgba(255, 255, 255, 0.85)',
+                              lineHeight: 1.7,
+                              fontSize: '0.9rem'
                             }}
                           >
                             {feature.description}
@@ -298,24 +325,38 @@ export default function AWSBedrockFullScreenPopup() {
 
               {/* 价值主张 */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 1.5 }}
               >
                 <Box sx={{
-                  backgroundColor: 'rgba(255, 153, 0, 0.1)',
-                  borderRadius: '20px',
-                  padding: '32px',
+                  background: 'linear-gradient(135deg, rgba(255, 153, 0, 0.15) 0%, rgba(255, 153, 0, 0.08) 100%)',
+                  borderRadius: '24px',
+                  padding: { xs: '24px', md: '40px' },
                   textAlign: 'center',
-                  border: '2px solid rgba(255, 153, 0, 0.3)',
-                  mb: 4
+                  border: '2px solid rgba(255, 153, 0, 0.4)',
+                  mb: 6,
+                  mx: 2,
+                  backdropFilter: 'blur(20px)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent, rgba(255, 153, 0, 0.8), transparent)',
+                  }
                 }}>
                   <Typography 
-                    variant="h5" 
+                    variant="h4" 
                     sx={{ 
                       color: '#FFB84D', 
                       fontWeight: 'bold', 
-                      mb: 2 
+                      mb: 3,
+                      fontSize: { xs: '1.5rem', md: '2rem' }
                     }}
                   >
                     🚀 专为您这样的AI开发者设计
@@ -323,16 +364,17 @@ export default function AWSBedrockFullScreenPopup() {
                   <Typography 
                     variant="body1" 
                     sx={{ 
-                      color: 'white',
-                      fontSize: '1.1rem',
+                      color: 'rgba(255, 255, 255, 0.95)',
+                      fontSize: { xs: '1rem', md: '1.2rem' },
                       lineHeight: 1.8,
-                      maxWidth: '800px',
-                      margin: '0 auto'
+                      maxWidth: '900px',
+                      margin: '0 auto',
+                      fontWeight: 300
                     }}
                   >
-                    无需从零搭建AI基础设施，直接调用世界顶级的AI模型API。
-                    无论是构建智能对话系统、AI编程助手，还是图像处理工具，
-                    Bedrock都能让您的想法快速变为现实。
+                    无需从零搭建AI基础设施，直接调用世界顶级的AI模型API。<br />
+                    无论是构建智能对话系统、AI编程助手，还是图像处理工具，<br />
+                    <strong style={{ color: '#FFB84D' }}>Bedrock都能让您的想法快速变为现实。</strong>
                   </Typography>
                 </Box>
               </motion.div>
@@ -343,46 +385,103 @@ export default function AWSBedrockFullScreenPopup() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.8 }}
               >
-                <Box sx={{ textAlign: 'center' }}>
+                <Box sx={{ textAlign: 'center', px: 2 }}>
                   <motion.div
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.08 }}
                     whileTap={{ scale: 0.95 }}
+                    style={{ display: 'inline-block' }}
                   >
                     <Button
                       onClick={handleClick}
                       variant="contained"
                       size="large"
                       sx={{
-                        background: 'linear-gradient(45deg, #FF9900 30%, #FFB84D 90%)',
-                        fontSize: isMobile ? '1.1rem' : '1.3rem',
+                        background: 'linear-gradient(135deg, #FF9900 0%, #FFB84D 50%, #FF9900 100%)',
+                        fontSize: { xs: '1.1rem', md: '1.4rem' },
                         fontWeight: 'bold',
-                        padding: '16px 48px',
-                        borderRadius: '50px',
+                        padding: { xs: '16px 32px', md: '20px 60px' },
+                        borderRadius: '60px',
                         textTransform: 'none',
-                        boxShadow: '0 8px 25px rgba(255, 153, 0, 0.4)',
+                        boxShadow: '0 12px 30px rgba(255, 153, 0, 0.4)',
+                        border: '2px solid rgba(255, 255, 255, 0.2)',
+                        position: 'relative',
+                        overflow: 'hidden',
                         '&:hover': {
-                          background: 'linear-gradient(45deg, #E6890A 30%, #FF9900 90%)',
-                          boxShadow: '0 12px 35px rgba(255, 153, 0, 0.6)',
+                          background: 'linear-gradient(135deg, #E6890A 0%, #FF9900 50%, #E6890A 100%)',
+                          boxShadow: '0 16px 40px rgba(255, 153, 0, 0.6)',
+                          borderColor: 'rgba(255, 255, 255, 0.4)',
                         },
                         '&:active': {
-                          transform: 'scale(0.98)'
+                          transform: 'scale(0.96)'
+                        },
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: '-100%',
+                          width: '100%',
+                          height: '100%',
+                          background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+                          transition: 'left 0.6s',
+                        },
+                        '&:hover::before': {
+                          left: '100%',
                         }
                       }}
                     >
-                      🎯 立即体验 AWS Bedrock →
+                      🚀 立即体验 AWS Bedrock
                     </Button>
                   </motion.div>
                   
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      mt: 2,
-                      fontSize: '0.9rem'
-                    }}
+                  <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', gap: 3, flexWrap: 'wrap' }}>
+                    {['免费试用', '按需付费', '企业级安全'].map((text, index) => (
+                      <motion.div
+                        key={text}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 2 + index * 0.1 }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box sx={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: '50%',
+                            backgroundColor: '#FFB84D',
+                            boxShadow: '0 0 10px rgba(255, 184, 77, 0.6)'
+                          }} />
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '0.95rem',
+                              fontWeight: 500
+                            }}
+                          >
+                            {text}
+                          </Typography>
+                        </Box>
+                      </motion.div>
+                    ))}
+                  </Box>
+                  
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.8, delay: 2.5 }}
                   >
-                    免费试用 • 按需付费 • 企业级安全
-                  </Typography>
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        color: 'rgba(255, 255, 255, 0.5)',
+                        mt: 2,
+                        display: 'block',
+                        fontSize: '0.8rem',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      ✨ 加入全球数万AI开发者的选择
+                    </Typography>
+                  </motion.div>
                 </Box>
               </motion.div>
             </motion.div>
