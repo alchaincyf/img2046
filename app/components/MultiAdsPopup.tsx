@@ -10,16 +10,16 @@ import { motion } from 'framer-motion';
 // 广告配置
 const ADS_CONFIG = [
   {
-    id: 'aiMembership',
-    link: 'https://nf.video/3j99py',
-    title: 'AI工具特惠活动',
-    titleIcon: <LocalFireDepartmentIcon sx={{ color: '#f50057' }} />,
-    bgGradient: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
-    titleText: ['ChatGPT、Claude', 'MidJourney会员特惠'],
-    mainTitle: '限时特惠：29元/月起',
-    description: '国内直连，无需科学上网，立即体验AI领域顶级工具，提升工作效率与创意表现力',
-    couponCode: 'huasheng',
-    buttonText: '立即领取特惠 →'
+    id: 'videoMembership',
+    link: 'https://nf.video/hiWiH',
+    title: '🎬 创作者必备神器',
+    titleIcon: <LocalFireDepartmentIcon sx={{ color: '#ff6b6b' }} />,
+    bgGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    titleText: ['Netflix、Disney+', 'YouTube会员合租'],
+    mainTitle: '银河录像局 - 低至5折订阅',
+    description: '设计师和创作者的灵感源泉！正版流媒体会员合租，海量高清素材和创意内容，激发无限创作灵感',
+    couponCode: 'IMG2046',
+    buttonText: '立即解锁创意宝库 →'
   }
 ];
 
@@ -109,7 +109,7 @@ export default function MultiAdsPopup() {
           maxWidth: '500px',
           width: '100%',
           overflow: 'hidden',
-          background: 'linear-gradient(135deg, #e8f5fe 0%, #ffffff 100%)',
+          background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)',
           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
         }
       }}
@@ -117,7 +117,7 @@ export default function MultiAdsPopup() {
       <DialogTitle sx={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eaeaea' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {currentAd.titleIcon}
-          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#3f51b5' }}>
+          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#764ba2' }}>
             {currentAd.title}
           </Typography>
         </Box>
@@ -235,7 +235,7 @@ export default function MultiAdsPopup() {
               backgroundColor: '#f0f7ff', 
               borderRadius: '8px', 
               width: '100%',
-              border: '1px dashed #3f51b5',
+              border: '1px dashed #764ba2',
               position: 'relative',
               overflow: 'hidden'
             }}>
@@ -284,14 +284,14 @@ export default function MultiAdsPopup() {
                 sx={{ 
                   mt: 1, 
                   py: 1.5,
-                  background: 'linear-gradient(45deg, #3f51b5 30%, #5c6bc0 90%)',
+                  background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
                   fontSize: '1.1rem',
                   fontWeight: 'bold',
                   textTransform: 'none',
                   boxShadow: '0 4px 12px rgba(63, 81, 181, 0.3)',
                   '&:hover': {
-                    background: 'linear-gradient(45deg, #303f9f 30%, #3f51b5 90%)',
-                    boxShadow: '0 6px 14px rgba(63, 81, 181, 0.4)',
+                    background: 'linear-gradient(45deg, #5a67d8 30%, #6b46c1 90%)',
+                    boxShadow: '0 6px 14px rgba(118, 75, 162, 0.4)',
                   },
                   transition: 'all 0.3s ease',
                   position: 'relative',
@@ -317,7 +317,7 @@ export default function MultiAdsPopup() {
             
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1 }}>
               <Typography variant="caption" sx={{ color: '#999', textAlign: 'center', mt: 1 }}>
-                安全可靠的官方合作渠道，简单注册即可使用
+                专为创作者打造，稳定可靠，即刻激发创意
               </Typography>
               <Badge 
                 sx={{ 

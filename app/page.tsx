@@ -48,6 +48,12 @@ const tools = [
     href: '/ai-logo-design',
     description: '使用AI技术快速生成简洁现代的logo设计，为您的品牌打造独特标识。'
   },
+  { 
+    name: '圆角处理', 
+    icon: '/images/rounded-corners.svg', 
+    href: '/rounded-corners',
+    description: '为您的图片添加圆角效果，支持图片裁剪和圆角程度调整，让图片更具现代感。'
+  },
 ];
 
 const faqs = [
@@ -107,7 +113,7 @@ export default function Home() {
                     boxShadow: 6
                   } 
                 }}>
-                  <Image src={tool.icon} alt={tool.name} width={64} height={64} />
+                  <Image src={tool.icon} alt={tool.name} width={64} height={64} style={{ width: 64, height: 64 }} />
                   <Typography variant="h6" component="h3" align="center" sx={{ mt: 2, mb: 1 }}>
                     {tool.name}
                   </Typography>
