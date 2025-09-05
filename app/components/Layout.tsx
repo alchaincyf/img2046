@@ -204,9 +204,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
-        <AWSBedrockFullScreenPopup />
-        {/* ChatGPT购买弹窗已禁用 */}
-        {/* <MultiAdsPopup /> */}
+        {/* AWS Bedrock 弹窗已禁用 */}
+        {/* <AWSBedrockFullScreenPopup /> */}
+        {/* 银河录像局推广弹窗 */}
+        <MultiAdsPopup />
         <AWSMiniProgramPromo />
         <AppBar 
           position="fixed" 

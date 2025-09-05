@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const FLUX_API_URL = 'https://api.siliconflow.cn/v1/images/generations';
 const MODELS = [
+  "Kwai-Kolors/Kolors",  // 优先使用 Kolors 模型
   "black-forest-labs/FLUX.1-schnell",
   "stabilityai/stable-diffusion-xl-base-1.0"
 ];
@@ -10,8 +11,11 @@ let modelIndex = 0;
 
 async function makeRequest(prompt: string, retries = 3) {
   try {
-    const model = MODELS[modelIndex];
-    modelIndex = (modelIndex + 1) % MODELS.length; // Update modelIndex for next request
+    // 始终优先使用 Kolors 模型，只有在失败时才切换到其他模型
+    const model = retries === 3 ? MODELS[0] : MODELS[modelIndex];
+    if (retries < 3) {
+      modelIndex = (modelIndex + 1) % MODELS.length; // Update modelIndex for fallback
+    }
 
     const response = await axios.post(FLUX_API_URL, {
       model,
