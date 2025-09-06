@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unsupported format' }, { status: 400 });
     }
 
-    return new NextResponse(convertedBuffer, {
+    return new Response(new Uint8Array(convertedBuffer), {
       status: 200,
       headers: {
         'Content-Type': `image/${format}`,

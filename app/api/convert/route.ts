@@ -68,7 +68,12 @@ export async function POST(req: NextRequest) {
       convertedBuffer = await sharp(buffer).toFormat(format as keyof sharp.FormatEnum).toBuffer();
     }
 
-    return new NextResponse(convertedBuffer, {
+    // Convert buffer to Blob for Response
+    const blob = new Blob([convertedBuffer], { 
+      type: format === 'pdf' ? 'application/pdf' : `image/${format}` 
+    });
+    
+    return new Response(blob, {
       status: 200,
       headers: {
         'Content-Type': format === 'pdf' ? 'application/pdf' : `image/${format}`,
