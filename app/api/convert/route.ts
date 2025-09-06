@@ -68,12 +68,13 @@ export async function POST(req: NextRequest) {
       convertedBuffer = await sharp(buffer).toFormat(format as keyof sharp.FormatEnum).toBuffer();
     }
 
-    // Convert buffer to Blob for Response
-    const blob = new Blob([convertedBuffer], { 
-      type: format === 'pdf' ? 'application/pdf' : `image/${format}` 
-    });
+    // Convert buffer to a format Response can handle
+    // Use Buffer.from to ensure we have a proper Buffer then convert to Uint8Array
+    const responseBuffer = Buffer.isBuffer(convertedBuffer) 
+      ? convertedBuffer 
+      : Buffer.from(convertedBuffer);
     
-    return new Response(blob, {
+    return new Response(responseBuffer as any, {
       status: 200,
       headers: {
         'Content-Type': format === 'pdf' ? 'application/pdf' : `image/${format}`,

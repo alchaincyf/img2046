@@ -331,7 +331,7 @@ const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ width, height }) => {
             
             // Special handling for lines
             if (element.type === 'line' && element.data.type === 'line') {
-              const points = element.data.points || [];
+              const points = (element.data as any).points || [];
               if (points.length >= 4) {
                 const minX = Math.min(points[0], points[2]);
                 const maxX = Math.max(points[0], points[2]);
@@ -349,7 +349,7 @@ const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ width, height }) => {
             // Special handling for pen/path
             if ((element.type === 'line' && element.data.type === 'line' && element.data.points.length > 4) || 
                 element.type === 'path') {
-              const points = element.data.points || [];
+              const points = (element.data as any).points || [];
               let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
               
               for (let i = 0; i < points.length; i += 2) {
@@ -605,7 +605,7 @@ const InfiniteCanvas: React.FC<InfiniteCanvasProps> = ({ width, height }) => {
             stageRef={stageRef}
             onTextChange={(text) => {
               updateElement(editingTextId, { 
-                data: { ...element.data, text } 
+                data: { ...element.data, text } as any 
               });
             }}
             onEditEnd={() => {

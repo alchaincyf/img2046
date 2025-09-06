@@ -63,7 +63,7 @@ const TextStylePanel: React.FC<TextStylePanelProps> = ({ onClose }) => {
           fontStyle: italic ? 'italic' : 'normal',
           fontWeight: bold ? 'bold' : 'normal',
           textDecoration: underline ? 'underline' : 'none',
-        },
+        } as any,
       });
     }
   }, [fontSize, fontFamily, textColor, backgroundColor, bold, italic, underline, textElement?.id]);

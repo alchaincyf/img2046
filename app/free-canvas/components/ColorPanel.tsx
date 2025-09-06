@@ -17,9 +17,9 @@ const ColorPanel: React.FC<ColorPanelProps> = ({ onClose }) => {
   const selectedElement = selectedElements.length === 1 ? selectedElements[0] : null;
   
   // Initialize from selected element or drawing style
-  const initFillColor = selectedElement?.data?.fill || drawingStyle?.fill || '#ffffff';
-  const initStrokeColor = selectedElement?.data?.stroke || drawingStyle?.stroke || '#94a3b8';
-  const initStrokeWidth = selectedElement?.data?.strokeWidth || drawingStyle?.strokeWidth || 1;
+  const initFillColor = (selectedElement?.data as any)?.fill || drawingStyle?.fill || '#ffffff';
+  const initStrokeColor = (selectedElement?.data as any)?.stroke || drawingStyle?.stroke || '#94a3b8';
+  const initStrokeWidth = (selectedElement?.data as any)?.strokeWidth || drawingStyle?.strokeWidth || 1;
   
   const [fillColor, setFillColor] = useState(initFillColor);
   const [strokeColor, setStrokeColor] = useState(initStrokeColor);
@@ -61,7 +61,7 @@ const ColorPanel: React.FC<ColorPanelProps> = ({ onClose }) => {
               fill: newFill,
               stroke: newStroke,
               strokeWidth,
-            },
+            } as any,
           });
         }
       });

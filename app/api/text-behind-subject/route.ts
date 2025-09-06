@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     console.log('Background removed successfully');
     const removedBgImage = await removeBgResponse.buffer();
 
-    return new NextResponse(removedBgImage, {
+    return new Response(removedBgImage as any, {
       headers: {
         'Content-Type': 'image/png',
       },

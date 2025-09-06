@@ -41,11 +41,14 @@ export interface TextElementData {
   fontSize?: number;
   fontFamily?: string;
   fontStyle?: 'normal' | 'bold' | 'italic';
+  fontWeight?: string;
+  textDecoration?: string;
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
   align?: 'left' | 'center' | 'right';
   lineHeight?: number;
+  backgroundColor?: string;
 }
 
 export interface RectElementData {

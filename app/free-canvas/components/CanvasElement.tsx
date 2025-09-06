@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Rect, Circle, Text, Line, Path, Image, Transformer, Group } from 'react-konva';
 import Konva from 'konva';
-import { CanvasElement as CanvasElementType } from '../types';
+import { CanvasElement as CanvasElementType, ElementData } from '../types';
 import { useCanvasStore } from '../store/canvasStore';
 import { loadImageElement } from '../utils/canvas';
 import { createPortal } from 'react-dom';
@@ -163,7 +163,7 @@ const CanvasElement: React.FC<CanvasElementProps> = ({ element, isSelected, isEd
       // For circles, update radius based on scale
       const avgScale = (node.scaleX() + node.scaleY()) / 2;
       const newRadius = Math.round((element.data as any).radius * avgScale);
-      updates.data = { ...element.data, radius: newRadius };
+      updates.data = { ...element.data, radius: newRadius } as ElementData;
       updates.scaleX = 1;
       updates.scaleY = 1;
       

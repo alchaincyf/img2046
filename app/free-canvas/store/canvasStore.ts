@@ -16,7 +16,7 @@ interface CanvasStore {
   
   // Actions
   setTool: (tool: Tool) => void;
-  addElement: (element: Omit<CanvasElement, 'id' | 'zIndex'>) => void;
+  addElement: (element: Omit<CanvasElement, 'id' | 'zIndex'>) => CanvasElement;
   updateElement: (id: string, updates: Partial<CanvasElement>) => void;
   deleteElement: (id: string) => void;
   deleteElements: (ids: string[]) => void;
@@ -101,6 +101,7 @@ export const useCanvasStore = create<CanvasStore>()(
         }));
         
         get().saveHistory();
+        return newElement;
       },
       
       updateElement: (id, updates) => {
