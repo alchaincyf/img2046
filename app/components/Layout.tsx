@@ -21,7 +21,8 @@ import AWSBedrockFullScreenPopup from './AWSBedrockFullScreenPopup';
 const drawerWidth = 240;
 const menuItems = [
   { text: '首页', icon: <Image src="/images/home.svg" alt="Home" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/' },
-  { text: 'AI 文生图', icon: <Image src="/images/ai-image-generator.svg" alt="AI Image Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/ai-image-generator' },
+  // { text: 'AI 文生图', icon: <Image src="/images/ai-image-generator.svg" alt="AI Image Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/ai-image-generator' },
+  { text: '自由画布', icon: <Image src="/images/free-canvas.svg" alt="Free Canvas" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/free-canvas' },
   { text: '文字卡片生成', icon: <Image src="/images/text-card-generator.svg" alt="Text Card Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/text-card-generator' },
   { text: '图片压缩', icon: <Image src="/images/compress.svg" alt="Compress" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/compress' },
   { text: '调整大小', icon: <Image src="/images/resize.svg" alt="Resize" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/resize' },
@@ -35,11 +36,11 @@ const menuItems = [
 
 const sidebarAds = [
   {
-    title: 'ChatGPT进阶课程',
-    description: '带你全面掌握ChatGPT应用技巧。提升工作、学习效率',
-    link: 'https://xiaobot.net/p/AIclass',
-    tag: '100万人学过',
-    socialProof: '已有640人订阅'
+    title: 'Claude Code会员',
+    description: 'Claude编程助手，开发者必备AI编程工具（优惠码：huasheng）',
+    link: 'https://nf.video/hiWiH',
+    tag: '限时优惠',
+    socialProof: '开发者首选'
   },
   {
     title: 'ChatGPT会员合租',

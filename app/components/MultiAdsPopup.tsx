@@ -18,7 +18,7 @@ const ADS_CONFIG = [
     titleText: ['Netflix、Disney+', 'YouTube会员合租'],
     mainTitle: '银河录像局 - 低至5折订阅',
     description: '设计师和创作者的灵感源泉！正版流媒体会员合租，海量高清素材和创意内容，激发无限创作灵感',
-    couponCode: 'IMG2046',
+    couponCode: 'huasheng',
     buttonText: '立即解锁创意宝库 →'
   }
 ];
