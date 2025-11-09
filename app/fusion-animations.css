@@ -1,0 +1,461 @@
+/* 
+ * 融合动效系统 - Saul Bass + Piet Mondrian + Thomas Heatherwick
+ * 性能优化：目标 LCP ≤ 2s，INP ≤ 200ms，CLS ≤ 0.1
+ * 可访问性：支持 prefers-reduced-motion
+ */
+
+/* 性能优化：GPU 加速 */
+.gpu-accelerated {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Bass 电影级切入动画 */
+@keyframes bass-slide-cut {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    opacity: 0;
+  }
+  50% {
+    clip-path: polygon(0 0, 70% 0, 60% 100%, 0 100%);
+    opacity: 0.8;
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 1;
+  }
+}
+
+.bass-enter {
+  animation: bass-slide-cut 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Bass 动态线条生长 */
+@keyframes bass-line-grow {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.bass-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.bass-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(
+    var(--cut-angle),
+    var(--primary-red) 0%,
+    var(--accent-orange) 100%
+  );
+  animation: bass-line-grow 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Mondrian 色块展开动画 */
+@keyframes mondrian-expand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.mondrian-block-animate {
+  animation: mondrian-expand 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.mondrian-block-animate:nth-child(1) { animation-delay: 0s; }
+.mondrian-block-animate:nth-child(2) { animation-delay: 0.1s; }
+.mondrian-block-animate:nth-child(3) { animation-delay: 0.2s; }
+.mondrian-block-animate:nth-child(4) { animation-delay: 0.3s; }
+
+/* Mondrian 网格线绘制 */
+@keyframes mondrian-grid-draw {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.mondrian-grid-line {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: mondrian-grid-draw 1.5s ease-out forwards;
+}
+
+/* Heatherwick 流体变形 */
+@keyframes heatherwick-morph {
+  0% {
+    border-radius: 0;
+    transform: scale(1);
+  }
+  50% {
+    border-radius: 50% 20% 80% 30%;
+    transform: scale(1.02);
+  }
+  100% {
+    border-radius: calc(var(--grid-base) * 2);
+    transform: scale(1);
+  }
+}
+
+.heatherwick-morph {
+  animation: heatherwick-morph 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Heatherwick 材质闪光效果 */
+@keyframes heatherwick-shine {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.heatherwick-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.heatherwick-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  animation: heatherwick-shine 2s ease-out infinite;
+  animation-delay: 1s;
+}
+
+/* 工具卡片悬浮序列动画 */
+@keyframes tool-card-float {
+  0%, 100% {
+    transform: translateY(0) rotateX(0);
+  }
+  50% {
+    transform: translateY(-8px) rotateX(2deg);
+  }
+}
+
+.fusion-tool-card {
+  animation: tool-card-float 4s ease-in-out infinite;
+}
+
+.fusion-tool-card:nth-child(1) { animation-delay: 0s; }
+.fusion-tool-card:nth-child(2) { animation-delay: 0.5s; }
+.fusion-tool-card:nth-child(3) { animation-delay: 1s; }
+.fusion-tool-card:nth-child(4) { animation-delay: 1.5s; }
+.fusion-tool-card:nth-child(5) { animation-delay: 2s; }
+.fusion-tool-card:nth-child(6) { animation-delay: 2.5s; }
+.fusion-tool-card:nth-child(7) { animation-delay: 3s; }
+.fusion-tool-card:nth-child(8) { animation-delay: 3.5s; }
+
+/* Bass 标题打字机效果 */
+@keyframes bass-typewriter {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.bass-title-typewriter {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.bass-title-typewriter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--primary-red);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* 滚动触发动画 */
+.scroll-trigger {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.scroll-trigger.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 鼠标跟随效果 - Heatherwick 空间感 */
+.mouse-follower {
+  position: relative;
+  cursor: none;
+}
+
+.mouse-follower::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, var(--primary-red) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.1s ease-out;
+  z-index: 1000;
+}
+
+.mouse-follower:hover::after {
+  opacity: 0.6;
+  transform: scale(1.5);
+}
+
+/* 页面转场动画 */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(50px) scale(0.95);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-50px) scale(1.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 按钮点击反馈 - Mondrian 几何扩散 */
+.mondrian-button-feedback {
+  position: relative;
+  overflow: hidden;
+}
+
+.mondrian-button-feedback::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease-out;
+}
+
+.mondrian-button-feedback:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* 加载状态动画 */
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--neutral-gray) 25%,
+    rgba(255, 255, 255, 0.5) 50%,
+    var(--neutral-gray) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 性能监控指示器 */
+.performance-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: monospace;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.performance-indicator.show {
+  opacity: 1;
+}
+
+/* 减少动效模式 - 完整回退 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
+  }
+  
+  .bass-enter,
+  .mondrian-block-animate,
+  .heatherwick-morph,
+  .fusion-tool-card {
+    animation: none;
+  }
+  
+  .bass-line::before,
+  .heatherwick-shine::before,
+  .mondrian-button-feedback::after {
+    display: none;
+  }
+  
+  .scroll-trigger {
+    opacity: 1;
+    transform: none;
+  }
+  
+  .page-transition-enter,
+  .page-transition-exit {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 低性能设备优化 */
+@media (max-width: 768px) {
+  .heatherwick-shine::before,
+  .mouse-follower::after {
+    display: none;
+  }
+  
+  .fusion-tool-card {
+    animation: none;
+  }
+  
+  .bass-line::before {
+    animation-duration: 0.5s;
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .mouse-follower {
+    cursor: auto;
+  }
+  
+  .mouse-follower::after {
+    display: none;
+  }
+  
+  .fusion-tool-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease-out;
+  }
+}
+
+/* 高刷新率显示器优化 */
+@media (min-resolution: 120dpi) {
+  .bass-enter,
+  .mondrian-block-animate,
+  .heatherwick-morph {
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+}
+
+/* 暗色模式动效调整 */
+@media (prefers-color-scheme: dark) {
+  .heatherwick-shine::before {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+  }
+  
+  .loading-skeleton {
+    background: linear-gradient(
+      90deg,
+      #333 25%,
+      rgba(255, 255, 255, 0.1) 50%,
+      #333 75%
+    );
+  }
+}
+
+/* 打印时隐藏所有动效 */
+@media print {
+  .bass-line::before,
+  .heatherwick-shine::before,
+  .mouse-follower::after,
+  .performance-indicator {
+    display: none;
+  }
+}

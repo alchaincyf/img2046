@@ -1,0 +1,416 @@
+/* 
+ * 融合设计系统 - Saul Bass + Piet Mondrian + Thomas Heatherwick
+ * 转译原则：借鉴气质与方法，禁止临摹具体作品
+ * 核心理念：动态几何 + 不对称张力 + 空间深度
+ */
+
+:root {
+  /* Saul Bass - 电影级动态色彩 */
+  --bass-red: #E31E24;           /* 动态红 */
+  --bass-orange: #FF6B35;        /* 切割橙 */
+  --bass-black: #1A1A1A;         /* 深黑 */
+  --bass-white: #FAFAFA;         /* 柔白 */
+  --bass-gray: #666666;          /* 中性灰 */
+  
+  /* Piet Mondrian - 新造型主义色彩 */
+  --mondrian-red: #DE1B1B;       /* 纯红 */
+  --mondrian-blue: #2E5BBA;      /* 纯蓝 */
+  --mondrian-yellow: #F7D002;    /* 纯黄 */
+  --mondrian-black: #000000;     /* 纯黑 */
+  --mondrian-white: #FFFFFF;     /* 纯白 */
+  --mondrian-gray: #E5E5E5;      /* 分割灰 */
+  
+  /* Thomas Heatherwick - 建筑材质色彩 */
+  --heatherwick-copper: #B87333;    /* 铜色 */
+  --heatherwick-steel: #71797E;     /* 钢色 */
+  --heatherwick-brass: #B5A642;     /* 黄铜 */
+  --heatherwick-concrete: #A8A8A8;  /* 混凝土 */
+  --heatherwick-wood: #8B4513;      /* 木色 */
+  
+  /* 融合色彩系统 */
+  --primary-red: var(--mondrian-red);
+  --primary-blue: var(--mondrian-blue);
+  --primary-yellow: var(--mondrian-yellow);
+  --accent-orange: var(--bass-orange);
+  --neutral-black: var(--bass-black);
+  --neutral-white: var(--bass-white);
+  --neutral-gray: var(--mondrian-gray);
+  --material-copper: var(--heatherwick-copper);
+  --material-steel: var(--heatherwick-steel);
+  
+  /* Bass 动态网格参数 */
+  --grid-base: 8px;
+  --grid-asymmetric-ratio: 1.618; /* 黄金比例 */
+  --cut-angle: 15deg;             /* Bass切割角度 */
+  --transition-cut: 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  /* Mondrian 不对称网格 */
+  --mondrian-col-1: 1.2fr;        /* 不等宽列 */
+  --mondrian-col-2: 0.8fr;
+  --mondrian-col-3: 1.5fr;
+  --mondrian-line-width: 4px;     /* 分割线宽度 */
+  
+  /* Heatherwick 空间深度 */
+  --depth-layer-1: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --depth-layer-2: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --depth-layer-3: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --depth-layer-4: 0 16px 48px rgba(0, 0, 0, 0.16);
+  --material-texture: 0 1px 3px rgba(0, 0, 0, 0.04);
+  
+  /* 响应式断点 */
+  --bp-mobile: 480px;
+  --bp-tablet: 768px;
+  --bp-desktop: 1024px;
+  --bp-wide: 1440px;
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --neutral-black: var(--bass-white);
+    --neutral-white: var(--bass-black);
+    --neutral-gray: #333333;
+    --depth-layer-1: 0 2px 8px rgba(255, 255, 255, 0.04);
+    --depth-layer-2: 0 4px 16px rgba(255, 255, 255, 0.06);
+    --depth-layer-3: 0 8px 32px rgba(255, 255, 255, 0.08);
+    --depth-layer-4: 0 16px 48px rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* 基础重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Arial", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--neutral-black);
+  background-color: var(--neutral-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bass 动态几何容器 */
+.bass-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.bass-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    var(--cut-angle),
+    transparent 0%,
+    var(--accent-orange) 1px,
+    transparent 1px
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-cut);
+}
+
+.bass-container:hover::before {
+  opacity: 0.1;
+}
+
+/* Mondrian 不对称网格 */
+.mondrian-grid {
+  display: grid;
+  grid-template-columns: var(--mondrian-col-1) var(--mondrian-col-2) var(--mondrian-col-3);
+  gap: var(--mondrian-line-width);
+  position: relative;
+}
+
+.mondrian-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(var(--mondrian-col-1) + var(--mondrian-line-width) / 2);
+  width: var(--mondrian-line-width);
+  height: 100%;
+  background-color: var(--neutral-black);
+  z-index: 1;
+}
+
+.mondrian-grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: calc(var(--mondrian-col-3) + var(--mondrian-line-width) / 2);
+  width: var(--mondrian-line-width);
+  height: 100%;
+  background-color: var(--neutral-black);
+  z-index: 1;
+}
+
+/* Mondrian 色彩块 */
+.mondrian-block {
+  position: relative;
+  padding: calc(var(--grid-base) * 3);
+  background-color: var(--neutral-white);
+}
+
+.mondrian-block--red {
+  background-color: var(--primary-red);
+  color: var(--neutral-white);
+}
+
+.mondrian-block--blue {
+  background-color: var(--primary-blue);
+  color: var(--neutral-white);
+}
+
+.mondrian-block--yellow {
+  background-color: var(--primary-yellow);
+  color: var(--neutral-black);
+}
+
+/* Heatherwick 层叠卡片 */
+.heatherwick-card {
+  position: relative;
+  background-color: var(--neutral-white);
+  border-radius: calc(var(--grid-base) * 1.5);
+  padding: calc(var(--grid-base) * 3);
+  box-shadow: var(--depth-layer-2);
+  transition: all var(--transition-cut);
+  overflow: hidden;
+}
+
+.heatherwick-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    var(--material-copper) 0%,
+    transparent 1px,
+    transparent 99%,
+    var(--material-steel) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--transition-cut);
+}
+
+.heatherwick-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--depth-layer-4);
+}
+
+.heatherwick-card:hover::before {
+  opacity: 0.03;
+}
+
+/* 工具卡片融合设计 */
+.fusion-tool-card {
+  position: relative;
+  background-color: var(--neutral-white);
+  border-radius: calc(var(--grid-base) * 2);
+  padding: calc(var(--grid-base) * 4);
+  box-shadow: var(--depth-layer-2);
+  transition: all var(--transition-cut);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Bass 切割线 */
+.fusion-tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-red) 0%,
+    var(--primary-blue) 50%,
+    var(--primary-yellow) 100%
+  );
+  transition: left var(--transition-cut);
+}
+
+/* Mondrian 色彩点缀 */
+.fusion-tool-card::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--grid-base) * 2);
+  right: calc(var(--grid-base) * 2);
+  width: calc(var(--grid-base) * 1);
+  height: calc(var(--grid-base) * 1);
+  background-color: var(--primary-red);
+  opacity: 0;
+  transition: opacity var(--transition-cut);
+}
+
+.fusion-tool-card:hover::before {
+  left: 0;
+}
+
+.fusion-tool-card:hover::after {
+  opacity: 1;
+}
+
+.fusion-tool-card:hover {
+  transform: translateY(-6px) rotateX(2deg);
+  box-shadow: var(--depth-layer-4);
+}
+
+/* Bass 动态标题 */
+.bass-title {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  position: relative;
+  margin-bottom: calc(var(--grid-base) * 4);
+}
+
+.bass-title::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 0;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-red) 0%,
+    var(--accent-orange) 100%
+  );
+  transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.bass-title.animate::before {
+  width: 60%;
+}
+
+/* Mondrian 按钮系统 */
+.mondrian-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--grid-base) * 2) calc(var(--grid-base) * 4);
+  background-color: var(--neutral-white);
+  color: var(--neutral-black);
+  border: 3px solid var(--neutral-black);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all var(--transition-cut);
+  position: relative;
+  overflow: hidden;
+}
+
+.mondrian-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-red);
+  transition: left var(--transition-cut);
+  z-index: -1;
+}
+
+.mondrian-button:hover {
+  color: var(--neutral-white);
+  border-color: var(--primary-red);
+}
+
+.mondrian-button:hover::before {
+  left: 0;
+}
+
+.mondrian-button--primary {
+  background-color: var(--primary-red);
+  border-color: var(--primary-red);
+  color: var(--neutral-white);
+}
+
+.mondrian-button--primary::before {
+  background-color: var(--neutral-black);
+}
+
+/* 响应式网格适配 */
+@media (max-width: 768px) {
+  .mondrian-grid {
+    grid-template-columns: 1fr;
+    gap: calc(var(--mondrian-line-width) * 2);
+  }
+  
+  .mondrian-grid::before,
+  .mondrian-grid::after {
+    display: none;
+  }
+  
+  .fusion-tool-card {
+    padding: calc(var(--grid-base) * 3);
+  }
+  
+  .bass-title {
+    font-size: clamp(2rem, 12vw, 3.5rem);
+  }
+}
+
+/* 可访问性增强 */
+@media (prefers-reduced-motion: reduce) {
+  .bass-container::before,
+  .fusion-tool-card::before,
+  .fusion-tool-card::after,
+  .bass-title::before,
+  .mondrian-button::before {
+    transition: none;
+  }
+  
+  .fusion-tool-card:hover,
+  .heatherwick-card:hover {
+    transform: none;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .fusion-tool-card {
+    border: 2px solid var(--neutral-black);
+  }
+  
+  .mondrian-button {
+    border-width: 4px;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .bass-container::before,
+  .fusion-tool-card::before,
+  .fusion-tool-card::after,
+  .heatherwick-card::before {
+    display: none;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .fusion-tool-card,
+  .heatherwick-card {
+    box-shadow: none;
+    border: 1px solid black;
+  }
+}

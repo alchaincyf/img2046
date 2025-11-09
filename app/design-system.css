@@ -1,0 +1,575 @@
+/* 
+ * 设计系统 - 融合 Josef Müller-Brockmann + Dieter Rams + Refik Anadol
+ * 核心理念：瑞士网格秩序 + 功能极简 + 数据美学
+ * 转译原则：借鉴气质与方法，禁止临摹具体作品
+ */
+
+:root {
+  /* Josef Müller-Brockmann - 瑞士现代主义色彩系统 */
+  --swiss-red: #FF0000;        /* 经典瑞士红 */
+  --swiss-black: #000000;      /* 纯黑 */
+  --swiss-white: #FFFFFF;      /* 纯白 */
+  --swiss-gray-100: #F5F5F5;   /* 浅灰 */
+  --swiss-gray-300: #CCCCCC;   /* 中灰 */
+  --swiss-gray-700: #333333;   /* 深灰 */
+  --swiss-blue: #0066CC;       /* 功能蓝 */
+  
+  /* Dieter Rams - Braun 功能色彩 */
+  --rams-red: #E30613;         /* Braun 经典红 */
+  --rams-orange: #FF6900;      /* 功能警示橙 */
+  --rams-gray-50: #FAFAFA;     /* 极浅灰 */
+  --rams-gray-200: #E0E0E0;    /* 浅灰 */
+  --rams-gray-500: #808080;    /* 中灰 */
+  --rams-gray-800: #2A2A2A;    /* 深灰 */
+  
+  /* Refik Anadol - 数据流渐变系统 */
+  --anadol-cyan: #00D9FF;      /* 数据青 */
+  --anadol-magenta: #FF00FF;   /* 数据洋红 */
+  --anadol-green: #00FF88;     /* 数据绿 */
+  --anadol-yellow: #FFD700;    /* 数据黄 */
+  --anadol-noise: rgba(0, 0, 0, 0.02);
+  
+  /* 融合系统色彩映射 */
+  --bg-primary: var(--swiss-white);
+  --bg-secondary: var(--rams-gray-50);
+  --bg-tertiary: var(--swiss-gray-100);
+  --text-primary: var(--swiss-black);
+  --text-secondary: var(--swiss-gray-700);
+  --text-muted: var(--rams-gray-500);
+  --accent-primary: var(--swiss-red);
+  --accent-secondary: var(--rams-red);
+  --accent-tertiary: var(--swiss-blue);
+  --border-color: var(--rams-gray-200);
+  --border-accent: var(--swiss-red);
+  
+  /* Müller-Brockmann 8列网格系统 */
+  --grid-columns: 8;
+  --grid-gutter: 24px;
+  --grid-margin: 48px;
+  --grid-unit: 8px;
+  --golden-ratio: 1.618;
+  
+  /* Rams 功能尺寸系统 */
+  --spacing-xs: calc(var(--grid-unit) * 0.5);   /* 4px */
+  --spacing-sm: calc(var(--grid-unit) * 1);     /* 8px */
+  --spacing-md: calc(var(--grid-unit) * 2);     /* 16px */
+  --spacing-lg: calc(var(--grid-unit) * 3);     /* 24px */
+  --spacing-xl: calc(var(--grid-unit) * 4);     /* 32px */
+  --spacing-2xl: calc(var(--grid-unit) * 6);    /* 48px */
+  --spacing-3xl: calc(var(--grid-unit) * 8);    /* 64px */
+  
+  /* Müller-Brockmann 瑞士排版系统 */
+  --font-primary: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+  --font-mono: "SF Mono", Monaco, "Courier New", monospace;
+  --font-size-base: 16px;
+  --font-scale: 1.25; /* Major Third 音程 */
+  --line-height-tight: 1.1;    /* 瑞士风格紧密行高 */
+  --line-height-base: 1.4;     /* 功能阅读行高 */
+  --line-height-loose: 1.6;    /* 舒适阅读行高 */
+  
+  /* Rams 功能动效参数 */
+  --transition-fast: 150ms;
+  --transition-base: 250ms;
+  --transition-slow: 400ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  
+  /* Anadol 数据流参数 */
+  --particle-density: 0.001;
+  --flow-speed: 30s;
+  --data-opacity: 0.03;
+}
+
+/* 暗色模式 - 保持瑞士现代主义对比度 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: var(--swiss-black);
+    --bg-secondary: var(--rams-gray-800);
+    --bg-tertiary: var(--swiss-gray-700);
+    --text-primary: var(--swiss-white);
+    --text-secondary: var(--rams-gray-200);
+    --text-muted: var(--rams-gray-500);
+    --border-color: var(--swiss-gray-700);
+    --border-accent: var(--swiss-red);
+    --anadol-noise: rgba(255, 255, 255, 0.01);
+    --data-opacity: 0.02;
+  }
+}
+
+/* 减少动效模式 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+    --transition-slow: 0ms;
+    --flow-speed: 0s;
+  }
+  
+  .data-flow,
+  .particle-system,
+  .fluid-morph {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 基础重置 - Rams 极简原则 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Müller-Brockmann 网格容器 */
+.swiss-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  gap: var(--grid-gutter);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--grid-margin);
+}
+
+.swiss-grid--narrow {
+  --grid-columns: 4;
+}
+
+.swiss-grid--wide {
+  --grid-columns: 12;
+}
+
+/* 网格对齐辅助类 */
+.span-1 { grid-column: span 1; }
+.span-2 { grid-column: span 2; }
+.span-3 { grid-column: span 3; }
+.span-4 { grid-column: span 4; }
+.span-6 { grid-column: span 6; }
+.span-8 { grid-column: span 8; }
+.span-full { grid-column: 1 / -1; }
+
+/* Rams 排版层级 */
+.text-display {
+  font-size: calc(var(--font-size-base) * pow(var(--font-scale), 4));
+  line-height: var(--line-height-tight);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text-h1 {
+  font-size: calc(var(--font-size-base) * pow(var(--font-scale), 3));
+  line-height: var(--line-height-tight);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.text-h2 {
+  font-size: calc(var(--font-size-base) * pow(var(--font-scale), 2));
+  line-height: var(--line-height-tight);
+  font-weight: 600;
+}
+
+.text-h3 {
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  line-height: var(--line-height-base);
+  font-weight: 500;
+}
+
+.text-body {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  font-weight: 400;
+}
+
+.text-caption {
+  font-size: calc(var(--font-size-base) / var(--font-scale));
+  line-height: var(--line-height-base);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+/* Rams 功能性组件 */
+.rams-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--grid-unit) * 1.5) calc(var(--grid-unit) * 3);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+  font-weight: 500;
+  font-size: var(--font-size-base);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition-base) var(--easing-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.rams-button:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  transform: translateY(-1px);
+}
+
+.rams-button:active {
+  transform: translateY(0);
+  transition-duration: var(--transition-fast);
+}
+
+.rams-button--primary {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--rams-white);
+}
+
+.rams-button--primary:hover {
+  background-color: var(--rams-black);
+  border-color: var(--rams-black);
+}
+
+/* Müller-Brockmann 卡片系统 */
+.swiss-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  padding: calc(var(--grid-unit) * 3);
+  position: relative;
+  transition: transform var(--transition-base) var(--easing-standard);
+}
+
+.swiss-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--grid-unit);
+  height: 100%;
+  background-color: var(--accent-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-base) var(--easing-decelerate);
+}
+
+.swiss-card:hover::before {
+  transform: scaleX(1);
+}
+
+.swiss-card__title {
+  font-size: calc(var(--font-size-base) * var(--font-scale));
+  font-weight: 600;
+  margin-bottom: calc(var(--grid-unit) * 2);
+}
+
+.swiss-card__content {
+  color: var(--text-secondary);
+}
+
+/* Anadol 数据流背景 - 参数化渐变 */
+.data-flow-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: var(--data-opacity);
+  background: 
+    radial-gradient(ellipse at 20% 20%, var(--anadol-cyan) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, var(--anadol-magenta) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, var(--anadol-green) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, var(--anadol-yellow) 0%, transparent 50%);
+  filter: blur(120px);
+  animation: data-flow var(--flow-speed) linear infinite;
+}
+
+@keyframes data-flow {
+  0% {
+    transform: rotate(0deg) scale(1.2);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.4);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.4);
+  }
+  100% {
+    transform: rotate(360deg) scale(1.2);
+  }
+}
+
+/* 粒子噪点纹理 */
+.particle-noise {
+  position: relative;
+}
+
+.particle-noise::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.3;
+  background-image: 
+    repeating-radial-gradient(
+      circle at 0 0, 
+      transparent 0,
+      var(--anadol-noise) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  mix-blend-mode: multiply;
+}
+
+/* Rams 导航系统 */
+.rams-nav {
+  display: flex;
+  align-items: center;
+  padding: calc(var(--grid-unit) * 2) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.rams-nav__logo {
+  font-weight: 700;
+  font-size: calc(var(--font-size-base) * 1.25);
+  letter-spacing: -0.01em;
+  margin-right: auto;
+}
+
+.rams-nav__menu {
+  display: flex;
+  gap: calc(var(--grid-unit) * 4);
+  list-style: none;
+}
+
+.rams-nav__link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast) var(--easing-standard);
+  position: relative;
+}
+
+.rams-nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--accent-primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--transition-base) var(--easing-decelerate);
+}
+
+.rams-nav__link:hover {
+  color: var(--text-primary);
+}
+
+.rams-nav__link:hover::after,
+.rams-nav__link--active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* 工具卡片网格 */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: calc(var(--grid-unit) * 3);
+  padding: calc(var(--grid-unit) * 6) 0;
+}
+
+.tool-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  padding: calc(var(--grid-unit) * 3);
+  transition: all var(--transition-base) var(--easing-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--anadol-cyan) 0%,
+    var(--anadol-magenta) 33%,
+    var(--anadol-green) 66%,
+    var(--anadol-yellow) 100%
+  );
+  transform: translateX(-100%);
+  transition: transform var(--transition-slow) var(--easing-decelerate);
+}
+
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.tool-card:hover::before {
+  transform: translateX(0);
+}
+
+/* 响应式断点 */
+@media (max-width: 1024px) {
+  :root {
+    --grid-columns: 6;
+    --grid-margin: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --grid-columns: 4;
+    --grid-margin: 24px;
+    --grid-gutter: 16px;
+  }
+  
+  .text-display {
+    font-size: calc(var(--font-size-base) * pow(var(--font-scale), 3));
+  }
+  
+  .tool-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --grid-columns: 2;
+    --grid-margin: 16px;
+  }
+}
+
+/* WCAG 2.2 AA 可访问性增强 */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent-primary);
+  color: var(--swiss-white);
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-decoration: none;
+  font-weight: 600;
+  z-index: 1000;
+  border-radius: 4px;
+  transition: top var(--transition-fast) var(--easing-standard);
+}
+
+.skip-link:focus {
+  top: var(--spacing-sm);
+}
+
+/* 高对比度焦点样式 */
+*:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 键盘导航增强 */
+.rams-button:focus-visible,
+.tool-card:focus-visible,
+.swiss-card:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--bg-primary);
+}
+
+/* 颜色对比度确保 */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* 确保最小对比度 4.5:1 */
+@media (prefers-contrast: high) {
+  :root {
+    --text-secondary: var(--text-primary);
+    --text-muted: var(--text-primary);
+    --border-color: var(--text-primary);
+  }
+}
+
+/* 性能优化护栏 */
+@media (prefers-reduced-motion: reduce) {
+  .data-flow-bg {
+    animation: none;
+    opacity: 0.01;
+  }
+  
+  .tool-card::before,
+  .swiss-card::before {
+    transition: none;
+  }
+  
+  .hover-lift:hover {
+    transform: none;
+  }
+}
+
+/* 低性能设备优化 */
+@media (max-width: 768px) {
+  .data-flow-bg {
+    opacity: 0.01;
+    filter: blur(200px);
+  }
+  
+  .particle-system {
+    display: none;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .data-flow-bg,
+  .particle-noise::after,
+  .particle-system {
+    display: none;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .rams-button,
+  .tool-card,
+  .swiss-card {
+    border: 1px solid black;
+  }
+}

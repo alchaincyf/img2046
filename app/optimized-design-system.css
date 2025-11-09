@@ -1,0 +1,463 @@
+/*
+ * 优化设计系统 - Dieter Rams + Josef Müller-Brockmann + Susan Kare
+ * 转译原则：功能优先、网格秩序、像素精确
+ * 核心理念：少即是多、数学化精确、直观交互
+ */
+
+:root {
+  /* Dieter Rams - 功能色彩 */
+  --rams-white: #FFFFFF;
+  --rams-black: #000000;
+  --rams-gray-50: #FAFAFA;
+  --rams-gray-100: #F5F5F5;
+  --rams-gray-200: #EEEEEE;
+  --rams-gray-300: #E0E0E0;
+  --rams-gray-400: #BDBDBD;
+  --rams-gray-500: #9E9E9E;
+  --rams-gray-600: #757575;
+  --rams-gray-700: #616161;
+  --rams-gray-800: #424242;
+  --rams-gray-900: #212121;
+  --rams-red: #E53935;
+  --rams-blue: #1976D2;
+  --rams-green: #43A047;
+  --rams-orange: #FB8C00;
+  
+  /* Müller-Brockmann - 网格系统 */
+  --grid-base: 8px;
+  --grid-margin: 24px;
+  --grid-gutter: 16px;
+  --grid-columns: 12;
+  --grid-container-max: 1200px;
+  
+  /* Susan Kare - 像素精确 */
+  --pixel-unit: 1px;
+  --icon-size-sm: 16px;
+  --icon-size-md: 24px;
+  --icon-size-lg: 32px;
+  --border-width: 1px;
+  --border-radius: 4px;
+  
+  /* 语义化色彩 */
+  --color-primary: var(--rams-blue);
+  --color-danger: var(--rams-red);
+  --color-success: var(--rams-green);
+  --color-warning: var(--rams-orange);
+  --color-background: var(--rams-white);
+  --color-surface: var(--rams-gray-50);
+  --color-text-primary: var(--rams-gray-900);
+  --color-text-secondary: var(--rams-gray-600);
+  --color-border: var(--rams-gray-300);
+  --color-divider: var(--rams-gray-200);
+  
+  /* 阴影系统 - 精简且实用 */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  
+  /* 动效参数 - 统一且高性能 */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --easing-linear: linear;
+  --easing-ease: ease;
+  --easing-ease-in: ease-in;
+  --easing-ease-out: ease-out;
+  --easing-ease-in-out: ease-in-out;
+  
+  /* 排版系统 */
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Courier, monospace;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  
+  /* 间距系统 - 基于8px网格 */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--rams-gray-900);
+    --color-surface: var(--rams-gray-800);
+    --color-text-primary: var(--rams-gray-100);
+    --color-text-secondary: var(--rams-gray-400);
+    --color-border: var(--rams-gray-700);
+    --color-divider: var(--rams-gray-800);
+  }
+}
+
+/* 基础重置 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family-sans);
+  line-height: var(--line-height-normal);
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+}
+
+/* Müller-Brockmann 网格系统 */
+.container {
+  max-width: var(--grid-container-max);
+  margin: 0 auto;
+  padding: 0 var(--grid-margin);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  gap: var(--grid-gutter);
+}
+
+.grid--2 { grid-template-columns: repeat(2, 1fr); }
+.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--4 { grid-template-columns: repeat(4, 1fr); }
+.grid--6 { grid-template-columns: repeat(6, 1fr); }
+
+.col-span-1 { grid-column: span 1; }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+.col-span-4 { grid-column: span 4; }
+.col-span-6 { grid-column: span 6; }
+.col-span-full { grid-column: 1 / -1; }
+
+/* Rams 功能性组件 */
+.card {
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--space-6);
+  transition: all var(--duration-base) var(--easing-ease-out);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--duration-base) var(--easing-ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.button:hover {
+  background-color: var(--color-text-primary);
+  color: var(--color-background);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.button--primary {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.button--primary:hover {
+  background-color: var(--rams-blue);
+  border-color: var(--rams-blue);
+}
+
+.button--danger {
+  background-color: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
+}
+
+.button--danger:hover {
+  background-color: var(--rams-red);
+  border-color: var(--rams-red);
+}
+
+/* Susan Kare 精确图标系统 */
+.icon {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  flex-shrink: 0;
+}
+
+.icon--sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.icon--lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+
+/* 排版系统 */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+.text-4xl { font-size: var(--font-size-4xl); }
+
+.font-mono { font-family: var(--font-family-mono); }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.leading-tight { line-height: var(--line-height-tight); }
+.leading-snug { line-height: var(--line-height-snug); }
+.leading-normal { line-height: var(--line-height-normal); }
+.leading-relaxed { line-height: var(--line-height-relaxed); }
+
+/* 工具卡片优化 */
+.tool-card {
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--space-6);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  position: relative;
+  transition: all var(--duration-base) var(--easing-ease-out);
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-base) var(--easing-ease-out);
+}
+
+.tool-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.tool-card:hover::before {
+  transform: scaleX(1);
+}
+
+.tool-card__icon {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  margin-bottom: var(--space-4);
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.tool-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  color: var(--color-text-primary);
+}
+
+.tool-card__description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+/* 导航系统 */
+.nav {
+  background-color: var(--color-surface);
+  border-bottom: var(--border-width) solid var(--color-border);
+  padding: var(--space-4) 0;
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav__logo {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.nav__menu {
+  display: flex;
+  gap: var(--space-6);
+  list-style: none;
+}
+
+.nav__link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius);
+  transition: all var(--duration-base) var(--easing-ease-out);
+}
+
+.nav__link:hover,
+.nav__link--active {
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  :root {
+    --grid-margin: 16px;
+    --grid-gutter: 12px;
+    --grid-columns: 4;
+  }
+  
+  .grid--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .nav__menu {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --grid-columns: 2;
+  }
+  
+  .grid--4,
+  .grid--3,
+  .grid--2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 可访问性增强 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: var(--space-2) var(--space-4);
+  text-decoration: none;
+  border-radius: 0 0 var(--border-radius) 0;
+  z-index: 1000;
+  transition: top var(--duration-base) var(--easing-ease-out);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 动效控制 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 高对比度支持 */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border: var(--rams-black);
+    --shadow-xs: none;
+    --shadow-sm: none;
+    --shadow-md: 0 0 0 2px var(--rams-black);
+    --shadow-lg: 0 0 0 3px var(--rams-black);
+  }
+}
+
+/* 打印优化 */
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  .nav,
+  .button {
+    display: none;
+  }
+  
+  .tool-card {
+    border: 1px solid black;
+    break-inside: avoid;
+  }
+}

@@ -14,9 +14,10 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Script from 'next/script';
-import MultiAdsPopup from './MultiAdsPopup';
-import AWSMiniProgramPromo from './AWSMiniProgramPromo';
-import AWSBedrockFullScreenPopup from './AWSBedrockFullScreenPopup';
+// 广告组件已禁用
+// import MultiAdsPopup from './MultiAdsPopup';
+// import AWSMiniProgramPromo from './AWSMiniProgramPromo';
+// import AWSBedrockFullScreenPopup from './AWSBedrockFullScreenPopup';
 
 const drawerWidth = 240;
 const menuItems = [
@@ -207,9 +208,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Box sx={{ display: 'flex' }}>
         {/* AWS Bedrock 弹窗已禁用 */}
         {/* <AWSBedrockFullScreenPopup /> */}
-        {/* 银河录像局推广弹窗 */}
-        <MultiAdsPopup />
-        <AWSMiniProgramPromo />
+        {/* 银河录像局推广弹窗已禁用 */}
+        {/* <MultiAdsPopup /> */}
+        {/* AWS小程序推广已禁用 */}
+        {/* <AWSMiniProgramPromo /> */}
         <AppBar 
           position="fixed" 
           sx={{ 
@@ -319,7 +321,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             p: 3,
             width: { 
               xs: '100%',
-              sm: `calc(100% - ${drawerWidth}px - ${adSidebarOpen ? 300 : 50}px)` 
+              sm: `calc(100% - ${drawerWidth}px)` 
             },
             minHeight: '100vh',
             display: 'flex',
@@ -339,7 +341,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {children}
           </motion.div>
         </Box>
-        <Box
+        {/* 侧边栏广告已禁用 */}
+        {/* <Box
           component="aside"
           sx={{
             width: 300,
@@ -522,7 +525,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Box>
             )}
           </Paper>
-        </Box>
+        </Box> */}
       </Box>
     </ThemeProvider>
   );

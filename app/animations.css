@@ -1,0 +1,396 @@
+/* 
+ * 动效系统 - 融合 Josef Müller-Brockmann + Dieter Rams + Refik Anadol
+ * 性能优化与可访问性护栏
+ * 转译原则：借鉴气质与方法，禁止临摹具体作品
+ */
+
+/* 性能优化：使用 will-change 和 GPU 加速 */
+.optimize-animation {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Anadol 数据粒子动效 - 参数化流动 */
+@keyframes particle-flow {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translate(100vw, -100vh) scale(1.2);
+    opacity: 0;
+  }
+}
+
+.particle-system {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.particle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  background: radial-gradient(circle, var(--anadol-cyan) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: particle-flow 25s linear infinite;
+  animation-delay: calc(var(--delay) * 1s);
+  opacity: 0;
+}
+
+.particle:nth-child(2n) {
+  background: radial-gradient(circle, var(--anadol-magenta) 0%, transparent 70%);
+}
+
+.particle:nth-child(3n) {
+  background: radial-gradient(circle, var(--anadol-green) 0%, transparent 70%);
+}
+
+.particle:nth-child(4n) {
+  background: radial-gradient(circle, var(--anadol-yellow) 0%, transparent 70%);
+}
+
+/* 平滑页面过渡 */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all var(--transition-base) var(--easing-decelerate);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all var(--transition-base) var(--easing-accelerate);
+}
+
+/* 卡片悬浮反馈 */
+.hover-lift {
+  transition: transform var(--transition-base) var(--easing-standard),
+              box-shadow var(--transition-base) var(--easing-standard);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Anadol 数据脉冲效果 - 参数化响应 */
+.data-pulse {
+  position: relative;
+  overflow: hidden;
+}
+
+.data-pulse::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--anadol-magenta) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: all var(--transition-slow) var(--easing-standard);
+}
+
+.data-pulse:hover::before {
+  transform: translate(-50%, -50%) scale(1.5);
+  opacity: 0.08;
+}
+
+/* Müller-Brockmann 瑞士网格动画 */
+.swiss-grid-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: swiss-reveal 0.6s var(--easing-decelerate) forwards;
+}
+
+@keyframes swiss-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Rams 功能按钮反馈 */
+.rams-button-feedback {
+  position: relative;
+  overflow: hidden;
+}
+
+.rams-button-feedback::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all var(--transition-base) var(--easing-accelerate);
+  opacity: 0.1;
+}
+
+.rams-button-feedback:active::before {
+  width: 200px;
+  height: 200px;
+  opacity: 0.2;
+}
+
+/* 文字渐入效果 */
+.text-reveal {
+  animation: text-reveal 0.8s var(--easing-decelerate) forwards;
+  opacity: 0;
+}
+
+@keyframes text-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* 加载骨架屏 */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, 
+    var(--rams-gray-100) 25%, 
+    var(--rams-gray-200) 50%, 
+    var(--rams-gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* 焦点动效 */
+.focus-ring {
+  position: relative;
+}
+
+.focus-ring:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--accent);
+  border-radius: inherit;
+  animation: focus-pulse 1s var(--easing-standard) infinite;
+}
+
+@keyframes focus-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* 滚动触发动画 */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s var(--easing-decelerate);
+}
+
+.scroll-fade-in.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 减少动效模式 - 完整回退策略 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
+  }
+  
+  .particle-system,
+  .data-flow-bg {
+    display: none;
+  }
+  
+  .hover-lift:hover {
+    transform: none;
+  }
+  
+  .data-pulse::before,
+  .rams-button-feedback::before {
+    display: none;
+  }
+  
+  .scroll-fade-in,
+  .swiss-grid-reveal {
+    opacity: 1;
+    transform: none;
+  }
+  
+  .text-reveal {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* 低性能设备回退 */
+@media (max-width: 768px) {
+  .particle-system {
+    display: none;
+  }
+  
+  .data-flow-bg {
+    opacity: 0.005;
+    filter: blur(200px);
+  }
+  
+  .hover-lift:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .hover-lift:active {
+    transform: scale(0.98);
+  }
+  
+  .data-pulse::before,
+  .rams-button-feedback::before {
+    display: none;
+  }
+  
+  .rams-button {
+    padding: var(--spacing-md) var(--spacing-lg);
+    min-height: 44px; /* 触摸目标最小尺寸 */
+  }
+}
+
+/* 性能监控指示器 */
+.performance-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--rams-gray-200);
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.performance-indicator.show {
+  opacity: 1;
+}
+
+.performance-indicator__fps {
+  color: var(--rams-green);
+}
+
+.performance-indicator__fps.warning {
+  color: var(--rams-orange);
+}
+
+.performance-indicator__fps.critical {
+  color: var(--rams-red);
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .hover-lift:active {
+    transform: scale(0.98);
+  }
+  
+  .data-pulse::before {
+    display: none;
+  }
+  
+  .rams-button {
+    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .tool-card {
+    border-width: 2px;
+    border-color: var(--foreground);
+  }
+  
+  .rams-button {
+    border-width: 3px;
+  }
+  
+  .swiss-divider {
+    height: 2px;
+    background: var(--foreground);
+  }
+}
+
+/* 暗色模式优化 */
+@media (prefers-color-scheme: dark) {
+  .particle {
+    opacity: 0.3;
+  }
+  
+  .data-flow-bg {
+    opacity: 0.02;
+  }
+  
+  .skeleton {
+    background: linear-gradient(90deg, 
+      var(--rams-gray-900) 25%, 
+      var(--rams-gray-700) 50%, 
+      var(--rams-gray-900) 75%
+    );
+  }
+}

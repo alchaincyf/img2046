@@ -1,7 +1,9 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
+import './animations.css'
 import Layout from './components/Layout'
 import Footer from './components/Footer'
+import PerformanceMonitor from './components/PerformanceMonitor'
 import { Metadata } from 'next'
 import Script from 'next/script'
 
@@ -92,6 +94,7 @@ export default function RootLayout({
       <body className={inter.className} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Layout>{children}</Layout>
         <Footer />
+        <PerformanceMonitor />
       </body>
     </html>
   )
