@@ -13,21 +13,18 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
-import { db, storage } from '../firebase/config';
 import dynamic from 'next/dynamic';
 
 const CloudUploadIcon = dynamic(() => import('@mui/icons-material/CloudUpload'), { ssr: false });
 
 interface ImageItem {
   id: string;
-  url: string;
+  data: string;
   name: string;
-  uploadedAt: Date;
+  uploadedAt: number;
 }
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB (压缩前)
 const ACCEPTED_FILE_TYPES = {
   'image/jpeg': ['.jpg', '.jpeg'],
   'image/png': ['.png'],
@@ -48,22 +45,11 @@ export default function UploadPage() {
   // 加载已上传的图片
   const loadImages = async () => {
     try {
-      const imagesRef = collection(db, 'shared-images');
-      const q = query(imagesRef, orderBy('uploadedAt', 'desc'));
-      const querySnapshot = await getDocs(q);
-
-      const loadedImages: ImageItem[] = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        loadedImages.push({
-          id: doc.id,
-          url: data.url,
-          name: data.name,
-          uploadedAt: data.uploadedAt?.toDate() || new Date(),
-        });
-      });
-
-      setImages(loadedImages);
+      const response = await fetch('/api/upload');
+      const data = await response.json();
+      if (data.images) {
+        setImages(data.images);
+      }
     } catch (error) {
       console.error('Error loading images:', error);
       setSnackbar({
@@ -80,35 +66,12 @@ export default function UploadPage() {
     loadImages();
   }, []);
 
-  // 上传图片
-  const uploadImage = async (file: File) => {
-    const timestamp = Date.now();
-    const fileName = `${timestamp}_${file.name}`;
-    const storageRef = ref(storage, `shared-images/${fileName}`);
-
-    // 上传到 Firebase Storage
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-
-    // 保存元数据到 Firestore
-    await addDoc(collection(db, 'shared-images'), {
-      url: downloadURL,
-      name: file.name,
-      uploadedAt: Timestamp.now(),
-    });
-
-    return {
-      url: downloadURL,
-      name: file.name,
-    };
-  };
-
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const validFiles = acceptedFiles.filter((file) => {
       if (file.size > MAX_FILE_SIZE) {
         setSnackbar({
           open: true,
-          message: `文件 ${file.name} 超过 10MB 限制`,
+          message: `文件 ${file.name} 超过 20MB 限制`,
           severity: 'error',
         });
         return false;
@@ -122,16 +85,17 @@ export default function UploadPage() {
 
     try {
       for (const file of validFiles) {
-        const result = await uploadImage(file);
-        setImages((prev) => [
-          {
-            id: Date.now().toString(),
-            url: result.url,
-            name: result.name,
-            uploadedAt: new Date(),
-          },
-          ...prev,
-        ]);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('上传失败');
+        }
       }
 
       setSnackbar({
@@ -139,6 +103,9 @@ export default function UploadPage() {
         message: `成功上传 ${validFiles.length} 张图片`,
         severity: 'success',
       });
+
+      // 重新加载图片列表
+      await loadImages();
     } catch (error) {
       console.error('Upload error:', error);
       setSnackbar({
@@ -186,7 +153,7 @@ export default function UploadPage() {
           {uploading ? (
             <>
               <CircularProgress size={48} sx={{ mb: 2 }} />
-              <Typography variant="h6">上传中...</Typography>
+              <Typography variant="h6">压缩并上传中...</Typography>
             </>
           ) : (
             <>
@@ -195,7 +162,7 @@ export default function UploadPage() {
                 {isDragActive ? '放开以上传图片' : '拖放图片到这里，或点击选择'}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                支持 JPG、PNG、GIF、WebP 格式，最大 10MB
+                支持 JPG、PNG、GIF、WebP 格式，图片会自动压缩
               </Typography>
             </>
           )}
@@ -220,7 +187,7 @@ export default function UploadPage() {
           {images.map((image) => (
             <ImageListItem key={image.id}>
               <img
-                src={image.url}
+                src={`data:image/jpeg;base64,${image.data}`}
                 alt={image.name}
                 loading="lazy"
                 style={{
