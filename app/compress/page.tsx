@@ -27,12 +27,10 @@ import {
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 import ImageToolLayout from '../components/ImageToolLayout';
-import FeatureFAQ from '../components/FeatureFAQ';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import HistoryIcon from '@mui/icons-material/History';
 import DeleteIcon from '@mui/icons-material/Delete';
-import compressFAQ from '../../content/faq/compress.json';
 
 interface CompressedImage {
   dataUrl: string;
@@ -652,12 +650,6 @@ export default function CompressPage() {
         <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
       </Box>
 
-      {/* FAQ区域 */}
-      <FeatureFAQ
-        title={compressFAQ.title}
-        description={compressFAQ.description}
-        faqs={compressFAQ.faqs}
-      />
     </ImageToolLayout>
   );
 }

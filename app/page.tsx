@@ -34,22 +34,6 @@ interface Tool {
 
 const tools: Tool[] = [
   {
-    name: '自由画布',
-    icon: '/images/free-canvas.svg',
-    href: '/free-canvas',
-    description: '无限画布创作空间，支持图片编辑、绘图和多元素组合，打造专业的创意作品。',
-    isNew: true,
-    isPopular: true,
-    category: 'AI工具'
-  },
-  {
-    name: '文字卡片生成',
-    icon: '/images/text-card-generator.svg',
-    href: '/text-card-generator',
-    description: '创建精美的文字卡片，自定义字体、颜色和背景，适合社交媒体分享和营销使用。',
-    category: '创意设计'
-  },
-  {
     name: '图片压缩',
     icon: '/images/compress.svg',
     href: '/compress',
@@ -92,6 +76,22 @@ const tools: Tool[] = [
     href: '/rounded-corners',
     description: '为您的图片添加圆角效果，支持图片裁剪和圆角程度调整，让图片更具现代感。',
     category: '基础编辑'
+  },
+  {
+    name: '自由画布',
+    icon: '/images/free-canvas.svg',
+    href: '/free-canvas',
+    description: '无限画布创作空间，支持图片编辑、绘图和多元素组合，打造专业的创意作品。',
+    isNew: true,
+    isPopular: true,
+    category: 'AI工具'
+  },
+  {
+    name: '文字卡片生成',
+    icon: '/images/text-card-generator.svg',
+    href: '/text-card-generator',
+    description: '创建精美的文字卡片，自定义字体、颜色和背景，适合社交媒体分享和营销使用。',
+    category: '创意设计'
   },
 ];
 

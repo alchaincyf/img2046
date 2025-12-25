@@ -16,6 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Script from 'next/script';
 import NotificationContainer from './NotificationContainer';
 import OnboardingDialog from './OnboardingDialog';
+import ToolFooter from './ToolFooter';
 // 广告组件已禁用
 // import MultiAdsPopup from './MultiAdsPopup';
 // import AWSMiniProgramPromo from './AWSMiniProgramPromo';
@@ -25,8 +26,6 @@ const drawerWidth = 240;
 const menuItems = [
   { text: '首页', icon: <Image src="/images/home.svg" alt="Home" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/' },
   // { text: 'AI 文生图', icon: <Image src="/images/ai-image-generator.svg" alt="AI Image Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/ai-image-generator' },
-  { text: '自由画布', icon: <Image src="/images/free-canvas.svg" alt="Free Canvas" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/free-canvas' },
-  { text: '文字卡片生成', icon: <Image src="/images/text-card-generator.svg" alt="Text Card Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/text-card-generator' },
   { text: '图片压缩', icon: <Image src="/images/compress.svg" alt="Compress" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/compress' },
   { text: '调整大小', icon: <Image src="/images/resize.svg" alt="Resize" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/resize' },
   { text: '图片格式转换', icon: <Image src="/images/format-convert.svg" alt="Format Convert" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/format-convert' },
@@ -35,6 +34,8 @@ const menuItems = [
   { text: '极简Logo设计', icon: <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/ai-logo-design' },
   { text: 'Text Behind Object', icon: <Image src="/images/text-behind-object.svg" alt="Text Behind Object" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/text-behind-object' },
   { text: '圆角处理', icon: <Image src="/images/rounded-corners.svg" alt="Rounded Corners" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/rounded-corners' },
+  { text: '自由画布', icon: <Image src="/images/free-canvas.svg" alt="Free Canvas" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/free-canvas' },
+  { text: '文字卡片生成', icon: <Image src="/images/text-card-generator.svg" alt="Text Card Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/text-card-generator' },
 ];
 
 const sidebarAds = [
@@ -346,6 +347,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             {children}
           </motion.div>
+          <ToolFooter />
         </Box>
         {/* 侧边栏广告已禁用 */}
         {/* <Box
