@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { Box, Button, Grid, Typography, Paper, useTheme, useMediaQuery, Modal } from '@mui/material';
+import { Box, Button, Grid, Typography, Paper, useTheme, useMediaQuery, Modal, Chip } from '@mui/material';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import Feedback from '../components/Feedback';
@@ -230,6 +230,12 @@ export default function FormatConvert() {
       )}
       {files.length > 0 && selectedFormat && (
         <Box sx={{ mt: 3, textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+            <Chip
+              label={files.length > 1 ? `已选 ${files.length} 张` : '已选 1 张'}
+              variant="outlined"
+            />
+          </Box>
           <Button
             variant="contained"
             onClick={handleConvert}
@@ -242,7 +248,7 @@ export default function FormatConvert() {
               }
             }}
           >
-            批量转换
+            {files.length > 1 ? `批量转换 (${files.length} 张)` : '立即转换'}
           </Button>
           {convertedImages.length > 0 && (
             <Button

@@ -506,7 +506,11 @@ export default function CompressPage() {
 
         {/* 操作按钮 */}
         {files.length > 0 && (
-          <Box sx={{ mt: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ mt: 3, display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Chip
+              label={files.length > 1 ? `已选 ${files.length} 张` : '已选 1 张'}
+              variant="outlined"
+            />
             <Button
               variant="contained"
               onClick={handleCompress}
@@ -520,7 +524,7 @@ export default function CompressPage() {
                 }
               }}
             >
-              {loading ? '压缩中...' : '批量压缩'}
+              {loading ? '压缩中...' : files.length > 1 ? `批量压缩 (${files.length} 张)` : '立即压缩'}
             </Button>
             {compressedImages.length > 0 && (
               <Button
