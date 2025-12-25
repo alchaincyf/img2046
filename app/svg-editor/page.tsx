@@ -6,7 +6,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import SaveIcon from '@mui/icons-material/Save';
 import HistoryIcon from '@mui/icons-material/History';
 import ClearIcon from '@mui/icons-material/Clear';
-import Toolbar as EditorToolbar from './components/Toolbar';
+import EditorToolbar from './components/Toolbar';
 import Canvas from './components/Canvas';
 import PropertyPanel from './components/PropertyPanel';
 import { useSVGStore } from './store/svgStore';

@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['sharp', 'node-fetch', 'form-data'],
-  },
-}
+  serverExternalPackages: ['sharp', 'node-fetch', 'form-data'],
+  transpilePackages: ['@mui/icons-material'],
+};
 
 module.exports = nextConfig
