@@ -2,23 +2,32 @@
 
 import React from 'react'
 import { Box, Typography, Container, Chip, Divider, Paper } from '@mui/material'
-import { notFound } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import Link from 'next/link'
 import { blogPosts } from '../blogData'
 
-interface PageProps {
-  params: {
-    slug: string
-  }
-}
-
-export default function BlogPostPage({ params }: PageProps) {
-  const post = blogPosts.find(p => p.slug === params.slug)
+export default function BlogPostPage() {
+  const params = useParams()
+  const slugParam = params?.slug
+  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam
+  const post = blogPosts.find(p => p.slug === slug)
 
   if (!post) {
-    notFound()
+    return (
+      <Container maxWidth="md" sx={{ py: 8 }}>
+        <Typography variant="h4" sx={{ mb: 2 }}>
+          文章不存在
+        </Typography>
+        <Typography color="text.secondary" sx={{ mb: 3 }}>
+          该文章可能已被移动或删除。
+        </Typography>
+        <Link href="/blog" style={{ textDecoration: 'none', color: 'inherit' }}>
+          返回知识库
+        </Link>
+      </Container>
+    )
   }
 
   // 相关文章推荐

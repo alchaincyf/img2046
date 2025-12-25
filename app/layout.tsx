@@ -1,4 +1,3 @@
-import { Inter } from 'next/font/google'
 import './globals.css'
 import './animations.css'
 import Layout from './components/Layout'
@@ -7,8 +6,6 @@ import PerformanceMonitor from './components/PerformanceMonitor'
 import FloatingAd from './components/FloatingAd'
 import { Metadata } from 'next'
 import Script from 'next/script'
-
-const inter = Inter({ subsets: ['latin'] })
 
 const title = '图像魔方 img2046.com | 一站式图像处理工具'
 const description = '图像魔方是一个强大的在线图像处理工具，提供格式转换、裁剪、调整大小、压缩、滤镜、SVG生成器、AI文生图和AI Logo设计等功能。完全免费，本地处理保护隐私，轻松处理您的图片需求。'
@@ -119,7 +116,7 @@ export default function RootLayout({
         />
         */}
       </head>
-      <body className={inter.className} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Layout>{children}</Layout>
         <Footer />
         <PerformanceMonitor />
