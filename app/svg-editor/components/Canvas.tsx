@@ -359,14 +359,16 @@ export default function Canvas() {
             rotation={el.rotation}
           />
         );
-      case 'ellipse':
+      case 'ellipse': {
+        const radiusX = el.radiusX ?? 0;
+        const radiusY = el.radiusY ?? 0;
         return (
           <Ellipse
             {...commonProps}
             x={el.x}
             y={el.y}
-            radiusX={el.radiusX}
-            radiusY={el.radiusY}
+            radiusX={radiusX}
+            radiusY={radiusY}
             fill={el.fill}
             stroke={el.stroke}
             strokeWidth={el.strokeWidth}
@@ -374,6 +376,7 @@ export default function Canvas() {
             rotation={el.rotation}
           />
         );
+      }
       case 'line':
         return (
           <Line
