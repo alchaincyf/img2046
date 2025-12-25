@@ -14,6 +14,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Script from 'next/script';
+import NotificationContainer from './NotificationContainer';
+import OnboardingDialog from './OnboardingDialog';
 // 广告组件已禁用
 // import MultiAdsPopup from './MultiAdsPopup';
 // import AWSMiniProgramPromo from './AWSMiniProgramPromo';
@@ -206,6 +208,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex' }}>
+        {/* 全局通知系统 */}
+        <NotificationContainer />
+        {/* 用户引导系统 */}
+        <OnboardingDialog />
         {/* AWS Bedrock 弹窗已禁用 */}
         {/* <AWSBedrockFullScreenPopup /> */}
         {/* 银河录像局推广弹窗已禁用 */}

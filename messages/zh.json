@@ -1,1 +1,163 @@
- 
+{
+  "common": {
+    "upload": "上传",
+    "download": "下载",
+    "cancel": "取消",
+    "confirm": "确认",
+    "delete": "删除",
+    "save": "保存",
+    "close": "关闭",
+    "retry": "重试",
+    "loading": "加载中...",
+    "processing": "处理中...",
+    "success": "成功",
+    "error": "错误",
+    "search": "搜索",
+    "all": "全部",
+    "history": "历史记录",
+    "clear": "清空"
+  },
+  "nav": {
+    "home": "首页",
+    "freeCanvas": "自由画布",
+    "textCard": "文字卡片生成",
+    "compress": "图片压缩",
+    "resize": "调整大小",
+    "format": "图片格式转换",
+    "svg": "SVG编辑器",
+    "logo": "极简Logo设计",
+    "rounded": "圆角处理"
+  },
+  "home": {
+    "title": "图像魔方：一站式图像处理工具",
+    "subtitle": "免费 · 安全 · 高效 · 智能",
+    "searchPlaceholder": "搜索工具...",
+    "noResults": "未找到匹配的工具",
+    "tryOtherKeywords": "试试搜索其他关键词或切换分类",
+    "faq": "常见问题",
+    "stats": {
+      "tools": "专业工具",
+      "free": "免费使用",
+      "upload": "数据上传"
+    }
+  },
+  "categories": {
+    "all": "全部",
+    "ai": "AI工具",
+    "basic": "基础编辑",
+    "format": "格式转换",
+    "creative": "创意设计"
+  },
+  "tools": {
+    "freeCanvas": {
+      "name": "自由画布",
+      "description": "无限画布创作空间，支持图片编辑、绘图和多元素组合，打造专业的创意作品。"
+    },
+    "textCard": {
+      "name": "文字卡片生成",
+      "description": "创建精美的文字卡片，自定义字体、颜色和背景，适合社交媒体分享和营销使用。"
+    },
+    "compress": {
+      "name": "图片压缩",
+      "description": "智能图片压缩，支持PNG、JPEG、WebP格式，自动检测透明背景，保留原图质量。"
+    },
+    "resize": {
+      "name": "调整大小",
+      "description": "快速调整图片尺寸，保持比例或自定义大小，适应各种平台要求。"
+    },
+    "formatConvert": {
+      "name": "图片格式转换",
+      "description": "轻松将图片转换为各种格式，支持JPG、PNG、WEBP、GIF等，满足不同场景需求。"
+    },
+    "svg": {
+      "name": "SVG编辑器",
+      "description": "在线创建和编辑SVG图形，轻松设计可缩放的矢量图像，适用于各种设计需求。"
+    },
+    "logo": {
+      "name": "极简Logo设计",
+      "description": "使用AI技术快速生成简洁现代的logo设计，为您的品牌打造独特标识。"
+    },
+    "rounded": {
+      "name": "圆角处理",
+      "description": "为您的图片添加圆角效果，支持图片裁剪和圆角程度调整，让图片更具现代感。"
+    }
+  },
+  "compress": {
+    "title": "图片压缩",
+    "intro": "智能图片压缩工具，支持PNG、JPEG、WebP格式，自动检测透明背景，所有处理在本地浏览器完成，保护您的隐私。",
+    "uploadButton": "上传图片（最多20张）",
+    "quality": "压缩质量",
+    "outputFormat": "输出格式",
+    "formatAuto": "自动选择（推荐）",
+    "formatWebp": "WebP（最佳压缩）",
+    "formatJpeg": "JPEG（兼容性好）",
+    "formatPng": "PNG（保留透明）",
+    "originalPreview": "原图预览",
+    "compressedPreview": "压缩后",
+    "original": "原始",
+    "compressed": "压缩",
+    "saved": "节省",
+    "ratio": "压缩率",
+    "compressButton": "批量压缩",
+    "compressing": "压缩中...",
+    "downloadSingle": "下载压缩图片",
+    "downloadMultiple": "下载压缩包 (ZIP)",
+    "historyTitle": "压缩历史记录",
+    "noHistory": "暂无历史记录",
+    "completedAlert": "压缩完成！原始总大小: {original} → 压缩后: {compressed}",
+    "savedSpace": "节省空间: {saved} ({ratio}% 压缩率)",
+    "suggestions": {
+      "pngLarge": "💡 建议：PNG 大文件建议质量 75-85，或转换为 WebP 格式以获得更好压缩",
+      "png": "💡 建议：PNG 图片建议质量 80-90 以保持清晰度",
+      "jpegLarge": "💡 建议：大尺寸照片建议质量 60-75，可显著减小文件大小",
+      "jpeg": "💡 建议：照片建议质量 70-85 以平衡大小和质量",
+      "webp": "💡 建议：WebP 已经是高效格式，质量 75-85 即可",
+      "general": "💡 建议：根据用途选择格式 - Web用WebP，需兼容性用JPEG，需透明用PNG"
+    },
+    "qualityMarks": {
+      "high": "高压缩",
+      "balanced": "平衡",
+      "quality": "高质量"
+    }
+  },
+  "feedback": {
+    "success": "操作成功完成",
+    "error": "操作失败",
+    "compressError": "压缩过程中出现错误，请重试",
+    "networkError": "网络连接失败，请检查网络后重试",
+    "timeoutError": "处理超时，请稍后再试",
+    "fileSizeError": "文件大小超过限制",
+    "unsupportedFormat": "不支持此文件格式",
+    "unknownError": "发生未知错误，请联系客服"
+  },
+  "faq": {
+    "q1": {
+      "question": "图像魔方是免费使用的吗？",
+      "answer": "是的，图像魔方的所有功能完全免费。所有图片处理都在您的浏览器本地完成，无需注册账号，保护您的隐私。"
+    },
+    "q2": {
+      "question": "我的图片数据安全吗？",
+      "answer": "非常安全！所有的图片处理都在您的浏览器中进行，不会上传到我们的服务器。您的图片数据完全保留在本地，我们无法访问。"
+    },
+    "q3": {
+      "question": "图像魔方支持哪些图片格式？",
+      "answer": "我们支持大多数常见的图片格式，包括JPG、PNG、WEBP、GIF、SVG等。压缩工具还支持智能格式转换，自动选择最佳输出格式。"
+    },
+    "q4": {
+      "question": "如何报告问题或提出建议？",
+      "answer": "我们欢迎您的反馈！请通过页面顶部的GitHub图标访问我们的项目页面，在那里您可以提交问题或建议。"
+    },
+    "q5": {
+      "question": "为什么选择图像魔方而不是其他工具？",
+      "answer": "图像魔方的优势：(1) 完全免费无广告 (2) 本地处理保护隐私 (3) 支持批量操作 (4) 智能建议优化参数 (5) 历史记录方便回溯"
+    },
+    "q6": {
+      "question": "图像魔方的AI功能是如何工作的？",
+      "answer": "我们的AI功能使用先进的机器学习模型，部分处理在本地完成，部分使用云端API。这既保护了您的隐私，又确保了高质量的结果。"
+    },
+    "q7": {
+      "question": "如何联系作者？",
+      "answer": "您可以通过以下方式联系作者：微信：alchain，邮箱：alchaincyf@gmail.com"
+    }
+  }
+}

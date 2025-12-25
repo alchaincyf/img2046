@@ -1,1 +1,163 @@
- 
+{
+  "common": {
+    "upload": "Upload",
+    "download": "Download",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "save": "Save",
+    "close": "Close",
+    "retry": "Retry",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "success": "Success",
+    "error": "Error",
+    "search": "Search",
+    "all": "All",
+    "history": "History",
+    "clear": "Clear"
+  },
+  "nav": {
+    "home": "Home",
+    "freeCanvas": "Free Canvas",
+    "textCard": "Text Card Generator",
+    "compress": "Image Compress",
+    "resize": "Resize",
+    "format": "Format Convert",
+    "svg": "SVG Editor",
+    "logo": "Logo Design",
+    "rounded": "Rounded Corners"
+  },
+  "home": {
+    "title": "ImageCube: All-in-One Image Processing Tools",
+    "subtitle": "Free · Secure · Efficient · Smart",
+    "searchPlaceholder": "Search tools...",
+    "noResults": "No matching tools found",
+    "tryOtherKeywords": "Try different keywords or switch categories",
+    "faq": "FAQ",
+    "stats": {
+      "tools": "Professional Tools",
+      "free": "Free to Use",
+      "upload": "Data Upload"
+    }
+  },
+  "categories": {
+    "all": "All",
+    "ai": "AI Tools",
+    "basic": "Basic Editing",
+    "format": "Format Conversion",
+    "creative": "Creative Design"
+  },
+  "tools": {
+    "freeCanvas": {
+      "name": "Free Canvas",
+      "description": "Infinite canvas workspace supporting image editing, drawing, and multi-element composition for professional creative works."
+    },
+    "textCard": {
+      "name": "Text Card Generator",
+      "description": "Create beautiful text cards with custom fonts, colors, and backgrounds, perfect for social media sharing and marketing."
+    },
+    "compress": {
+      "name": "Image Compress",
+      "description": "Smart image compression supporting PNG, JPEG, WebP formats with automatic transparency detection and quality preservation."
+    },
+    "resize": {
+      "name": "Resize",
+      "description": "Quickly resize images while maintaining aspect ratio or using custom dimensions for various platform requirements."
+    },
+    "formatConvert": {
+      "name": "Format Convert",
+      "description": "Easily convert images between formats including JPG, PNG, WEBP, GIF, and more for different scenarios."
+    },
+    "svg": {
+      "name": "SVG Editor",
+      "description": "Create and edit SVG graphics online, easily design scalable vector images for various design needs."
+    },
+    "logo": {
+      "name": "Logo Design",
+      "description": "Use AI technology to quickly generate minimalist modern logo designs for your brand identity."
+    },
+    "rounded": {
+      "name": "Rounded Corners",
+      "description": "Add rounded corner effects to your images with adjustable radius, making images more modern."
+    }
+  },
+  "compress": {
+    "title": "Image Compression",
+    "intro": "Smart image compression tool supporting PNG, JPEG, WebP formats with automatic transparency detection. All processing happens locally in your browser to protect your privacy.",
+    "uploadButton": "Upload Images (Max 20)",
+    "quality": "Compression Quality",
+    "outputFormat": "Output Format",
+    "formatAuto": "Auto (Recommended)",
+    "formatWebp": "WebP (Best Compression)",
+    "formatJpeg": "JPEG (Better Compatibility)",
+    "formatPng": "PNG (Preserve Transparency)",
+    "originalPreview": "Original Preview",
+    "compressedPreview": "Compressed",
+    "original": "Original",
+    "compressed": "Compressed",
+    "saved": "Saved",
+    "ratio": "Compression Ratio",
+    "compressButton": "Batch Compress",
+    "compressing": "Compressing...",
+    "downloadSingle": "Download Compressed Image",
+    "downloadMultiple": "Download ZIP",
+    "historyTitle": "Compression History",
+    "noHistory": "No history records",
+    "completedAlert": "Compression completed! Original size: {original} → Compressed: {compressed}",
+    "savedSpace": "Space saved: {saved} ({ratio}% compression ratio)",
+    "suggestions": {
+      "pngLarge": "💡 Suggestion: For large PNG files, recommend quality 75-85 or convert to WebP for better compression",
+      "png": "💡 Suggestion: For PNG images, recommend quality 80-90 to maintain clarity",
+      "jpegLarge": "💡 Suggestion: For large photos, recommend quality 60-75 to significantly reduce file size",
+      "jpeg": "💡 Suggestion: For photos, recommend quality 70-85 to balance size and quality",
+      "webp": "💡 Suggestion: WebP is already an efficient format, quality 75-85 is sufficient",
+      "general": "💡 Suggestion: Choose format based on usage - WebP for web, JPEG for compatibility, PNG for transparency"
+    },
+    "qualityMarks": {
+      "high": "High Compression",
+      "balanced": "Balanced",
+      "quality": "High Quality"
+    }
+  },
+  "feedback": {
+    "success": "Operation completed successfully",
+    "error": "Operation failed",
+    "compressError": "An error occurred during compression, please retry",
+    "networkError": "Network connection failed, please check your connection and retry",
+    "timeoutError": "Processing timeout, please try again later",
+    "fileSizeError": "File size exceeds limit",
+    "unsupportedFormat": "Unsupported file format",
+    "unknownError": "An unknown error occurred, please contact support"
+  },
+  "faq": {
+    "q1": {
+      "question": "Is ImageCube free to use?",
+      "answer": "Yes, all features of ImageCube are completely free. All image processing is done locally in your browser without requiring account registration, protecting your privacy."
+    },
+    "q2": {
+      "question": "Is my image data secure?",
+      "answer": "Absolutely secure! All image processing happens in your browser and is not uploaded to our servers. Your image data remains completely local and inaccessible to us."
+    },
+    "q3": {
+      "question": "What image formats does ImageCube support?",
+      "answer": "We support most common image formats including JPG, PNG, WEBP, GIF, SVG, etc. The compression tool also supports smart format conversion, automatically selecting the best output format."
+    },
+    "q4": {
+      "question": "How do I report issues or make suggestions?",
+      "answer": "We welcome your feedback! Please visit our project page via the GitHub icon at the top of the page, where you can submit issues or suggestions."
+    },
+    "q5": {
+      "question": "Why choose ImageCube over other tools?",
+      "answer": "ImageCube advantages: (1) Completely free with no ads (2) Local processing protects privacy (3) Supports batch operations (4) Smart parameter suggestions (5) History records for easy tracking"
+    },
+    "q6": {
+      "question": "How do ImageCube's AI features work?",
+      "answer": "Our AI features use advanced machine learning models, with some processing done locally and some using cloud APIs. This protects your privacy while ensuring high-quality results."
+    },
+    "q7": {
+      "question": "How to contact the author?",
+      "answer": "You can contact the author via: WeChat: alchain, Email: alchaincyf@gmail.com"
+    }
+  }
+}
