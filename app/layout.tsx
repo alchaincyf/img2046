@@ -4,6 +4,7 @@ import './animations.css'
 import Layout from './components/Layout'
 import Footer from './components/Footer'
 import PerformanceMonitor from './components/PerformanceMonitor'
+import FloatingAd from './components/FloatingAd'
 import { Metadata } from 'next'
 import Script from 'next/script'
 
@@ -122,6 +123,7 @@ export default function RootLayout({
         <Layout>{children}</Layout>
         <Footer />
         <PerformanceMonitor />
+        <FloatingAd />
       </body>
     </html>
   )
