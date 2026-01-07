@@ -68,6 +68,16 @@ const Footer: React.FC = () => {
           </Link>
           {' '}学习ChatGPT、Cursor教程
         </Typography>
+        <Typography variant="body2" sx={{ color: '#666', mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+          相关项目：
+          <Link color="inherit" href="https://huasheng.ai/" target="_blank" rel="noopener noreferrer">
+            huasheng.ai
+          </Link>
+          ·
+          <Link color="inherit" href="https://lovlogo.com/" target="_blank" rel="noopener noreferrer">
+            Lovlogo
+          </Link>
+        </Typography>
       </Box>
     </Box>
   );
