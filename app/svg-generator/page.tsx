@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, TextField, Typography, Grid, useTheme, useMediaQuery, Select, MenuItem, FormControl, InputLabel, LinearProgress } from '@mui/material';
 import dynamic from 'next/dynamic';
 import Feedback from '../components/Feedback';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -20,6 +20,9 @@ export default function SVGGeneratorPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [scaleFactor, setScaleFactor] = useState(1);
   const [svgCodeFocused, setSvgCodeFocused] = useState(false);
+  const [gifFps, setGifFps] = useState<number>(10);
+  const [isGeneratingGif, setIsGeneratingGif] = useState(false);
+  const [gifProgress, setGifProgress] = useState<number>(0);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -327,19 +330,314 @@ export default function SVGGeneratorPage() {
     const svgDoc = parser.parseFromString(svgCode, 'image/svg+xml');
     const svgElement = svgDoc.documentElement;
 
-    let width = parseInt(svgElement.getAttribute('width') || '0');
-    let height = parseInt(svgElement.getAttribute('height') || '0');
+    const widthStr = svgElement.getAttribute('width') || '';
+    const heightStr = svgElement.getAttribute('height') || '';
+    let width = (widthStr.includes('%') || widthStr.includes('em') || widthStr.includes('vw')) ? 0 : parseInt(widthStr) || 0;
+    let height = (heightStr.includes('%') || heightStr.includes('em') || heightStr.includes('vh')) ? 0 : parseInt(heightStr) || 0;
 
     if (width === 0 || height === 0) {
       const viewBox = svgElement.getAttribute('viewBox');
       if (viewBox) {
-        const [, , vbWidth, vbHeight] = viewBox.split(' ').map(Number);
-        width = vbWidth;
-        height = vbHeight;
+        const parts = viewBox.split(/[\s,]+/).map(Number);
+        width = parts[2] || width;
+        height = parts[3] || height;
       }
     }
 
     return { width: width || 1024, height: height || 1024 };
+  };
+
+  const getSvgAnimationDuration = (svgCode: string): number => {
+    let maxDuration = 0;
+
+    // SMIL animations
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgCode, 'image/svg+xml');
+    const animElements = svgDoc.querySelectorAll('animate, animateTransform, animateMotion, set');
+    animElements.forEach(el => {
+      const dur = el.getAttribute('dur');
+      if (dur) {
+        let seconds = 0;
+        if (dur.endsWith('ms')) seconds = parseFloat(dur) / 1000;
+        else if (dur.endsWith('s')) seconds = parseFloat(dur);
+        else seconds = parseFloat(dur);
+        if (!isNaN(seconds) && seconds > maxDuration) maxDuration = seconds;
+      }
+    });
+
+    // CSS animations - parse duration from animation properties
+    const cssTimeRegex = /animation(?:-duration)?:\s*[^;]*?([\d.]+)(s|ms)/gi;
+    let match;
+    const durations: number[] = [];
+    while ((match = cssTimeRegex.exec(svgCode)) !== null) {
+      let seconds = parseFloat(match[1]);
+      if (match[2] === 'ms') seconds /= 1000;
+      if (!isNaN(seconds) && seconds > 0 && seconds <= 5) durations.push(seconds);
+    }
+    if (durations.length > 0) {
+      maxDuration = Math.max(maxDuration, Math.max(...durations));
+    }
+
+    return maxDuration || 3;
+  };
+
+  const interpolateValues = (from: string, to: string, t: number): string => {
+    const fromNum = parseFloat(from);
+    const toNum = parseFloat(to);
+    if (!isNaN(fromNum) && !isNaN(toNum) && from.trim() === String(fromNum) && to.trim() === String(toNum)) {
+      const result = fromNum + (toNum - fromNum) * t;
+      return String(Math.round(result * 100) / 100);
+    }
+    const fromNums = from.match(/-?\d+\.?\d*/g);
+    const toNums = to.match(/-?\d+\.?\d*/g);
+    if (fromNums && toNums && fromNums.length === toNums.length) {
+      let numIndex = 0;
+      return from.replace(/-?\d+\.?\d*/g, () => {
+        const f = parseFloat(fromNums[numIndex]);
+        const tVal = parseFloat(toNums[numIndex]);
+        numIndex++;
+        const result = f + (tVal - f) * t;
+        return String(Math.round(result * 100) / 100);
+      });
+    }
+    return t < 0.5 ? from : to;
+  };
+
+  const applyAnimationValues = (svgElement: Element, time: number) => {
+    const animElements = svgElement.querySelectorAll('animate, animateTransform');
+    animElements.forEach(anim => {
+      const target = anim.parentElement;
+      const attrName = anim.getAttribute('attributeName');
+      const valuesStr = anim.getAttribute('values');
+      const durStr = anim.getAttribute('dur');
+      const fromStr = anim.getAttribute('from');
+      const toStr = anim.getAttribute('to');
+      if (!target || !attrName) return;
+
+      let animDur = 3;
+      if (durStr) {
+        if (durStr.endsWith('ms')) animDur = parseFloat(durStr) / 1000;
+        else if (durStr.endsWith('s')) animDur = parseFloat(durStr);
+        else animDur = parseFloat(durStr);
+      }
+      if (isNaN(animDur) || animDur <= 0) animDur = 3;
+
+      const progress = (time % animDur) / animDur;
+      let interpolatedValue: string;
+
+      if (valuesStr) {
+        const values = valuesStr.split(';').map(v => v.trim());
+        const segments = values.length - 1;
+        if (segments <= 0) {
+          interpolatedValue = values[0];
+        } else {
+          const segmentProgress = progress * segments;
+          const segmentIndex = Math.min(Math.floor(segmentProgress), segments - 1);
+          const segmentFraction = segmentProgress - segmentIndex;
+          const fromVal = values[segmentIndex];
+          const toVal = values[Math.min(segmentIndex + 1, values.length - 1)];
+          interpolatedValue = interpolateValues(fromVal, toVal, segmentFraction);
+        }
+      } else if (fromStr && toStr) {
+        interpolatedValue = interpolateValues(fromStr, toStr, progress);
+      } else {
+        return;
+      }
+
+      if (anim.tagName === 'animateTransform') {
+        const transformType = anim.getAttribute('type') || 'translate';
+        target.setAttribute('transform', `${transformType}(${interpolatedValue})`);
+      } else {
+        target.setAttribute(attrName, interpolatedValue);
+      }
+    });
+  };
+
+  const fixSvgDimensions = (svgCode: string, width: number, height: number): string => {
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgCode, 'image/svg+xml');
+    const svgEl = svgDoc.documentElement;
+    svgEl.setAttribute('width', String(width));
+    svgEl.setAttribute('height', String(height));
+    return new XMLSerializer().serializeToString(svgEl);
+  };
+
+  const convertSvgToGif = async (
+    svgCode: string, fps: number, scale: number,
+    onProgress?: (progress: number) => void
+  ): Promise<Blob> => {
+    const GifModule = await import('gif.js');
+    const GIF = GifModule.default || GifModule;
+
+    const { width, height } = getSvgSize(svgCode);
+    const scaledWidth = Math.round(width * scale);
+    const scaledHeight = Math.round(height * scale);
+    const duration = getSvgAnimationDuration(svgCode);
+
+    const gif = new GIF({
+      workers: 2,
+      quality: 1,
+      width: scaledWidth,
+      height: scaledHeight,
+      workerScript: '/gif.worker.js',
+      repeat: 0,
+    });
+
+    const totalFrames = Math.ceil(fps * duration);
+    const frameDelay = Math.round(1000 / fps);
+
+    // Fix SVG dimensions (replace %, em, etc. with pixel values)
+    const fixedSvg = fixSvgDimensions(sanitizeSvg(svgCode), width, height);
+
+    const hasCssAnimation = /<style[\s\S]*?animation/i.test(svgCode);
+
+    if (hasCssAnimation) {
+      // Real-time capture for CSS animations
+      const svgBlob = new Blob([fixedSvg], { type: 'image/svg+xml;charset=utf-8' });
+      const dataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.readAsDataURL(svgBlob);
+      });
+
+      const img = document.createElement('img');
+      img.style.cssText = 'position:fixed;left:0;top:0;opacity:0.01;pointer-events:none;z-index:-9999;';
+      document.body.appendChild(img);
+
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('SVG加载失败'));
+        img.src = dataUrl;
+      });
+
+      // Wait for first paint and animation to start
+      await new Promise(r => setTimeout(r, 100));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = scaledWidth;
+      canvas.height = scaledHeight;
+      const ctx = canvas.getContext('2d')!;
+
+      return new Promise((resolve, reject) => {
+        let framesCaptured = 0;
+        const startTime = performance.now();
+
+        const captureNextFrame = () => {
+          try {
+            ctx.clearRect(0, 0, scaledWidth, scaledHeight);
+            ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+            gif.addFrame(ctx, { copy: true, delay: frameDelay });
+            framesCaptured++;
+
+            if (onProgress) onProgress(framesCaptured / totalFrames);
+
+            if (framesCaptured >= totalFrames) {
+              document.body.removeChild(img);
+              gif.on('finished', (blob: Blob) => resolve(blob));
+              gif.render();
+            } else {
+              const nextTime = startTime + framesCaptured * frameDelay;
+              const delay = Math.max(0, nextTime - performance.now());
+              setTimeout(captureNextFrame, delay);
+            }
+          } catch (err) {
+            if (img.parentNode) document.body.removeChild(img);
+            reject(err);
+          }
+        };
+
+        captureNextFrame();
+      });
+    } else {
+      // Frame-by-frame for SMIL animations (deterministic, no real-time wait)
+      const parser = new DOMParser();
+      const serializer = new XMLSerializer();
+
+      const canvas = document.createElement('canvas');
+      canvas.width = scaledWidth;
+      canvas.height = scaledHeight;
+      const ctx = canvas.getContext('2d')!;
+
+      for (let frame = 0; frame < totalFrames; frame++) {
+        const time = (frame / totalFrames) * duration;
+
+        const svgDoc = parser.parseFromString(fixedSvg, 'image/svg+xml');
+        const svgElement = svgDoc.documentElement;
+
+        applyAnimationValues(svgElement, time);
+        svgElement.querySelectorAll('animate, animateTransform, animateMotion, set').forEach(el => el.remove());
+
+        const svgString = serializer.serializeToString(svgElement);
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const dataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(svgBlob);
+        });
+
+        const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+          const i = new Image();
+          i.onload = () => resolve(i);
+          i.onerror = () => reject(new Error('帧图像加载失败'));
+          i.src = dataUrl;
+        });
+
+        ctx.clearRect(0, 0, scaledWidth, scaledHeight);
+        ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+        gif.addFrame(ctx, { copy: true, delay: frameDelay });
+
+        if (onProgress) onProgress((frame + 1) / totalFrames);
+      }
+
+      return new Promise((resolve) => {
+        gif.on('finished', (blob: Blob) => resolve(blob));
+        gif.render();
+      });
+    }
+  };
+
+  const handleDownloadGif = async () => {
+    setIsGeneratingGif(true);
+    setGifProgress(0);
+    setLoading(true);
+    try {
+      if (svgCodes.length > 1) {
+        const zip = new JSZip();
+        for (let i = 0; i < svgCodes.length; i++) {
+          const sanitized = sanitizeSvg(svgCodes[i]);
+          if (sanitized.trim()) {
+            const blob = await convertSvgToGif(
+              sanitized, gifFps, scaleFactor,
+              (p) => setGifProgress((i + p) / svgCodes.length)
+            );
+            zip.file(`image_${i + 1}.gif`, blob);
+          }
+        }
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, 'images.zip');
+      } else {
+        const sanitized = sanitizeSvg(svgCodes[0]);
+        if (sanitized.trim()) {
+          const blob = await convertSvgToGif(
+            sanitized, gifFps, scaleFactor,
+            (p) => setGifProgress(p)
+          );
+          if (isMobileDevice() && supportsWebShareAPI()) {
+            await shareImageToGallery(blob, 'image.gif');
+          } else {
+            downloadBlob(blob, 'image.gif');
+          }
+        }
+      }
+      setSuccess(true);
+    } catch (err) {
+      console.error('GIF generation error:', err);
+      setError('GIF生成失败，请重试。');
+    } finally {
+      setIsGeneratingGif(false);
+      setGifProgress(0);
+      setLoading(false);
+    }
   };
 
   // 检测是否为移动设备
@@ -504,14 +802,48 @@ export default function SVGGeneratorPage() {
             >
               {isMobileDevice() && svgCodes.length === 1 ? '保存PNG到相册' : '下载PNG'}
             </Button>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               onClick={() => handleDownload('jpg')}
               sx={{ mb: 2 }}
             >
               {isMobileDevice() && svgCodes.length === 1 ? '保存JPG到相册' : '下载JPG'}
             </Button>
+            <FormControl variant="outlined" sx={{ minWidth: 100 }} size="small">
+              <InputLabel id="gif-fps-label">帧率</InputLabel>
+              <Select
+                labelId="gif-fps-label"
+                value={gifFps}
+                onChange={(e) => setGifFps(Number(e.target.value))}
+                label="帧率"
+                disabled={isGeneratingGif}
+              >
+                <MenuItem value={5}>5 FPS</MenuItem>
+                <MenuItem value={10}>10 FPS</MenuItem>
+                <MenuItem value={15}>15 FPS</MenuItem>
+                <MenuItem value={20}>20 FPS</MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              onClick={handleDownloadGif}
+              disabled={isGeneratingGif || loading}
+              sx={{
+                mb: 2,
+                backgroundColor: '#e67e22',
+                '&:hover': { backgroundColor: '#d35400' }
+              }}
+            >
+              {isGeneratingGif
+                ? `生成GIF中... ${Math.round(gifProgress * 100)}%`
+                : (isMobileDevice() && svgCodes.length === 1 ? '保存GIF到相册' : '下载GIF')}
+            </Button>
           </Box>
+          {isGeneratingGif && (
+            <Box sx={{ mt: 1 }}>
+              <LinearProgress variant="determinate" value={gifProgress * 100} sx={{ borderRadius: 1 }} />
+            </Box>
+          )}
         </Box>
       )}
       <Feedback loading={loading} success={success} error={error} onClose={handleClose} />
