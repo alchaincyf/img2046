@@ -26,7 +26,8 @@
     "format": "Format Convert",
     "svg": "SVG Editor",
     "logo": "Logo Design",
-    "rounded": "Rounded Corners"
+    "rounded": "Rounded Corners",
+    "aidex": "AIDEX AI Tools Directory"
   },
   "home": {
     "title": "ImageCube: All-in-One Image Processing Tools",
@@ -80,6 +81,10 @@
     "rounded": {
       "name": "Rounded Corners",
       "description": "Add rounded corner effects to your images with adjustable radius, making images more modern."
+    },
+    "aidex": {
+      "name": "AIDEX - AI Tools Directory",
+      "description": "Explore 2,000+ AI tools across 30 categories. Compare features, pricing, and alternatives. Updated weekly."
     }
   },
   "compress": {

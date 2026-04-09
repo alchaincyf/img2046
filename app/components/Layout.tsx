@@ -36,6 +36,7 @@ const menuItems = [
   { text: '圆角处理', icon: <Image src="/images/rounded-corners.svg" alt="Rounded Corners" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/rounded-corners' },
   { text: '自由画布', icon: <Image src="/images/free-canvas.svg" alt="Free Canvas" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/free-canvas' },
   { text: '文字卡片生成', icon: <Image src="/images/text-card-generator.svg" alt="Text Card Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/text-card-generator' },
+  { text: 'AIDEX AI工具目录', icon: <Image src="/images/aidex.svg" alt="AIDEX" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/aidex/' },
 ];
 
 const sidebarAds = [

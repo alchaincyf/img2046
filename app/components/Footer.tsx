@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
           </svg>
           Copyright{' '}
           <Link color="inherit" href="https://www.youtube.com/@Alchain" target="_blank" rel="noopener noreferrer">
-            {' '}AI进化论-花生
+            {' '}花叔
           </Link>
           , Created with  {' '}
           <Link color="inherit" href="https://www.bookai.top/cursor/intro" target="_blank" rel="noopener noreferrer">
@@ -76,6 +76,10 @@ const Footer: React.FC = () => {
           ·
           <Link color="inherit" href="https://lovlogo.com/" target="_blank" rel="noopener noreferrer">
             Lovlogo
+          </Link>
+          ·
+          <Link color="inherit" href="/aidex/">
+            AIDEX AI工具目录
           </Link>
         </Typography>
       </Box>

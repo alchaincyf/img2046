@@ -4,24 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-图像魔方 (img2046.com) - 基于 Next.js 14 的在线图像处理工具平台，提供 13+ 种图像处理和 AI 创意工具。
+图像魔方 (img2046.com) - 基于 Next.js 的在线图像处理工具平台，提供 17 种图像处理和 AI 创意工具。
 
 ## 常用命令
 
 ```bash
 npm run dev      # 启动开发服务器 (localhost:3000)
-npm run build    # 生产构建 (Next.js 优化构建)
+npm run build    # 生产构建
 npm run start    # 启动生产服务器
-npm run lint     # ESLint 代码检查 (构建时忽略错误)
+npm run lint     # ESLint 代码检查
 ```
 
 ## 技术栈
 
-- **框架**: Next.js 14 (App Router) + React 18 + TypeScript 5
+- **框架**: Next.js 14/15 (App Router) + React 18 + TypeScript 5
 - **UI**: Material-UI 6 + Tailwind CSS 3 + Framer Motion
 - **画布引擎**: Konva + React-Konva (GPU 加速 2D 渲染)
 - **图像处理**: Sharp (服务端) + Canvas API (客户端)
-- **AI/ML**: TensorFlow.js + BodyPix (人物检测) + OpenAI/SiliconFlow API
+- **AI/ML**: TensorFlow.js + BodyPix (人物检测) + SiliconFlow/OpenAI API
 - **状态管理**: Zustand
 - **国际化**: next-intl (中/英文)
 
@@ -29,68 +29,45 @@ npm run lint     # ESLint 代码检查 (构建时忽略错误)
 
 ```
 app/
-├── api/                    # API 路由 (所有 route.ts 文件)
+├── api/                    # API 路由 (route.ts)
 │   ├── convert/           # 图片格式转换 (Sharp)
 │   ├── generate-image/    # AI 图像生成 (SiliconFlow API)
+│   ├── generate-prompt/   # AI 提示词生成
 │   ├── remove-bg/         # 背景去除
 │   ├── text-behind-subject/ # 人物背景文字
 │   ├── design-logo/       # Logo 设计
+│   ├── convert-logo/      # Logo 格式转换
 │   ├── analyze-photo/     # 图片分析
+│   ├── article-to-svg/    # 文章转 SVG
 │   └── upload/            # 文件上传处理
 ├── components/            # 全局共享组件
 ├── utils/                 # 工具函数 (rateLimiter, imageGenerationQueue, translate)
 ├── free-canvas/           # 自由画布模块 (Konva + Zustand)
-│   ├── store/canvasStore.ts  # 画布状态管理 (元素、历史、工具)
-│   ├── components/       # Canvas, Toolbar, PropertyPanel 等
+│   ├── store/canvasStore.ts  # 画布状态管理
+│   ├── components/       # Canvas, Toolbar, PropertyPanel
 │   ├── hooks/            # 自定义 hooks
-│   └── types/index.ts    # CanvasElement, Tool, ElementData 等类型
-├── [功能路由]/page.tsx   # 独立功能页面 (17+ 工具页面)
-│   ├── ai-image-generator/
-│   ├── text-card-generator/
-│   ├── format-convert/
-│   ├── compress/
-│   ├── text-behind-object/
-│   └── ...
+│   └── types/index.ts    # 类型定义
+├── [功能路由]/page.tsx   # 17 个工具页面
 messages/                  # i18n 翻译文件 (zh.json, en.json)
-public/                    # 静态资源
 ```
 
-**路由结构**: 项目使用 Next.js 14 App Router,所有功能页面直接在 `app/` 下作为顶级路由,无 `[locale]` 嵌套。
-
-## 核心模块
-
-| 路由 | 功能 | 技术 |
-|------|------|------|
-| `/free-canvas` | 无限画布编辑 | Konva + Zustand |
-| `/ai-image-generator` | AI 文生图 | SiliconFlow API |
-| `/text-card-generator` | 文字卡片 | Canvas API |
-| `/format-convert` | 格式转换 | Sharp + PDF-lib |
-| `/compress` | 图片压缩 | Sharp |
-| `/text-behind-object` | 人物背景文字 | BodyPix + Canvas |
-| `/svg-generator` | SVG 编辑 | Konva |
-| `/ppt-generator` | PPT 生成 | pptxgenjs |
+**路由结构**: Next.js App Router，功能页面直接在 `app/` 下作为顶级路由，无 `[locale]` 嵌套。
 
 ## 自由画布 (Free Canvas) 架构
 
-状态管理使用 Zustand (`app/free-canvas/store/canvasStore.ts`):
-- **元素类型** (`ElementType`): `image | text | rect | circle | line | path`
-- **工具类型** (`Tool`): `select | pan | text | rect | circle | line | pen | eraser`
-- **核心 Store 接口**:
-  - `elements: CanvasElement[]` - 画布元素数组
-  - `canvasState: CanvasState` - 画布状态 (缩放、位置、网格、选中项)
-  - `history/historyIndex` - 撤销/重做栈 (最多 50 步)
-  - `clipboard: CanvasElement[]` - 剪贴板
+核心状态管理 (`app/free-canvas/store/canvasStore.ts`):
 
-**关键操作方法**:
-- 元素管理: `addElement()`, `updateElement()`, `deleteElement()`
-- 选择: `selectElement()`, `selectAll()`, `clearSelection()`
+- **元素类型**: `image | text | rect | circle | line | path`
+- **工具类型**: `select | pan | text | rect | circle | line | pen | eraser`
+- **状态结构**: `elements[]` + `canvasState` (缩放/位置/网格/选中项) + `history[]` (50 步撤销)
+
+**关键方法**:
+- 元素: `addElement()`, `updateElement()`, `deleteElement()`
 - 图层: `bringToFront()`, `sendToBack()`, `bringForward()`, `sendBackward()`
 - 历史: `undo()`, `redo()`, `saveHistory()`
 - 剪贴板: `copy()`, `paste()`, `cut()`, `duplicate()`
-- 画布视图: `setScale()`, `setPosition()`, `resetView()`
 
-**ID 生成**: 使用 `nanoid()` 生成唯一元素 ID
-**Z-Index 管理**: 自动维护元素层级,新元素总是在最上层
+**ID/层级**: `nanoid()` 生成 ID，新元素自动置顶
 
 ## API 路由规范
 

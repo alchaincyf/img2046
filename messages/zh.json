@@ -26,7 +26,8 @@
     "format": "图片格式转换",
     "svg": "SVG编辑器",
     "logo": "极简Logo设计",
-    "rounded": "圆角处理"
+    "rounded": "圆角处理",
+    "aidex": "AIDEX AI工具目录"
   },
   "home": {
     "title": "图像魔方：一站式图像处理工具",
@@ -80,6 +81,10 @@
     "rounded": {
       "name": "圆角处理",
       "description": "为您的图片添加圆角效果，支持图片裁剪和圆角程度调整，让图片更具现代感。"
+    },
+    "aidex": {
+      "name": "AIDEX - AI工具目录",
+      "description": "探索2000+款AI工具，覆盖30个分类。对比功能、价格与替代方案，每周更新。"
     }
   },
   "compress": {

@@ -93,6 +93,14 @@ const tools: Tool[] = [
     description: '创建精美的文字卡片，自定义字体、颜色和背景，适合社交媒体分享和营销使用。',
     category: '创意设计'
   },
+  {
+    name: 'AIDEX - AI工具目录',
+    icon: '/images/aidex.svg',
+    href: '/aidex/',
+    description: '探索2000+款AI工具，覆盖30个分类。对比功能、价格与替代方案，每周更新。',
+    isNew: true,
+    category: 'AI工具'
+  },
 ];
 
 const faqs = [
