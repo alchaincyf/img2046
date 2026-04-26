@@ -100,31 +100,42 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#3f51b5',
+      main: '#0A0A0A',
     },
     secondary: {
-      main: '#f50057',
+      main: '#DC2F1A',
     },
     background: {
-      default: '#f5f5f5',
+      default: '#FFFFFF',
     },
   },
   components: {
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage: 'linear-gradient(to bottom right, #ffffff, #f0f0f0)',
+          backgroundImage: 'none',
+          backgroundColor: '#FFFFFF',
+          boxShadow: 'none',
+          border: '1px solid rgba(10,10,10,0.15)',
         },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 0,
           textTransform: 'none',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          boxShadow: 'none',
+          fontWeight: 600,
           '&:hover': {
-            boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+            boxShadow: 'none',
+          },
+        },
+        contained: {
+          backgroundColor: '#0A0A0A',
+          color: '#FFFFFF',
+          '&:hover': {
+            backgroundColor: '#DC2F1A',
           },
         },
       },
@@ -132,7 +143,17 @@ const theme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 4,
+          borderRadius: 0,
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          backgroundColor: '#0A0A0A',
+          boxShadow: 'none',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
         },
       },
     },
@@ -165,31 +186,76 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   const drawer = (
-    <Box sx={{ overflow: 'auto' }}>
+    <Box sx={{ overflow: 'auto', height: '100%', borderRight: '1px solid rgba(10,10,10,0.15)', backgroundColor: '#FFFFFF' }}>
       <Toolbar />
-      <List>
-        {menuItems.map((item) => (
-          <ListItem
-            key={item.text}
-            disablePadding
-            onClick={() => isMobile && setMobileOpen(false)}
-          >
-            <NextLinkComposed
-              href={item.href}
-              style={{
-                textDecoration: 'none',
-                color: item.href === pathname ? theme.palette.primary.main : 'inherit',
-                display: 'flex',
-                width: '100%',
-                padding: '8px 16px',
-                backgroundColor: item.href === pathname ? theme.palette.action.selected : 'inherit',
-              }}
+      <Box sx={{ px: 3, pt: 3, pb: 2, borderBottom: '1px solid rgba(10,10,10,0.10)' }}>
+        <Typography
+          sx={{
+            fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+            fontSize: '9px',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            color: 'rgba(10,10,10,0.5)',
+          }}
+        >
+          — Tools / 工具
+        </Typography>
+      </Box>
+      <List sx={{ p: 0 }}>
+        {menuItems.map((item, idx) => {
+          const active = item.href === pathname;
+          return (
+            <ListItem
+              key={item.text}
+              disablePadding
+              onClick={() => isMobile && setMobileOpen(false)}
+              sx={{ borderBottom: '1px solid rgba(10,10,10,0.06)' }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </NextLinkComposed>
-          </ListItem>
-        ))}
+              <NextLinkComposed
+                href={item.href}
+                style={{
+                  textDecoration: 'none',
+                  color: active ? '#DC2F1A' : '#0A0A0A',
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: '100%',
+                  padding: '12px 24px',
+                  backgroundColor: active ? '#FFF5F3' : 'transparent',
+                  borderLeft: active ? '3px solid #DC2F1A' : '3px solid transparent',
+                  transition: 'all 0.15s',
+                  position: 'relative',
+                }}
+              >
+                <Typography
+                  component="span"
+                  sx={{
+                    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+                    fontSize: '9px',
+                    letterSpacing: '0.25em',
+                    color: active ? '#DC2F1A' : 'rgba(10,10,10,0.4)',
+                    minWidth: 32,
+                    display: 'inline-block',
+                  }}
+                >
+                  {String(idx + 1).padStart(2, '0')}
+                </Typography>
+                <Typography
+                  component="span"
+                  sx={{
+                    fontSize: '14px',
+                    fontWeight: active ? 600 : 400,
+                    flex: 1,
+                  }}
+                >
+                  {item.text}
+                </Typography>
+                {active && (
+                  <span style={{ width: 6, height: 6, backgroundColor: '#DC2F1A', display: 'inline-block' }} />
+                )}
+              </NextLinkComposed>
+            </ListItem>
+          );
+        })}
       </List>
       
       <Box sx={{ p: 2, mt: 2 }}>
@@ -212,20 +278,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Box sx={{ display: 'flex' }}>
         {/* 全局通知系统 */}
         <NotificationContainer />
-        {/* 用户引导系统 */}
-        <OnboardingDialog />
+        {/* 用户引导系统已禁用（与 Vignelli 风一致——不打扰用户） */}
+        {/* <OnboardingDialog /> */}
         {/* AWS Bedrock 弹窗已禁用 */}
         {/* <AWSBedrockFullScreenPopup /> */}
         {/* 银河录像局推广弹窗已禁用 */}
         {/* <MultiAdsPopup /> */}
         {/* AWS小程序推广已禁用 */}
         {/* <AWSMiniProgramPromo /> */}
-        <AppBar 
-          position="fixed" 
-          sx={{ 
+        <AppBar
+          position="fixed"
+          sx={{
             zIndex: (theme) => theme.zIndex.drawer + 1,
-            backgroundImage: 'linear-gradient(to right, #3f51b5, #5c6bc0)',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            backgroundImage: 'none',
+            backgroundColor: '#0A0A0A',
+            boxShadow: 'none',
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
           }}
         >
           <Toolbar>
@@ -239,19 +307,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <MenuIcon />
             </IconButton>
             <Link href="/" passHref legacyBehavior>
-              <a style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-                <Image src="/image-tools-icon.svg" alt="Image Tools Icon" width={40} height={40} style={{ width: 40, height: 40 }} />
-                <Typography 
-                  variant="h6" 
-                  noWrap 
+              <a style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit', gap: 12 }}>
+                <span style={{ width: 8, height: 8, backgroundColor: '#DC2F1A', display: 'inline-block' }} />
+                <Typography
+                  noWrap
                   component="span"
-                  sx={{ 
-                    fontWeight: 'bold',
-                    ml: 2,
+                  sx={{
+                    fontWeight: 700,
+                    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+                    letterSpacing: '0.2em',
+                    fontSize: '13px',
+                    textTransform: 'uppercase',
                     display: { xs: 'none', sm: 'inline' }
                   }}
                 >
-                  图像魔方 img2046.com
+                  img<span style={{ color: '#DC2F1A' }}>.</span>2046
                 </Typography>
               </a>
             </Link>
