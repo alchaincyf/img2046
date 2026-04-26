@@ -1,9 +1,6 @@
 import './globals.css'
 import './animations.css'
-import Layout from './components/Layout'
-import Footer from './components/Footer'
-import PerformanceMonitor from './components/PerformanceMonitor'
-import FloatingAd from './components/FloatingAd'
+import ConditionalChrome from './components/ConditionalChrome'
 import { Metadata } from 'next'
 import Script from 'next/script'
 
@@ -117,10 +114,7 @@ export default function RootLayout({
         */}
       </head>
       <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Layout>{children}</Layout>
-        <Footer />
-        <PerformanceMonitor />
-        <FloatingAd />
+        <ConditionalChrome>{children}</ConditionalChrome>
       </body>
     </html>
   )
