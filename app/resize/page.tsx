@@ -217,9 +217,6 @@ export default function ResizePage() {
       description="使用我们的在线图片调整大小工具，轻松改变图片尺寸。支持保持宽高比，精确调整图片大小。"
     >
       <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
-          调整图片大小
-        </Typography>
         <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
           <Image src="/images/resize.svg" alt="Resize" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
           <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>

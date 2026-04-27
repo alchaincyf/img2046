@@ -9,36 +9,44 @@
 @import './design-system.css';
 
 :root {
-  /* Dieter Rams - 功能色彩系统 */
-  --rams-white: #FFFFFF;
-  --rams-black: #000000;
+  /* ===== Vignelli 收敛后的 token 系统（2026-04-27）=====
+   * 单一红 #DC2F1A 替代历史上的多套红（swiss-red / rams-red）
+   * 删除 anadol 五彩渐变，统一为单色 accent
+   */
+  --ink: #0A0A0A;
+  --paper: #FFFFFF;
+  --soft: #F8F8F6;
+  --line: rgba(10, 10, 10, 0.15);
+  --mute: rgba(10, 10, 10, 0.55);
+  --red: #DC2F1A;
+
+  /* 向后兼容旧组件的 token 别名（全部指向新统一值）*/
+  --rams-white: var(--paper);
+  --rams-black: var(--ink);
   --rams-gray-100: #F7F7F7;
   --rams-gray-200: #E5E5E5;
   --rams-gray-300: #CCCCCC;
   --rams-gray-500: #808080;
   --rams-gray-700: #404040;
   --rams-gray-900: #1A1A1A;
-  --rams-red: #E30613;
-  --rams-orange: #FF6900;
-  
-  /* Josef Müller-Brockmann - 瑞士印刷色彩 */
-  --swiss-red: #FF0000;
-  --swiss-black: #000000;
-  --swiss-white: #FFFFFF;
-  --swiss-blue: #0066CC;
-  
-  /* Refik Anadol - 数据流渐变 */
-  --anadol-gradient-1: #00D9FF;
-  --anadol-gradient-2: #FF00FF;
-  --anadol-gradient-3: #00FF88;
-  --anadol-gradient-4: #FFD700;
-  --anadol-noise: rgba(255, 255, 255, 0.02);
-  
+  --rams-red: var(--red);
+  --rams-orange: var(--red);
+  --swiss-red: var(--red);
+  --swiss-black: var(--ink);
+  --swiss-white: var(--paper);
+  --swiss-blue: var(--ink);
+  /* anadol 五色统一收敛为 ink/red，避免视觉杂音 */
+  --anadol-gradient-1: var(--ink);
+  --anadol-gradient-2: var(--red);
+  --anadol-gradient-3: var(--ink);
+  --anadol-gradient-4: var(--red);
+  --anadol-noise: rgba(0, 0, 0, 0.02);
+
   /* 系统色彩映射 */
-  --background: var(--rams-white);
-  --foreground: var(--rams-black);
-  --surface: var(--rams-white);
-  --accent: var(--rams-red);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --surface: var(--paper);
+  --accent: var(--red);
   
   /* 网格系统 */
   --grid-unit: 8px;

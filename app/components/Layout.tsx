@@ -215,6 +215,131 @@ const theme = createTheme({
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+          boxShadow: 'none',
+          border: '1px solid rgba(10,10,10,0.15)',
+          backgroundImage: 'none',
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(10,10,10,0.25)',
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'rgba(10,10,10,0.55)',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#0A0A0A',
+            borderWidth: '1px',
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 0,
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+        },
+      },
+    },
+    MuiSlider: {
+      styleOverrides: {
+        root: {
+          color: '#DC2F1A',
+          height: 4,
+          padding: '13px 0',
+        },
+        thumb: {
+          width: 14,
+          height: 14,
+          borderRadius: 0,
+          backgroundColor: '#DC2F1A',
+          boxShadow: 'none',
+          '&:hover, &.Mui-focusVisible': {
+            boxShadow: '0 0 0 6px rgba(220,47,26,0.16)',
+          },
+        },
+        track: {
+          height: 4,
+          border: 'none',
+          backgroundColor: '#DC2F1A',
+        },
+        rail: {
+          height: 4,
+          opacity: 1,
+          backgroundColor: 'rgba(10,10,10,0.15)',
+        },
+        valueLabel: {
+          backgroundColor: '#0A0A0A',
+          borderRadius: 0,
+          fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+          fontSize: 10,
+          letterSpacing: '0.15em',
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+        },
+      },
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          borderRadius: '0 !important',
+          boxShadow: 'none',
+          border: '1px solid rgba(10,10,10,0.12)',
+          backgroundImage: 'none',
+          '&:before': { display: 'none' },
+        },
+      },
+    },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
+          backgroundColor: 'rgba(10,10,10,0.08)',
+        },
+        bar: {
+          backgroundColor: '#DC2F1A',
+          borderRadius: 0,
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: '#0A0A0A',
+          borderRadius: 0,
+          fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+          fontSize: 10,
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          padding: '6px 10px',
+        },
+        arrow: {
+          color: '#0A0A0A',
+        },
+      },
+    },
   },
 });
 

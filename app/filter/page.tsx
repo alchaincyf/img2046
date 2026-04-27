@@ -78,9 +78,6 @@ export default function FilterPage() {
       description="使用我们的在线图片滤镜工具，为您的图片添加各种精美效果。提供多种滤镜选项，让您的图片更具吸引力。"
     >
       <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
-          图片滤镜
-        </Typography>
         <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
           <Image src="/images/filter.svg" alt="Filter" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
           <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>

@@ -122,9 +122,6 @@ export default function AILogoDesign() {
       description="使用我们的 AI Logo 设计工具，只需输入您的 logo 名称，即可生成独特的 SVG 格式 logo。支持下载 SVG、PNG 和 JPG 格式。"
     >
       <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
-          极简Logo设计
-        </Typography>
         <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'center', mb: 3, backgroundColor: '#ecf0f1', borderRadius: '10px', padding: '20px' }}>
           <Image src="/images/ai-logo-design.svg" alt="AI Logo Design" width={isMobile ? 150 : 200} height={isMobile ? 150 : 200} />
           <Typography variant="h6" sx={{ ml: isMobile ? 0 : 3, mt: isMobile ? 2 : 0, color: '#34495e' }}>

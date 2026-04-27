@@ -327,9 +327,6 @@ export default function CompressPage() {
       <Box sx={{ '& > *': { mb: 3 }, maxWidth: '100%', margin: '0 auto', padding: '20px' }}>
         {/* 标题区 */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2c3e50', fontSize: isMobile ? '1.5rem' : '2rem' }}>
-            图片压缩
-          </Typography>
           {history.length > 0 && (
             <Tooltip title="查看历史记录">
               <IconButton onClick={() => setShowHistory(true)} color="primary">
