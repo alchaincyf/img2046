@@ -17,6 +17,64 @@ import Script from 'next/script';
 import NotificationContainer from './NotificationContainer';
 import OnboardingDialog from './OnboardingDialog';
 import ToolFooter from './ToolFooter';
+import VignelliToolHero from './VignelliToolHero';
+
+// 工具页 hero 元数据（pathname → title/description）
+// 这是单一数据源，所有工具页 hero 都从这里取
+const TOOL_META: Record<string, { title: string; description: string }> = {
+  '/compress': {
+    title: '图片压缩',
+    description: '智能压缩 PNG · JPEG · WebP，自动检测透明背景，所有处理在本地浏览器完成。最多批量 20 张。',
+  },
+  '/resize': {
+    title: '调整大小',
+    description: '快速调整图片尺寸，保持比例或自定义大小，适应小红书、X、B 站、公众号等各种平台规格。',
+  },
+  '/format-convert': {
+    title: '图片格式转换',
+    description: 'JPG · PNG · WEBP · GIF 格式互转，无损压缩，支持批量处理。',
+  },
+  '/svg-generator': {
+    title: 'SVG 编辑器',
+    description: '在线创建和编辑 SVG 矢量图形，输入代码实时预览，导出 SVG / PNG / JPG / GIF。',
+  },
+  '/ppt-generator': {
+    title: 'SVG to PPT',
+    description: '把 SVG 直接转为可编辑的 PPT 演示文稿。',
+  },
+  '/ai-logo-design': {
+    title: '极简 Logo 设计',
+    description: 'AI 快速生成简洁现代的 logo，下载 SVG / PNG 多种格式。',
+  },
+  '/text-behind-object': {
+    title: 'Text Behind Object',
+    description: '把文字放到主体背后，制造杂志封面、海报常见的层次感。AI 自动识别人物。',
+  },
+  '/rounded-corners': {
+    title: '圆角处理',
+    description: '为图片添加圆角效果，自定义半径与裁剪，批量处理。',
+  },
+  '/free-canvas': {
+    title: '自由画布',
+    description: '无限创意画布，自由组合图层。从文字到图像，从草图到成品。',
+  },
+  '/text-card-generator': {
+    title: '文字卡片生成',
+    description: '把文字变成可分享的精美卡片，100+ 模板，一键导出。',
+  },
+  '/aidex': {
+    title: 'AIDEX',
+    description: '精选 AI 工具索引，按场景分类，含上手难度与价格区间。',
+  },
+  '/crop': {
+    title: '图片裁剪',
+    description: '精确裁剪图片，自由比例或预设尺寸。',
+  },
+  '/filter': {
+    title: '图片滤镜',
+    description: '内置多种滤镜效果，一键调整亮度、对比度、饱和度。',
+  },
+};
 // 广告组件已禁用
 // import MultiAdsPopup from './MultiAdsPopup';
 // import AWSMiniProgramPromo from './AWSMiniProgramPromo';
@@ -416,6 +474,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             transition={{ duration: 0.3 }}
             style={{ flexGrow: 1 }}
           >
+            {(() => {
+              // 根据 pathname 自动渲染 Vignelli hero（除非主页 / 已被 ConditionalChrome 隔离）
+              // 找到 pathname 对应的工具元数据
+              const stripped = (pathname || '').replace(/\/$/, '');
+              const meta = TOOL_META[stripped] || TOOL_META[stripped + '/'] || TOOL_META[pathname || ''];
+              const idx = menuItems.findIndex((m) => m.href.replace(/\/$/, '') === stripped);
+              return meta ? (
+                <VignelliToolHero
+                  title={meta.title}
+                  description={meta.description}
+                  num={idx >= 0 ? String(idx + 1).padStart(2, '0') : undefined}
+                />
+              ) : null;
+            })()}
             {children}
           </motion.div>
           <ToolFooter />
