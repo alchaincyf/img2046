@@ -27,8 +27,6 @@ import {
 import Image from 'next/image';
 import Feedback from '../components/Feedback';
 import ImageToolLayout from '../components/ImageToolLayout';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 import HistoryIcon from '@mui/icons-material/History';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -280,7 +278,12 @@ export default function CompressPage() {
       link.download = compressedImages[0].fileName;
       link.click();
     } else {
-      // 打包多个图片
+      // 打包多个图片。JSZip / file-saver 只在批量下载时用到，按需加载，不进首屏 bundle。
+      // file-saver 是 CJS 包，动态 import 时要取 default。
+      const [{ default: JSZip }, { default: saveAs }] = await Promise.all([
+        import('jszip'),
+        import('file-saver'),
+      ]);
       const zip = new JSZip();
       compressedImages.forEach(({ dataUrl, fileName }) => {
         const base64Data = dataUrl.split(',')[1];
