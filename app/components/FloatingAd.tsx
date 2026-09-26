@@ -5,22 +5,12 @@ import { Box, IconButton, Typography, Button, Paper, Chip, useMediaQuery, useThe
 import CloseIcon from '@mui/icons-material/Close';
 import RedeemIcon from '@mui/icons-material/Redeem';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // 广告配置 - 可以根据需要修改
 const PROMO_ITEMS = [
-  {
-    id: 'zsxq',
-    title: '知识星球',
-    subtitle: '30元券 · 1500+人',
-    link: 'https://t.zsxq.com/K3vsN',
-    color: '#8B5CF6',
-    badge: '限量',
-    icon: <SchoolIcon />,
-  },
   {
     id: 'yinhe',
     title: '银河录像局',

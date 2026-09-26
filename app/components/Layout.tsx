@@ -126,13 +126,6 @@ const sidebarAds = [
     link: 'https://nf.video/j02hw9/?gid=75',
     tag: '写作能力超ChatGPT',
     socialProof: '8元单日体验卡'
-  },
-  {
-    title: 'AI编程：从入门到精通',
-    description: '我的cursor教学视频已经超30万人观看，可能是中文互联网最佳了',
-    link: 'https://www.bookai.top/docs/cursor-introduction',
-    tag: '365元',
-    socialProof: '400+人已加入'
   }
 ];
 
