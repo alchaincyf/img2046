@@ -69,7 +69,6 @@ export default function RootLayout({
     <html lang="zh-CN">
       <head>
         <link rel="icon" href="/image-tools-icon.svg" />
-        <link rel="canonical" href="https://www.img2046.com/" />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-FRKGZTH854"
