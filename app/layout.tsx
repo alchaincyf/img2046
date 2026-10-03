@@ -1,6 +1,7 @@
 import './globals.css'
 import './animations.css'
 import ConditionalChrome from './components/ConditionalChrome'
+import ToolEvents from './components/ToolEvents'
 import { Metadata } from 'next'
 import Script from 'next/script'
 
@@ -114,6 +115,7 @@ export default function RootLayout({
       </head>
       <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <ConditionalChrome>{children}</ConditionalChrome>
+        <ToolEvents />
       </body>
     </html>
   )
