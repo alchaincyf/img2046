@@ -23,15 +23,14 @@ const tools: Tool[] = [
   { num: '06', name: '圆角处理', en: 'Rounded Corners', href: '/rounded-corners', desc: '为图片添加圆角效果。自定义半径、裁剪、批量处理。', category: 'Basic', catCN: '基础编辑' },
   { num: '07', name: '自由画布', en: 'Free Canvas', href: '/free-canvas', desc: '无限创意画布，自由组合图层。从文字到图像，从草图到成品。', category: 'AI', catCN: 'AI 工具', badges: ['NEW', 'POPULAR'] },
   { num: '08', name: '文字卡片', en: 'Text Card', href: '/text-card-generator', desc: '把文字变成可分享的精美卡片。100+ 模板，一键导出。', category: 'Design', catCN: '创意设计' },
-  { num: '09', name: 'AIDEX', en: 'AI Tool Index', href: '/aidex/', desc: '精选 AI 工具索引。按场景分类，含上手难度与价格区间。', category: 'AI', catCN: 'AI 工具', badges: ['NEW'] },
 ];
 
 const filters = [
-  { key: 'all', label: 'All', cnt: 9 },
+  { key: 'all', label: 'All', cnt: 8 },
   { key: 'Basic', label: 'Basic', cnt: 3 },
   { key: 'Format', label: 'Format', cnt: 1 },
   { key: 'Design', label: 'Design', cnt: 2 },
-  { key: 'AI', label: 'AI', cnt: 3 },
+  { key: 'AI', label: 'AI', cnt: 2 },
 ];
 
 const stats = [
@@ -47,7 +46,6 @@ const faqs = [
   { num: '03', q: '需要付费吗？', a: '所有工具永久免费。AI 工具消耗的算力由 huasheng.ai 团队承担，无任何限制。' },
   { num: '04', q: '可以批量处理吗？', a: '压缩 / 格式转换 / 圆角等基础工具支持批量上传与导出，最多同时处理 50 张。' },
   { num: '05', q: '移动端可用吗？', a: '所有工具响应式适配。但 SVG 编辑器、自由画布等高交互工具建议桌面端使用。' },
-  { num: '06', q: '什么是 AIDEX？', a: '花叔团队精选的 AI 工具目录，按场景分类，含上手难度与价格区间，帮你少踩坑。' },
 ];
 
 export default function Home() {

@@ -65,7 +65,6 @@ const Footer: React.FC = () => {
         >
           <FooterCol label="— Project">
             <FooterLink href="https://www.img2046.com/">img2046.com</FooterLink>
-            <FooterLink href="/aidex/">AIDEX AI 工具目录</FooterLink>
           </FooterCol>
           <FooterCol label="— Created By">
             <FooterLink href="https://huasheng.ai/" external>花叔 · huasheng.ai</FooterLink>

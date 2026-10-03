@@ -62,10 +62,6 @@ const TOOL_META: Record<string, { title: string; description: string }> = {
     title: '文字卡片生成',
     description: '把文字变成可分享的精美卡片，100+ 模板，一键导出。',
   },
-  '/aidex': {
-    title: 'AIDEX',
-    description: '精选 AI 工具索引，按场景分类，含上手难度与价格区间。',
-  },
   '/crop': {
     title: '图片裁剪',
     description: '精确裁剪图片，自由比例或预设尺寸。',
@@ -94,7 +90,6 @@ const menuItems = [
   { text: '圆角处理', icon: <Image src="/images/rounded-corners.svg" alt="Rounded Corners" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/rounded-corners' },
   { text: '自由画布', icon: <Image src="/images/free-canvas.svg" alt="Free Canvas" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/free-canvas' },
   { text: '文字卡片生成', icon: <Image src="/images/text-card-generator.svg" alt="Text Card Generator" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/text-card-generator' },
-  { text: 'AIDEX AI工具目录', icon: <Image src="/images/aidex.svg" alt="AIDEX" width={24} height={24} style={{ width: 24, height: 24 }} />, href: '/aidex/' },
 ];
 
 const sidebarAds = [
